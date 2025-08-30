@@ -22,7 +22,7 @@ class AppointmentsController extends Controller {
 	protected $tableViewService;
 	public function __construct(TableViewService $tableViewService) {
 		$this->tableViewService = $tableViewService;
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
 		$this->middleware('permission:control_acceder')->only('index');
 		$this->middleware('permission:control_ver')->only('seeAppointments', 'listAppointments', 'viewDetail');
 		$this->middleware('permission:control_crear')->only('add', 'store');

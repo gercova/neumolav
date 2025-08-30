@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 class ReportsController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:informe_acceder')->only('index');
 		$this->middleware('permission:informe_ver')->only('seeReports', 'listReports', 'listOfDiagnosticsByReportId');
 		$this->middleware('permission:informe_crear')->only('add', 'store');

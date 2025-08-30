@@ -23,7 +23,7 @@ class HistoriesController extends Controller {
 
 	use AuditLogTrait;
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
 		$this->middleware('permission:historia_acceder')->only('index');
 		$this->middleware('permission:historia_ver')->only('list');
 		$this->middleware('permission:historia_crear')->only('add', 'store');

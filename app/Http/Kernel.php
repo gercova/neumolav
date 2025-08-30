@@ -37,6 +37,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogUserActivity::class,
+            // ✅ AGREGAR EL MIDDLEWARE GLOBAL AQUÍ (solo uno)
+            \App\Http\Middleware\PreventBrowserCacheAfterLogout::class,
         ],
 
         'api' => [
@@ -68,5 +70,8 @@ class Kernel extends HttpKernel
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        // ✅ AGREGAR ESTOS DOS MIDDLEWARES NUEVOS
+        'prevent.cache' => \App\Http\Middleware\PreventBrowserCacheAfterLogout::class,
+        'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
     ];
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\security;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResetPasswordValidate;
 use App\Http\Requests\UserValidate;
 use App\Models\Enterprise;
 use App\Models\Specialty;
@@ -20,7 +21,7 @@ use Spatie\Permission\Models\Role;
 class UsersController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:usuario_acceder')->only('index');
         $this->middleware('permission:usuario_ver')->only('show');
         $this->middleware('permission:usuario_crear')->only('add', 'store', 'storePermission');
@@ -204,6 +205,24 @@ class UsersController extends Controller {
                 'messages'  => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function storePassword(ResetPasswordValidate $request, User $user): JsonResponse {
+        $validated = $request->validated();
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        /*dd(
+            $user,
+            $validated
+        );*/
+
+        return response()->json([
+            'status'    => true,
+            'type'      => 'success',
+            'message'   => 'La contraseña ha sido actualizada',
+            'route'     => route('security.users.home'),
+        ], 200);
     }
 
     private function cleanFileName($filename) {

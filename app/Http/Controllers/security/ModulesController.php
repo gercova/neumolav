@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 class ModulesController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:modulo_acceder')->only('index');
 		$this->middleware('permission:modulo_ver')->only('list', 'listReports', 'listOfDiagnosticsByReportId', 'showModule', 'showSubmodule');
 		$this->middleware('permission:modulo_crear')->only('storeModule', 'storeSubmodule');

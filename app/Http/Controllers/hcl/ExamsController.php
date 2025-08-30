@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 class ExamsController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
 		$this->middleware('permission:examen_acceder')->only('index');
 		$this->middleware('permission:examen_ver')->only('seeExams', 'listExams', 'viewDetail');
 		$this->middleware('permission:examen_crear')->only('add', 'store');

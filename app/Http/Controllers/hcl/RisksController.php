@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class RisksController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:riesgo_acceder')->only('index');
 		$this->middleware('permission:riesgo_ver')->only('seeRisks', 'viewRiskDetail', 'listRisks', 'listRisksByDNI', 'printRiskReportId');
 		$this->middleware('permission:riesgo_crear')->only('add', 'store');

@@ -188,7 +188,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <input type="hidden" name="user_id" id="userId" value="{{ $user->id }}">
                                 <!-- Input oculto para los permisos seleccionados -->
                                 <input type="hidden" name="permissions" id="selectedPermissions" value="{{ $directPermissions->pluck('id')->implode(',') }}">
                                 
@@ -303,7 +303,7 @@ const PermissionManager = (function() {
         $(config.removeSelectedBtn).on('click', removeSelectedPermissions);
         
         // Enviar formulario
-        $(config.form).on('submit', submitForm);
+        //$(config.form).on('submit', submitForm);
     }
     
     // Configurar búsqueda
@@ -474,7 +474,7 @@ const PermissionManager = (function() {
     }
     
     // Enviar formulario
-    function submitForm(e) {
+    /*function submitForm(e) {
         e.preventDefault();
         
         const formData = $(this).serialize();
@@ -495,7 +495,61 @@ const PermissionManager = (function() {
                 showToast('error', 'Error', 'Ha ocurrido un error al actualizar los permisos');
             }
         });
-    }
+    }*/
+
+    // En el submit del formulario
+    $('#assignPermissionsForm').submit(async function(e) {
+        e.preventDefault(); // Agrega esto para prevenir el submit normal
+        
+        const userId = $('#userId').val();
+        const selectedCount = $('#assignedPermissions tbody tr').not(':has(.text-muted)').length;
+        
+        if (selectedCount === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Debe asignar al menos un permiso directo al usuario',
+            });
+            return false;
+        }
+
+        const submitButton = $(this).find('button[type="submit"]');
+        const originalButtonText = submitButton.html();
+        submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Cargando...');
+        
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}/users/storePermission/${userId}`, 
+                $(this).serialize() // Mejor usar serialize() para forms
+            );
+            
+            if(response.data.status){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Operación exitosa',
+                    text: response.data.message,
+                }).then(() => {
+                    window.location.href = response.data.route;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.data.message,
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error del servidor',
+                text: 'Intente nuevamente más tarde',
+            });
+        } finally {
+            submitButton.prop('disabled', false).html(originalButtonText);
+        }
+    });
     
     // Mostrar notificación
     function showToast(type, title, message) {

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class StatisticsController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:dashboard')->only('index');
     }
 

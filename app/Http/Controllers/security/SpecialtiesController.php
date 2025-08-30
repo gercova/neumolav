@@ -9,7 +9,7 @@ use App\Models\Specialty;
 
 class SpecialtiesController extends Controller {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:especialidad_acceder')->only('index');
         $this->middleware('permission:especialidad_crear')->only('store');
         $this->middleware('permission:especialidad_ver')->only('list', 'show');

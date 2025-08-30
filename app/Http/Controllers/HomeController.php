@@ -11,7 +11,7 @@ use Illuminate\Contracts\View\View;
 class HomeController extends Controller {
     
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
     }
 
     public function index(): View {

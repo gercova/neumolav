@@ -22,7 +22,7 @@ class PostsController extends Controller {
 
     protected $summaryService;
     public function __construct(SummaryService $summaryService) {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:post_acceder')->only('index');
         $this->middleware('permission:post_crear')->only('add', 'store');
         $this->middleware('permission:post_actualizar')->only('edit', 'store');

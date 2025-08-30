@@ -6,6 +6,10 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise[0]->logo) }}">
     <title>@yield('title', $enterprise[0]->nombre_comercial)</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!---->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- JQuery UI -->

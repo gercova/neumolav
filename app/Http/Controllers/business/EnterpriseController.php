@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 class EnterpriseController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:empresa_acceder')->only('index');
         $this->middleware('permission:empresa_actualizar')->only('store');
     }

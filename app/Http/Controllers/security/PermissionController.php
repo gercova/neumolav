@@ -12,7 +12,12 @@ use Spatie\Permission\Models\Role;
 class PermissionController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'prevent.back']);
+        $this->middleware('permission:permiso_acceder')->only('index');
+        $this->middleware('permission:permiso_crear')->only('store');
+        $this->middleware('permission:permiso_ver')->only('list', 'show');
+        $this->middleware('permission:permiso_borrar')->only('destroy');
+        $this->middleware('permission:permiso_actualizar')->only('edit', 'store');
     }
     
     public function index(): View {

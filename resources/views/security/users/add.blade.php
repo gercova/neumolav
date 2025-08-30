@@ -35,18 +35,6 @@
                                             <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}">
                                         </div>
                                     </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="password">Contraseña: </label>
-                                            <input type="password" class="form-control" id="password" name="password">
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="password_confirmation">Confirmar contraseña: </label>
-                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
-                                        </div>
-                                    </div>
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="role_id">Rol: </label>

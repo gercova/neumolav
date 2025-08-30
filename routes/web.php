@@ -51,7 +51,7 @@ Route::post('/logout',                                      [AuthController::cla
 /**
  * RUTAS PROTEGIDAS
  */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'prevent.back'])->group(function () {
     Route::get('/home',                                     [HomeController::class, 'index'])->name('home');
     Route::get('/entreprise/dataEnterprise',                [EnterpriseController::class, 'getEnterprise']);
     Route::get('/enterprise/images',                        [EnterpriseController::class, 'getImages']);
@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/users/list',                       [UsersController::class, 'list']);
             Route::get('/users/{id}',                       [UsersController::class, 'show']);
             Route::post('/users/store',                     [UsersController::class, 'store']);
+            Route::post('/users/storePassword/{user}',      [UsersController::class, 'storePassword']);
             Route::post('/users/storePermission/{user}',    [UsersController::class, 'storePermission'])->name('securty.users.storePermission');
             Route::delete('/users/delete/{id}',             [UsersController::class, 'destroy']);
         });
@@ -292,3 +293,10 @@ Route::middleware(['auth'])->group(function () {
 
 #user: atencion-citas@neumotar.com
 #pass: Fy-=19XuLVNE
+
+#DB_CONNECTION=mysql
+#DB_HOST=127.0.0.1
+#DB_PORT=3306
+#DB_DATABASE=neumotar_neo_neumotar
+#DB_USERNAME=neumotar_neo
+#DB_PASSWORD=eRhsB_PiO-K3

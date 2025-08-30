@@ -25,12 +25,9 @@ class AuthController extends Controller {
     public function login(LoginValidate $request): JsonResponse {
         // Validación de tasa de intentos
         $this->ensureIsNotRateLimited($request);
-
         $validated = $request->validated();
-
         // Buscar usuario activo (no eliminado)
         $user = User::where('email', $validated['email'])->whereNull('deleted_at')->first();
-
         if (!$user) {
             RateLimiter::hit($this->throttleKey($request));
             return response()->json([
@@ -103,11 +100,7 @@ class AuthController extends Controller {
         return Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
     }
 
-    /*public function index(): View {
-        return view('auth.login');
-    }*/
-
-    public function logout(Request $request): JsonResponse {
+    public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
