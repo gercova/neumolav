@@ -13,7 +13,7 @@ class History extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'historias';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_td', 'dni', 'nombres', 'fecha_nacimiento', 'id_sexo', 'telefono', 'email', 'id_gs', 'ubigeo_extranjero', 'lugar_nacimiento', 'lugar_residencia', 'ubigeo_nacimiento', 'ubigeo_residencia', 'id_gi', 'ocupacion', 'id_ocupacion', 'id_estado', 'cirugias', 'transfuciones', 'traumatismos', 'hospitalizaciones', 'drogas', 'antecedentes', 'estadobasal', 'medicacion', 'animales', 'consumoagua', 'alimentacion', 'otros', 'asmabronquial', 'epoc', 'epid', 'tuberculosis', 'cancerpulmon', 'efusionpleural', 'neumonias', 'tabaquismo', 'id_ct', 'cig', 'aniosfum', 'result', 'contactotbc', 'exposicionbiomasa', 'motivoconsulta', 'sintomascardinales', 'te', 'fi', 'c', 'relatocronologico', 'estado'];
+    protected $fillable     = ['id_td', 'dni', 'nombres', 'fecha_nacimiento', 'id_sexo', 'telefono', 'email', 'id_gs', 'ubigeo_extranjero', 'lugar_nacimiento', 'lugar_residencia', 'ubigeo_nacimiento', 'ubigeo_residencia', 'id_gi', 'ocupacion', 'id_ocupacion', 'id_estado', 'cirugias', 'transfusiones', 'traumatismos', 'hospitalizaciones', 'drogas', 'antecedentes', 'estadobasal', 'medicacion', 'animales', 'consumoagua', 'alimentacion', 'otros', 'asmabronquial', 'epoc', 'epid', 'tuberculosis', 'cancerpulmon', 'efusionpleural', 'neumonias', 'tabaquismo', 'id_ct', 'cig', 'aniosfum', 'result', 'contactotbc', 'exposicionbiomasa', 'motivoconsulta', 'sintomascardinales', 'te', 'fi', 'c', 'relatocronologico', 'estado'];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_td'             => 'integer',
@@ -202,7 +202,7 @@ class History extends Model {
     }
 
     public function sex(){
-        return $this->hasOne(Sex::class, 'id_sex', 'id');
+        return $this->hasOne(Sex::class, 'id_sexo', 'id');
     }
 
     public function maritalStatus(){

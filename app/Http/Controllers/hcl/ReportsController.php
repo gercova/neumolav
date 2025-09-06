@@ -30,26 +30,26 @@ class ReportsController extends Controller {
     }
 
     public function add($dni): View {
-        $data['hc'] = History::where('dni', $dni)->get();
-        return view('hcl.reports.add', $data);
+        $hc = History::where('dni', $dni)->get();
+        return view('hcl.reports.add', compact('hc'));
     }
 
     public function edit($id): View {
-        $data['hc']	= Report::seePatientByReport($id);
-		$data['rp'] = Report::findOrFail($id);
-        return view('hcl.reports.edit', $data);
+        $hc	= Report::seePatientByReport($id);
+		$rp = Report::findOrFail($id);
+        return view('hcl.reports.edit', compact('hc', 'rp'));
     }
 
     public function seeReports($dni): View {
-		$data['hc'] = History::where('dni', $dni)->get();
-		return view('hcl.reports.see', $data);
+		$hc = History::where('dni', $dni)->get();
+		return view('hcl.reports.see', compact('hc'));
 	}
 
     public function viewReportDetail($id): JsonResponse {
-		$data['rp'] = Report::findOrFail($id);
-		$data['hc']	= Report::seePatientByReport($id);
-		$data['dx'] = DB::select('CALL getDiagnosticByReport(?)', [$id]);
-		return response()->json($data, 200);
+		$rp = Report::findOrFail($id);
+		$hc	= Report::seePatientByReport($id);
+		$dx = DB::select('CALL getDiagnosticByReport(?)', [$id]);
+		return response()->json(compact('rp', 'hc', 'dx'), 200);
 	}
 
     public function store(ReportValidate $request): JsonResponse {

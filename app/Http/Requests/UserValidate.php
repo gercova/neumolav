@@ -11,7 +11,6 @@ class UserValidate extends FormRequest {
     }
 
     public function rules(): array {
-        $userId = $this->input('userId');
         return [
             'name'                  => 'required|string|max:255',
             'biografia'             => 'nullable|string|max:255',

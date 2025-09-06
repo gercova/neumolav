@@ -163,7 +163,6 @@ class UsersController extends Controller {
             $path = $image->storeAs('users', $cleanName, 'public');
             // Obtener URL pública
             //$url = Storage::disk('public')->url($path);
-
         }
 
         $data           = array_merge($validated, [
@@ -193,7 +192,7 @@ class UsersController extends Controller {
                 'status'    => (bool) $result,
                 'type'      => $result ? 'success' : 'error',
                 'messages'  => $result ? ($result->wasChanged() ? 'El usuario ha sido actualizado' : 'Se ha añadido un nuevo usuario') : 'Recargue la página y vuelva a intentarlo',
-                'avatar'    => $imagePath ? Storage::url($imagePath) : ($result->avatar ? Storage::url($result->avatar) : null),
+                'avatar'    => $path ? Storage::url($path) : ($result->avatar ? Storage::url($result->avatar) : null),
                 'route'     => route('security.users.home'),
             ], 200);
         } catch (\Exception $e) {
@@ -208,15 +207,10 @@ class UsersController extends Controller {
     }
 
     public function storePassword(ResetPasswordValidate $request, User $user): JsonResponse {
-        $validated = $request->validated();
+        $validated      = $request->validated();
         $user->password = Hash::make($validated['password']);
         $user->save();
-
-        /*dd(
-            $user,
-            $validated
-        );*/
-
+        
         return response()->json([
             'status'    => true,
             'type'      => 'success',
@@ -294,7 +288,7 @@ class UsersController extends Controller {
         }
         // Eliminar caracteres no alfanuméricos
         $nickname = preg_replace('/[^a-zA-Z0-9]/', '', $nickname);
-        if(User::where('username', $nickname)->count() > 0) {
+        if(User::where('username', $nickname)->count() > 1) {
             $nickname .= rand(1, 99);
         }
     

@@ -7,7 +7,7 @@ $(document).ready(function(){
     DeleteHandler.initButtons([
         {
             selector: '.delete-post',
-            endpoint: 'posts',
+            endpoint: 'publications',
             table: tables.postsTable
         } 
     ]);

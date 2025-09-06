@@ -10,7 +10,7 @@ use App\Models\PostType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Services\SummaryService;
+#use App\Services\SummaryService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -20,15 +20,13 @@ use Throwable;
 
 class PostsController extends Controller {
 
-    protected $summaryService;
-    public function __construct(SummaryService $summaryService) {
+    public function __construct() {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:post_acceder')->only('index');
         $this->middleware('permission:post_crear')->only('add', 'store');
         $this->middleware('permission:post_actualizar')->only('edit', 'store');
         $this->middleware('permission:post_ver')->only('list');
         $this->middleware('permission:post_borrar')->only('destroy');
-        $this->summaryService = $summaryService;
     }
     public function index(): View {
         return view('business.posts.index');

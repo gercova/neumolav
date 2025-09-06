@@ -22,7 +22,8 @@
                 <div class="card-header">
                     NUEVO EXAMEN DE {{ $hc[0]['dni'].' :: '.$hc[0]['nombres'] }}
                 </div>
-                <form id="examForm" method="post">
+                <form id="examForm" method="post" enctype="multipart/form-data">
+                    @csrf
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4">

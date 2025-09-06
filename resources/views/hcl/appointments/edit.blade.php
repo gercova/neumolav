@@ -93,7 +93,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
-                                                        <!--<div class="col-8">
+                                                        <div class="col-8">
                                                             <div class="form-group row">
                                                                 <label class="col-sm-3 col-form-label" for="diagnostics">Buscar:</label>
                                                                 <div class="col-sm-9">
@@ -105,7 +105,18 @@
                                                             <div class="form-group row">
                                                                 <button id="btn-add-diagnostic" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar diagnóstico</button>
                                                             </div>
-                                                        </div>-->
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <table id="tableDiagnostics" class="table table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:90%;">Diagnóstico</th>
+                                                                        <th style="width:10%;"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
                                                         <div class="col-12">
                                                             <table id="diagnostic_data" class="table table-hover">
                                                                 <thead>
@@ -128,7 +139,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
-                                                        <!--<div class="col-8">
+                                                        <div class="col-8">
                                                             <div class="form-group row">
                                                                 <label class="col-sm-3 col-form-label" for="drugs">Buscar:</label>
                                                                 <div class="col-sm-9">
@@ -140,7 +151,19 @@
                                                             <div class="form-group row">
                                                                 <button id="btn-add-drug" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar fármaco</button>
                                                             </div>
-                                                        </div>-->
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <table id="tableDrugs" class="table table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:30%;">Fármaco</th>
+                                                                        <th style="width:60%;">Receta</th>
+                                                                        <th style="width:10%;"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
                                                         <div class="col-12">
                                                             <table id="medication_data" class="table table-hover">
                                                                 <thead>

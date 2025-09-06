@@ -17,7 +17,7 @@ class Imagen extends Model
     protected $casts        = [
         'id_examen'     => 'integer',
         'dni'           => 'string',
-        'fecha_examen'  => 'datetime',
+        'fecha_examen'  => 'date',
         'imagen'        => 'string',
         'estado'        => 'boolean',
         'created_at'    => 'datetime',

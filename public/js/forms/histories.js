@@ -326,7 +326,6 @@ $(document).ready(function(){
         });
     });
     LoadRecordsButton.click();
-    
     /**
      * Función para validar guardar y/o actualizar los datos de una historia clínica
      */
@@ -334,7 +333,7 @@ $(document).ready(function(){
         e.preventDefault();
         $('.text-danger').remove();
         $('.form-group').removeClass('is-invalid is-valid');
-        const formData = new FormData(this);
+        const formData = $(this).serialize();
 
         const submitButton = $(this).find('button[type="submit"]');
         const originalButtonText = submitButton.html(); // Guardar el texto original del botón

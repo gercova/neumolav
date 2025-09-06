@@ -14,7 +14,7 @@ class HistoryValidate extends FormRequest
         return [
             'id_td'                         => 'required',
             'dni'                           => 'required|digits:8|unique:historias,dni,'.$this->id ?? NULL,
-            'nombres'                       => 'required|string',
+            'nombres'                       => 'required|string|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/',
             'fecha_nacimiento'              => 'required|date',
             'id_sexo'                       => 'required',
             'telefono'                      => 'required|digits:9',
@@ -65,9 +65,11 @@ class HistoryValidate extends FormRequest
             'dni.unique'                    => 'El campo DNI debe ser único.',
             'nombres.required'              => 'El campo Nombres es obligadorio.',
             'nombres.string'                => 'El campo Nombres de ser de tipo cadena.',
+            'nombres.regex'                 => 'El campo Nombres solo puede contener letras, números, espacios, puntos, comas y guiones.',
             'fecha_nacimiento.required'     => 'El campo Fecha Nacimiento es obligatorio.',
             'fecha_nacimiento.date'         => 'El campo Fecha Nacimiento debe de ser de tipo fecha.',
             'id_sexo.required'              => 'El campo Sexo es obligatorio.',
+            //'id_sexo.in'                    => 'El campo Sexo solo puede contener F o M.',
             'telefono.required'             => 'El campo Teléfono es obligatorio.',
             'telefono.digits'               => 'El campo Teléfono debe tener 9 digitos.',
             'id_gs.required'                => 'El campo Grupo Sanguíneo es obligatorio.',
@@ -108,23 +110,5 @@ class HistoryValidate extends FormRequest
             'c'                             => 'El campo C solo puede contener letras, números, puntos, comas y guiones.',
             'relatocronologico'             => 'El campo Relato Cronológico solo puede contener letras, números, puntos, comas y guiones.',
         ];
-    }
-    
-    public function prepareForValidation() {
-        $this->merge([
-            'dni'           => strtoupper($this->dni),
-            'id_tipo'       => intval($this->id_tipo),
-            'so2'           => floatval($this->so2),
-            'peso'          => floatval($this->peso),
-            'talla'         => floatval($this->talla),  
-            'id_ct'         => intval($this->id_ct),
-            'cig'           => intval($this->cig),
-            'aniosfum'      => intval($this->aniosfum),
-            'id_sexo'       => intval($this->id_sexo),
-            'id_gs'         => intval($this->id_gs),
-            'id_gi'         => intval($this->id_gi),
-            'id_ocupacion'  => intval($this->id_ocupacion),
-            'id_estado'     => intval($this->id_estado)
-        ]);
     }
 }

@@ -31,12 +31,11 @@
         <div class="card card-outline card-primary">
             <div>
                 <picture>
-                    <source srcset="{{ asset('storage/homepage/isologo-neumotar-25.png') }}" type="image/png">
-                    <img src="{{ asset('storage/homepage/isologo-neumotar-25.png') }}" alt="Logo" class="img-fluid">
+                    <source srcset="{{ asset('storage/'.$enterprise[0]->logo_receta) }}" type="image/png">
+                    <img src="{{ asset('storage/'.$enterprise[0]->logo_receta) }}" alt="Logo Neumotar" class="img-fluid" loading="lazy">
                 </picture>
             </div>
             <div class="card-header text-center">
-                <!--<a href="#" class="h1"><b>{{ $enterprise[0]->nombre_comercial }}</b></a>-->
                 <p class="login-box-msg">Especialista en enfermedades respiratorias</p>
             </div>
             <div class="card-body">

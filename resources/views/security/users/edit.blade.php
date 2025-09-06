@@ -28,7 +28,6 @@
                         <div class="col-5 col-sm-3">
                             <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
                                 <a class="nav-link active" id="vert-tabs-user-tab" data-toggle="pill" href="#vert-tabs-user" role="tab" aria-controls="vert-tabs-user" aria-selected="true">Actualizar información general</a>
-                                
                                 <a class="nav-link" id="vert-tabs-userpassword-tab" data-toggle="pill" href="#vert-tabs-userpassword" role="tab" aria-controls="vert-tabs-userpassword" aria-selected="false">Actualizar contraseña del usuario</a>
                             </div>
                         </div>
@@ -108,7 +107,6 @@
                                         </div>
                                     </form>
                                 </div>
-
                                 <div class="tab-pane fade" id="vert-tabs-userpassword" role="tabpanel" aria-labelledby="vert-tabs-userpassword-tab">
                                     <form id="passwordForm" method="post">
                                         @csrf
@@ -131,7 +129,6 @@
                                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                             <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Guardar</button>
                                         </div>
-                                        
                                     </form>
                                 </div>
                             </div>
@@ -143,7 +140,6 @@
                         <a href="{{ route('security.users.home') }}" class="btn btn-danger"><i class="bi bi-box-arrow-left"></i> Volver</a>&nbsp;
                     </div>
                 </div>
-                
             </div>
         </div>
     </section>

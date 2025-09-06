@@ -75,12 +75,17 @@ class ExamsController extends Controller {
     		'dni', 'id_tipo', 'ta', 'fc', 'rf', 'so2', 'peso', 'talla', 'imc', 'pym', 'typ', 'cv', 'abdomen', 'hemolinfopoyetico', 'tcs', 'neurologico', 'hemograma', 'bioquimico', 'perfilhepatico', 'perfilcoagulacion', 'perfilreumatologico', 'orina', 'sangre', 'esputo', 'heces', 'lcr', 'citoquimico', 'adalp', 'paplp', 'bclp', 'cgchlp', 'cbklp', 'bkdab', 'bkcab', 'cgchab', 'papab', 'bcab', 'pulmon', 'pleurabpp', 'funcionpulmonar', 'medicinanuclear', 'plan', 'otros'
         ]);
 
+		//dd($img, $dateImg);
+
         DB::beginTransaction();
         try {
             $exam 	= empty($id) ? Exam::create($data) : Exam::updateOrCreate(['id' => $id], $data);
             $id 	= $exam->id;
-			$dni 	= $exam->dni;
+			$dni 	= $validated['dni'];
             // Guardar diagnóstico, medicación y subir imagen si existen
+
+			// dd($validated['dni']);
+
             if ($diagnostics) 	$this->saveDiagnosis($id, $dni, $diagnostics);
             if ($drugs) 		$this->saveMedicacion($id, $dni, $drugs, $descriptions);
             if ($img) 			$this->uploadImage($img, $dni, $dateImg, $id);
@@ -130,6 +135,33 @@ class ExamsController extends Controller {
 		
 		MedicationExam::insert($data);
 		return;
+    }
+
+	private function uploadImage($images, $dni, $fechaImg, $id) {
+        if ($images) {
+            $directorio = "img/pacientes/{$dni}";
+			if (!Storage::exists($directorio)) {
+                Storage::makeDirectory($directorio);
+            }
+			# Storage::disk('public')->makeDirectory($directorio);
+			foreach ($images as $i => $image) {
+				if ($image->isValid()) {
+					//$extension 	= $image->extension();
+					$extension 	= $image->getClientOriginalExtension();
+					$fileName 	= mt_rand(1000, 9999).'.'.$extension;
+					$route 		= "{$directorio}/{$fileName}";
+
+					if ($image->storeAs($directorio, $fileName, 'public')) {
+						Imagen::create([
+							'id_examen'    => $id,
+							'dni'          => $dni,
+							'fecha_examen' => $fechaImg[$i],
+							'imagen'       => $route,
+						]);
+					}
+				}
+			}
+        }
     }
 
 	public function listExams(string $dni): JsonResponse {
@@ -265,29 +297,6 @@ class ExamsController extends Controller {
 		$diagnostic = DiagnosticExam::where('id_examen', $id)->get();
 		return response()->json(compact('exam', 'medicacion', 'diagnostic'), 200);
 	}
-
-    private function uploadImage($images, $dni, $fechaImg, $id) {
-        if ($images) {
-            $directorio = "img/pacientes/{$dni}";
-			Storage::disk('public')->makeDirectory($directorio);
-			foreach ($images as $i => $image) {
-				if ($image->isValid()) {
-					$extension 	= $image->extension();
-					$fileName 	= mt_rand(1000, 9999) . '.' . $extension;
-					$route 		= "{$directorio}/{$fileName}";
-
-					if ($image->storeAs($directorio, $fileName, 'public')) {
-						Imagen::create([
-							'id_examen'    => $id,
-							'dni'          => $dni,
-							'fecha_examen' => $fechaImg[$i],
-							'imagen'       => $route,
-						]);
-					}
-				}
-			}
-        }
-    }
 
     public function destroy(int $id): JsonResponse {
 		$result = Exam::findOrFail($id);

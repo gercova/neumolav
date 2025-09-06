@@ -36,12 +36,27 @@ class User extends Authenticatable {
     
     protected $appends = ['formatted_name'];
 
-    public function getProfilePhotoUrlAttribute() {
+    /*public function getProfilePhotoUrlAttribute() {
         if ($this->avatar) {
             if (filter_var($this->avatar, FILTER_VALIDATE_URL)) return $this->avatar;
             return Storage::exists($this->avatar) ? url($this->avatar) : asset('storage/img/usuarios/default/anonymous.png');
         }
         
+        return asset('storage/img/usuarios/default/anonymous.png');
+    }*/
+
+    public function getProfilePhotoUrlAttribute() {
+        // URL externa
+        if ($this->avatar && filter_var($this->avatar, FILTER_VALIDATE_URL)) {
+            return $this->avatar;
+        }
+
+        // Imagen local existe
+        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+            return Storage::url($this->avatar);
+        }
+
+        // Imagen por defecto
         return asset('storage/img/usuarios/default/anonymous.png');
     }
 

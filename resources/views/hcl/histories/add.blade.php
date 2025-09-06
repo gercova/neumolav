@@ -37,7 +37,7 @@
                                     <select class="form-control" id="id_td" name="id_td" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach($dt as $t)
-                                            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                            <option value="{{ $t->id }}" {{ old('id_td') == $t->id ? 'selected' : '' }}>{{ $t->descripcion }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -72,7 +72,7 @@
                                     <select class="form-control" id="id_sexo" name="id_sexo" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($sx as $s)
-                                            <option value="{{ $s->id }}">{{ $s->descripcion }}</option>
+                                            <option value="{{ $s->id }}" {{ old('id_sexo') == $s->id ? 'selected' : '' }}>{{ $s->descripcion }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -89,7 +89,7 @@
                                     <select class="form-control" id="id_gs" name="id_gs" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach($bg as $b)
-                                            <option value="{{ $b->id }}">{{ $b->descripcion }}</option>
+                                            <option value="{{ $b->id }}" {{ old('id_gs') == $b->id ? 'selected' : '' }}>{{ $b->descripcion }}</option>
                                         @endforeach
                                     </select>
                                 </div>

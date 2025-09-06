@@ -25,7 +25,12 @@ class EnterpriseController extends Controller {
 
     public function store(Request $request): JsonResponse {
         $enterprise = Enterprise::where('id', $request->input('id'))->first();
-        if (!$enterprise) return response()->json(['status' => false, 'type' => 'error', 'messages' => 'Empresa no encontrada'], 404);
+        if (!$enterprise) return response()->json([
+            'status'    => false, 
+            'type'      => 'error', 
+            'messages'  => 'Empresa no encontrada'
+        ], 404);
+        
         $response = ['status' => false, 'type' => 'error', 'messages' => 'No se pudo actualizar'];
     
         try {

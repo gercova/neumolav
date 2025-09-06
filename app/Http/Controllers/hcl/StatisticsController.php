@@ -27,15 +27,15 @@ class StatisticsController extends Controller {
 
     public function getCountRows(): JsonResponse{
         $fechaActual    = now()->toDateString();
-        $result['hc']   = History::whereNull('deleted_at')->count();
-        $result['ex']   = Exam::whereNull('deleted_at')->count();
-        $result['ap']   = Appointment::whereNull('deleted_at')->count();
-        $result['cd']   = History::whereNull('deleted_at')->whereDate('created_at', $fechaActual)->count();
-        return response()->json($result, 200);
+        $hc             = History::whereNull('deleted_at')->count();
+        $ex             = Exam::whereNull('deleted_at')->count();
+        $ap             = Appointment::whereNull('deleted_at')->count();
+        $cd             = History::whereNull('deleted_at')->whereDate('created_at', $fechaActual)->count();
+        return response()->json(compact('hc', 'ex', 'ap', 'cd'), 200);
     }
 
     public function years(){
-        return History::selectRaw('YEAR(created_at) year')->groupBy('year')->orderBy('year', 'desc')->get();
+        return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
     }
 
     public function getHistoriesByYear($year): JsonResponse {
@@ -60,7 +60,7 @@ class StatisticsController extends Controller {
     }
 
     public function getExamsByYear($year): JsonResponse {
-        $exams = Exam::selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+        $exams = Exam::select('EXTRACT(MONTH FROM created_at) as month', DB::raw('COUNT(*) as count'))
             ->whereYear('created_at', $year)
             ->groupBy('month')
             ->orderBy('month')
@@ -81,7 +81,7 @@ class StatisticsController extends Controller {
     }
 
     public function getAppointmentsByYear($year): JsonResponse {
-        $appointments = Appointment::selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+        $appointments = Appointment::select('EXTRACT(MONTH FROM created_at) as month', DB::raw('COUNT(*) as count'))
             ->whereYear('created_at', $year)
             ->groupBy('month')
             ->orderBy('month')
@@ -102,7 +102,7 @@ class StatisticsController extends Controller {
     }
 
     public function getDiagnosticsByExam(){
-        return DiagnosticExam::selectRaw('d.descripcion diagnostico, COUNT(examen_diagnostico.id_diagnostico) cantidad')
+        return DiagnosticExam::select('d.descripcion as diagnostico', DB::raw('COUNT(examen_diagnostico.id_diagnostico) as cantidad'))
             ->join('diagnosticos as d', 'd.id', '=', 'examen_diagnostico.id_diagnostico')
             ->whereNull('examen_diagnostico.deleted_at')
             ->groupBy('diagnostico')
@@ -113,7 +113,7 @@ class StatisticsController extends Controller {
     }
 
     public function getDrugsByExam(){
-        return MedicationExam::selectRaw('d.descripcion droga, COUNT(*) cantidad')
+        return MedicationExam::select('d.descripcion as droga', DB::raw('COUNT(*) as cantidad'))
             ->join('drogas as d', 'd.id', '=', 'examen_medicacion.id_droga')
             ->whereNull('examen_medicacion.deleted_at')
             ->groupBy('droga')
@@ -124,7 +124,7 @@ class StatisticsController extends Controller {
     }
 
     public function getHistoriesBySex(){
-        return History::selectRaw('s.descripcion sexo, COUNT(historias.id_sexo) cantidad')
+        return History::select('s.descripcion as sexo', DB::raw('COUNT(historias.id_sexo) as cantidad'))
             ->join('sexo as s', 's.id', '=', 'historias.id_sexo')
             ->groupBy('sexo')
             ->get();
@@ -163,15 +163,17 @@ class StatisticsController extends Controller {
     }
 
     public function HCByMonth(Request $request){
-        $histories = History::where(function ($q) use ($request) {
+        /*$histories = History::where(function ($q) use ($request) {
             if($request->filled('start_date')) $q->where('created_at', '>=', request('start_date'));
             if($request->filled('end_date')) $q->where('created_at', '<=', request('end_date'));
-        })
-        ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
-        ->whereYear('created_at', $request->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+        })*/
+
+        $histories = History::query()
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', $request->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
         $data = [[
             'name' => 'Historias',
