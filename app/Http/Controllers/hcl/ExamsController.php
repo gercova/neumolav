@@ -349,9 +349,9 @@ class ExamsController extends Controller {
 			->setPaper('a5')
         	->setOptions(['defaultFont' => 'sans-serif'])
         	->setOptions([
-				'margin-top' 	=> 0.5, 
-				'margin-bottom' => 0.5, 
-				'margin-left' 	=> 0.5, 
+				'margin-top' 	=> 0.5,
+				'margin-bottom' => 0.5,
+				'margin-left' 	=> 0.5,
 				'margin-right' 	=> 0.5,
 			]);
         return $pdf->stream("examen-{$id}.pdf");

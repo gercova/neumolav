@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ApplicationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\hcl\AppointmentsController;

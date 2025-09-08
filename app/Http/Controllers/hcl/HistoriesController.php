@@ -136,7 +136,7 @@ class HistoriesController extends Controller {
 	
 		$processedFields = [
 			'nombres' 			=> strtoupper($validated['nombres']),
-			'ubigeo_nacimiento' => $this->getStringId($request->input('ubigeo_nacimiento')),
+			'ubigeo_nacimiento' => isset($request->ubigeo_nacimiento) ? ($this->getStringId($request->input('ubigeo_nacimiento'))) : '220901',
 			'ubigeo_residencia' => $this->getStringId($validated['ubigeo_residencia']),
 			'id_ocupacion' 		=> $this->getStringId($validated['id_ocupacion']),
 		];
@@ -146,7 +146,9 @@ class HistoriesController extends Controller {
 		DB::beginTransaction();    
         try {
 			$result = History::updateOrCreate(['id' => $request->input('id')], $data);
-			DB::table('citas')->insert(['id_historia' => $result->id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+			if(!$result->wasRecentlyCreated){
+				DB::table('citas')->insert(['id_historia' => $result->id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+			}
 			DB::commit();
 			return response()->json([
 				'status'    => (bool) $result,

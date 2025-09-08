@@ -98,25 +98,36 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-2">
-                                <div class="form-group">
-                                    <br>
-                                    <button type="button" class="btn btn-warning extra"><i class="fa fa-globe"></i> Paciente extranjero</button>
-                                    <button type="button" class="btn btn-success pe d-none"><i class="fa fa-globe"></i> Paciente nacional</button>
+                            @if($history->ubigeo_extranjero !== null)
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="extranjero">Ubigeo extranjero</label>
+                                        <input class="form-control" id="extranjero" name="extranjero" value="{{ $history->ubigeo_extranjero }}" placeholder="PAÍS, REGIÓN, CIUDAD">
+                                        <input type="hidden" name="ubigeo_nacimiento" id="ubigeo_nacimiento" value="{{ $unacimiento[0]['nacimiento'] }}">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-5">
-                                <div class="form-group nacional">
-                                    <label for="ubigeo_nacimiento">Lugar Nacimiento: </label>
-                                    <select class="form-control buscarUbigeoR" id="ubigeo_nacimiento" name="ubigeo_nacimiento">
-                                        <option value="{{ $unacimiento[0]['nacimiento'] }}"></option>
-                                    </select>
+                            @else
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <br>
+                                        <button type="button" class="btn btn-warning extra"><i class="fa fa-globe"></i> Paciente extranjero</button>
+                                        <button type="button" class="btn btn-success pe d-none"><i class="fa fa-globe"></i> Paciente nacional</button>
+                                    </div>
                                 </div>
-                                <div class="form-group foreign d-none">
-                                    <label for="extranjero">Ubigeo extranjero</label>
-                                    <input class="form-control" id="extranjero" name="extranjero" value="{{ $history->ubigeo_extranjero }}" placeholder="PAÍS, REGIÓN, CIUDAD">
+                                <div class="col-5">
+                                    <div class="form-group nacional">
+                                        <label for="ubigeo_nacimiento">Lugar Nacimiento: </label>
+                                        <select class="form-control buscarUbigeoR" id="ubigeo_nacimiento" name="ubigeo_nacimiento">
+                                            <option value="{{ $unacimiento[0]['nacimiento'] }}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group foreign d-none">
+                                        <label for="extranjero">Ubigeo extranjero</label>
+                                        <input class="form-control" id="extranjero" name="extranjero" value="{{ $history->ubigeo_extranjero }}" placeholder="PAÍS, REGIÓN, CIUDAD">
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+                            
                             <div class="col-5">
                                 <div class="form-group">
                                     <label for="ubigeo_residencia">Lugar Residencia: </label>
