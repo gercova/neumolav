@@ -210,6 +210,7 @@ class HistoriesController extends Controller {
 				'historias.nombres',
 				'citas.created_at',
 				'citas.id',
+				'historias.id as hid'
 				// Agregar más campos si es necesario
 			])
 			->whereDate('citas.created_at', Carbon::today())
@@ -239,7 +240,7 @@ class HistoriesController extends Controller {
             	htmlspecialchars(route('hcl.exams.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para examen
             	htmlspecialchars(route('hcl.reports.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para informe
             	htmlspecialchars(route('hcl.risks.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para riesgo
-				htmlspecialchars(route('hcl.histories.edit', 	['id' => $item->id]), ENT_QUOTES, 'UTF-8') // Para editar historia
+				htmlspecialchars(route('hcl.histories.edit', 	['id' => $item->hid]), ENT_QUOTES, 'UTF-8') // Para editar historia
 			);
 		
 			return [

@@ -45,7 +45,7 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="dni">DNI</label>
-                                    <input type="number" class="form-control" id="dni" name="dni" value="{{ old('dni') }}" required>
+                                    <input type="text" class="form-control" id="dni" name="dni" value="{{ old('dni') }}" required>
                                 </div>
                             </div>
                             <div class="col-6">

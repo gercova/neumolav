@@ -46,7 +46,7 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="dni">DNI</label>
-                                    <input type="number" class="form-control" id="dni" name="dni" value="{{ $history->dni }}" readonly>
+                                    <input type="text" class="form-control" id="dni" name="dni" value="{{ $history->dni }}" readonly>
                                 </div>
                             </div>
                             <div class="col-6">

@@ -1,6 +1,6 @@
 $(document).ready(function(){
     //validar dni
-    $("#dni").change(function() {
+    /*$("#dni").change(function() {
         let dni = $(this).val();
         let regex = /^\d{8}$/;
         if (!regex.test(dni)) {
@@ -14,7 +14,7 @@ $(document).ready(function(){
         }else{
             $('#dni').removeClass('is-invalid');
         }
-    });
+    });*/
     //tipear número DNI
     $('#dni').change(function(){
         let doc_type    = $('#id_td').val();
@@ -22,11 +22,17 @@ $(document).ready(function(){
         if (doc_type == ''){
             Swal.fire('Upsss!!!', 'Seleccione el Tipo de documento', 'warning')
             $('#id_td').addClass('is-invalid');
-        } else {
-            if(doc_type == 1 && dni.length == 8){
+        } else if (doc_type == 1) {
+            if(dni.length == 8){
                 consultaDatosSUNAT(dni);
                 $('#id_td').removeClass('is-invalid');
             }
+        } else if (doc_type == 3) {
+            if(dni.length == 9){
+                $('#id_td').removeClass('is-invalid');
+            }
+        } else if (doc_type == 4) {
+            $('#id_td').removeClass('is-invalid');
         }
     });
     //boton extranjero

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class HistoryValidate extends FormRequest
 {
@@ -13,7 +14,17 @@ class HistoryValidate extends FormRequest
     public function rules(): array {
         return [
             'id_td'                         => 'required',
-            'dni'                           => 'required|digits:8|unique:historias,dni,'.$this->id ?? NULL,
+            'dni'                           => [
+                'required',
+                Rule::when($this->id_td === 1, [
+                    'digits:8',
+                    Rule::unique('historias', 'dni')->ignore($this->id),
+                ]),
+                Rule::when($this->id_td === 2, [
+                    'size:9',
+                    Rule::unique('historias', 'dni')->ignore($this->id),
+                ]),
+            ],
             'nombres'                       => 'required|string|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/',
             'fecha_nacimiento'              => 'required|date',
             'id_sexo'                       => 'required',
@@ -63,6 +74,7 @@ class HistoryValidate extends FormRequest
             'dni.required'                  => 'El campo DNI es obligadorio.',
             'dni.digits'                    => 'El campo DNI solo debe tener 8 digitos.',
             'dni.unique'                    => 'El campo DNI debe ser único.',
+            'dni.size'                      => 'El campo DNI solo debe tener 9 digitos.',
             'nombres.required'              => 'El campo Nombres es obligadorio.',
             'nombres.string'                => 'El campo Nombres de ser de tipo cadena.',
             'nombres.regex'                 => 'El campo Nombres solo puede contener letras, números, espacios, puntos, comas y guiones.',

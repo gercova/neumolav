@@ -5,7 +5,7 @@ $(document).ready(function(){
         try {
             const result = await swal.fire({
                 title: '¿Quieres salir del sistema?',
-                text: 'Estás seguro que quieres cerrar la sesión actual y salir del sistema',
+                text: '¿Estás seguro que quieres cerrar la sesión?',
                 type: 'warning',   
                 showCancelButton: true,   
                 confirmButtonColor: "#16a085",   
