@@ -17,7 +17,7 @@ class History extends Model {
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_td'             => 'integer',
-        //'dni'               => 'string',
+        'dni'               => 'string',
         'nombres'           => 'string',
         'fecha_nacimiento'  => 'date',
         'id_sexo'           => 'string',
