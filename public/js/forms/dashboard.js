@@ -46,62 +46,19 @@ $(document).ready(function(){
             const response = await axios.get(`${API_BASE_URL}/dashboard/histories/${year}`);
             
             if (response.data) {
-                renderHistoriesChart({
-                    categories: monthNames,
-                    counts: response.data.counts,
-                    year: year
-                });
+                console.log(response.data[0].data);
+                renderChart(
+                    monthNames,
+                    response.data[0].data,
+                    year,
+                    'Pacientes',
+                    'histories',
+                );
             }
         } catch (error) {
             console.error('Error loading histories data:', error);
             showErrorNotification('No se pudo cargar los datos de historias clínicas');
         }
-    }
-    
-    function renderHistoriesChart({categories, counts, year}) {
-        Highcharts.chart('histories', {
-            chart: { type: 'column' },
-            title: { text: 'Pacientes nuevos' },
-            subtitle: { text: `Año: ${year}` },
-            xAxis: {
-                categories: categories,
-                crosshair: true
-            },
-            yAxis: {
-                min: 0,
-                title: { text: 'Cantidad de pacientes' }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                pointFormat: `
-                    <tr>
-                        <td style="color:{series.color};padding:0">Cantidad: </td>
-                        <td style="padding:0"><b>{point.y} pacientes</b></td>
-                    </tr>
-                `,
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
-                },
-                series: {
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function() {
-                            return Highcharts.numberFormat(this.y, 0);
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Pacientes',
-                data: counts
-            }]
-        });
     }
     
     async function loadExamsChart(year){
@@ -109,11 +66,13 @@ $(document).ready(function(){
         try {
             const response = await axios.get(`${API_BASE_URL}/dashboard/exams/${year}`);
             if(response.status == 200){
-                renderExamsChart({
-                    categories: monthNames, 
-                    counts: response.data.counts, 
-                    year: year
-                });
+                renderChart(
+                    monthNames, 
+                    response.data[0].data, 
+                    year,
+                    'Exámenes',
+                    'exams',
+                );
             }
         } catch (error) {
             console.error('Error loading histories data:', error);
@@ -121,111 +80,22 @@ $(document).ready(function(){
         }
     }
 
-    function renderExamsChart({categories, counts, year}){
-        Highcharts.chart('exams', {
-            chart: { type: 'column' },
-            title: { text: 'Exámenes nuevos' },
-            subtitle: { text: 'Año: ' + year },
-            xAxis: {
-                categories: categories,
-                crosshair: true
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Cantidad de exámenes'
-                }
-            },
-            tooltip: {
-                headerFormat: `<span style="font-size:10px">{point.key}</span><table>`,
-                pointFormat: `
-                    <tr>
-                        <td style="color:{series.color};padding:0">Cantidad: </td>
-                        <td style="padding:0"><b>{point.y:f} exámenes</b></td>
-                    </tr>
-                `,
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
-                },
-                series:{
-                    dataLabels:{
-                        enabled:true,
-                        formatter:function(){
-                            return Highcharts.numberFormat(this.y, 0);
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Meses',
-                data: counts
-            }]
-        });
-    }
-
     async function loadAppointmentsChart(year){
         const monthNames = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
         try {
             const response = await axios.get(`${API_BASE_URL}/dashboard/appointments/${year}`);
             if(response.status == 200){
-                renderAppointmentsChart({
-                    categories: monthNames, 
-                    counts: response.data.counts, 
-                    year: year
-                });
+                renderChart(
+                    monthNames, 
+                    response.data[0].data, 
+                    year,
+                    'Controles',
+                    'appointments',
+                );
             }
         } catch (error) {
             console.error(error);
         }
-    }
-
-    function renderAppointmentsChart({categories, counts, year}){
-        Highcharts.chart('appointments', {
-            chart: { type: 'column' },
-            title: { text: 'Citas nuevas' },
-            subtitle: { text: 'Año:'+ year },
-            xAxis: {
-                categories: categories,
-                crosshair: true
-            },
-            yAxis: {
-                min: 0,
-                title: { text: 'Cantidad de citas' }
-            },
-            tooltip: {
-                headerFormat: `<span style="font-size:10px">{point.key}</span><table>`,
-                pointFormat: `
-                    <tr>
-                        <td style="color:{series.color};padding:0">Cantidad: </td>
-                        <td style="padding:0"><b>{point.y:f} citas</b></td>
-                    </tr>
-                `,
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                column: { pointPadding: 0.2, borderWidth: 0 },
-                series:{
-                    dataLabels:{
-                        enabled:true,
-                        formatter:function(){
-                            return Highcharts.numberFormat(this.y, 0);
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Meses',
-                data: counts
-            }]
-        });
     }
     
     async function diagnosisByExams(){
@@ -614,3 +484,49 @@ $(document).ready(function(){
         });
     }
 });
+
+function renderChart(categories, counts, year, item, chart) {
+        Highcharts.chart(chart, {
+            chart: { type: 'column' },
+            title: { text: item + ' nuevos' },
+            subtitle: { text: `Año: ${year}` },
+            xAxis: {
+                categories: categories,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Cantidad de ' + item }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: `
+                    <tr>
+                        <td style="color:{series.color};padding:0">Cantidad: </td>
+                        <td style="padding:0"><b>{point.y} ` + item + `</b></td>
+                    </tr>
+                `,
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                },
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function() {
+                            return Highcharts.numberFormat(this.y, 0);
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: item,
+                data: counts
+            }]
+        });
+    }

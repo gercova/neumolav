@@ -25,7 +25,7 @@ class StatisticsController extends Controller {
         return view('hcl.statistics.index', compact('yr'));
     }
 
-    public function getCountRows(): JsonResponse{
+    public function getCountRows(): JsonResponse {
         $fechaActual    = now()->toDateString();
         $hc             = History::whereNull('deleted_at')->count();
         $ex             = Exam::whereNull('deleted_at')->count();
@@ -38,67 +38,85 @@ class StatisticsController extends Controller {
         return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
     }
 
-    public function getHistoriesByYear($year): JsonResponse {
-        $histories = History::selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', $year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        $monthlyData = array_fill(1, 12, 0);
-
-        foreach ($histories as $history) {
-            $monthlyData[(int)$history->month] = $history->count;
-        }
-        
-        $formattedData = [
-            'months' => range(1, 12),
-            'counts' => array_values($monthlyData)
-        ];
-
-        return response()->json($formattedData);
+    public static function getPatientWithMonthOptimized($year)
+    {
+        return History::selectRaw('MONTH(fecha) as mes, COUNT(id) as cantidad')
+            ->whereYear('fecha', $year)
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->mes => $item->cantidad];
+            })
+            ->pipe(function ($collection) {
+                // Completar meses faltantes con 0
+                return collect(range(1, 12))->map(function ($month) use ($collection) {
+                    return [
+                        'mes' => $month,
+                        'cantidad' => $collection->get($month, 0)
+                    ];
+                });
+            });
     }
 
-    public function getExamsByYear($year): JsonResponse {
-        $exams = Exam::select('EXTRACT(MONTH FROM created_at) as month', DB::raw('COUNT(*) as count'))
+    public function getHistoriesByYear($year) {
+        $histories = History::query()
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', $year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        $monthlyData = array_fill(1, 12, 0);
+        $data = [[
+            'name' => 'Historias',
+            'data' => array_fill(0, 12, 0) // Inicializa un array con 12 ceros (uno por cada mes)
+        ]];
+
+        foreach ($histories as $hc) {
+            $data[0]['data'][$hc->month - 1] = $hc->count;
+        }
+
+        return $data;
+    }
+
+    public function getExamsByYear($year) {
+        $exams = Exam::query()
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $data = [[
+            'name' => 'Exámenes',
+            'data' => array_fill(0, 12, 0) // Inicializa un array con 12 ceros (uno por cada mes)
+        ]];
 
         foreach ($exams as $ex) {
-            $monthlyData[(int)$ex->month] = $ex->count;
+            $data[0]['data'][$ex->month - 1] = $ex->count;
         }
 
-        $formattedData = [
-            'months' => range(1, 12),
-            'counts' => array_values($monthlyData)
-        ];
-
-        return response()->json($formattedData);
+        return $data;
     }
 
-    public function getAppointmentsByYear($year): JsonResponse {
-        $appointments = Appointment::select('EXTRACT(MONTH FROM created_at) as month', DB::raw('COUNT(*) as count'))
+    public function getAppointmentsByYear($year) {
+        $appointments = Appointment::query()
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', $year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-            
-        $monthlyData = array_fill(1, 12, 0);
+
+        $data = [[
+            'name' => 'Citas',
+            'data' => array_fill(0, 12, 0) // Inicializa un array con 12 ceros (uno por cada mes)
+        ]];
 
         foreach ($appointments as $ap) {
-            $monthlyData[(int)$ap->month] = $ap->count;
+            $data[0]['data'][$ap->month - 1] = $ap->count;
         }
 
-        $formattedData = [
-            'months' => range(1, 12),
-            'counts' => array_values($monthlyData)
-        ];
-
-        return response()->json($formattedData);
+        return $data;
     }
 
     public function getDiagnosticsByExam(){
@@ -160,30 +178,5 @@ class StatisticsController extends Controller {
             ->groupBy('t.consumo')
             ->orderBy('cantidad', 'desc')
             ->get();
-    }
-
-    public function HCByMonth(Request $request){
-        /*$histories = History::where(function ($q) use ($request) {
-            if($request->filled('start_date')) $q->where('created_at', '>=', request('start_date'));
-            if($request->filled('end_date')) $q->where('created_at', '<=', request('end_date'));
-        })*/
-
-        $histories = History::query()
-            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', $request->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        $data = [[
-            'name' => 'Historias',
-            'data' => array_fill(0, 12, 0) // Inicializa un array con 12 ceros (uno por cada mes)
-        ]];
-
-        foreach ($histories as $hc) {
-            $data[0]['data'][$hc->month - 1] = $hc->count;
-        }
-
-        return $data;
     }
 }

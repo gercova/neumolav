@@ -17,8 +17,8 @@ class SpecialtiesController extends Controller {
     }
     
     public function index() {
-        $data['oc'] = Occupation::all();
-        return view('security.specialties.index', $data);
+        $oc = Occupation::all();
+        return view('security.specialties.index', compact('oc'));
     }
 
     public function list() {

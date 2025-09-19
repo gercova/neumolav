@@ -1,10 +1,24 @@
 $(document).ready(function(){
     let slimSelect;
-    const manageSpecialtyTable = $("#specialty_data").DataTable({
+    /*const manageSpecialtyTable = $("#specialty_data").DataTable({
 		'ajax': `${API_BASE_URL}/specialties/list`,
 		'order': [],
         'processing': true,
-	});
+	});*/
+
+    const tables = {
+        specialtiesTable: $("#specialty_data").DataTable({ ajax: `${API_BASE_URL}/specialties/list`, processing: true, order: [] })
+    };
+
+    //Eliminar un registro
+    DeleteHandler.initButtons([
+        {
+            selector: '.delete-specialty',
+            endpoint: 'specialties',
+            table: tables.specialtiesTable
+        } 
+    ]);
+
 	//boton modal
 	$('#btn-add-specialty').click(function(e){
         e.preventDefault();
@@ -92,32 +106,4 @@ $(document).ready(function(){
             console.log(error);
         }
     });
-    //delete item
-    /*$(document).on('click', '.delete-row', async function(e) {
-        e.preventDefault();
-        const id = $(this).attr('value');
-        try {
-            const result = await swal.fire({
-                title: '¿Estás seguro de hacerlo?',
-                text: 'Este registro será borrado',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                cancelButtonText: 'Cancelar',
-                confirmButtonText: 'Sí, borrarlo'
-            });
-            if (result.isConfirmed) {
-                const response = await axios.delete(`${API_BASE_URL}/specialties/${id}`);
-                if (response.status == 200 && response.data.status == true) {
-                    alertNotify(response.data.type, response.data.messages);
-                    $('#specialty_data').DataTable().ajax.reload();
-                } else {
-                    alertNotify(response.data.type, response.data.messages);
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });*/
 })

@@ -10,7 +10,7 @@ $(document).ready(function(){
             endpoint: 'categories',
             table: tables.categoriesTable 
         } 
-    ])
+    ]);
 	//boton modal
 	$('#btn-add-category').click(function(e){
         e.preventDefault();

@@ -256,6 +256,9 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::post('/enterprise/store',                        [EnterpriseController::class, 'store']);
         Route::get('/enterprise',                               [EnterpriseController::class, 'index'])->name('business.enterprise');
     });
+    /**
+     * PUBLICACIONES
+     */
     Route::middleware(['permission:posts'])->group(function(){
         Route::get('/publications',                             [PostsController::class, 'index'])->name('business.posts');
         Route::get('/publications/add/',                        [PostsController::class, 'add'])->name('business.posts.add');

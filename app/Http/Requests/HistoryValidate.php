@@ -16,6 +16,7 @@ class HistoryValidate extends FormRequest
             'id_td'                         => 'required',
             'dni'                           => [
                 'required',
+                'unique:historias,dni,'.$this->id,
                 Rule::when($this->id_td === 1, [
                     'digits:8',
                     Rule::unique('historias', 'dni')->ignore($this->id),
