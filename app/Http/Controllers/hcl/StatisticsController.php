@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class StatisticsController extends Controller {
     
@@ -25,6 +26,10 @@ class StatisticsController extends Controller {
         return view('hcl.statistics.index', compact('yr'));
     }
 
+    public function years(){
+        return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
+    }
+
     public function getCountRows(): JsonResponse {
         $fechaActual    = now()->toDateString();
         $hc             = History::whereNull('deleted_at')->count();
@@ -34,11 +39,40 @@ class StatisticsController extends Controller {
         return response()->json(compact('hc', 'ex', 'ap', 'cd'), 200);
     }
 
-    public function years(){
-        return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
+    public function getMonthlyCountsByYear($year, $model, $name) {
+        if (!class_exists($model)) {
+            throw new InvalidArgumentException("El modelo '{$model}' no existe.");
+        }
+        
+        $records = $model::query()
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+        // Inicializamos array de 12 meses con ceros
+        $data = array_fill(0, 12, 0);
+        // Asignamos los conteos reales a los meses correspondientes
+        foreach ($records as $record) {
+            $data[$record->month - 1] = $record->count;
+        }
+        // Retornamos en el formato solicitado: array de objetos con name y data
+        return [
+            [
+                'name' => $name,
+                'data' => $data
+            ]
+        ];
     }
 
-    public static function getPatientWithMonthOptimized($year) {
+    public function getAnnualData($year) {
+        $histories      = $this->getMonthlyCountsByYear($year, History::class, 'Historias');
+        $exams          = $this->getMonthlyCountsByYear($year, Exam::class, 'Exámenes');
+        $appointments   = $this->getMonthlyCountsByYear($year, Appointment::class, 'Citas');
+        return array_merge($histories, $exams, $appointments);
+    }
+
+    /*public static function getPatientWithMonthOptimized($year) {
         return History::selectRaw('MONTH(fecha) as mes, COUNT(id) as cantidad')
             ->whereYear('fecha', $year)
             ->groupBy('mes')
@@ -116,7 +150,7 @@ class StatisticsController extends Controller {
         }
 
         return $data;
-    }
+    }*/
 
     public function getDiagnosticsByExam(){
         return DiagnosticExam::select('d.descripcion as diagnostico', DB::raw('COUNT(examen_diagnostico.id_diagnostico) as cantidad'))

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es_PE">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,15 +37,17 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
     <script>
         const API_BASE_URL = "{{ url('/') }}";
+        const NAME_ENTERPRISE = "{{ $enterprise[0]->nombre_comercial }}";
         const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     </script>
     <!-- Hightcharts -->
-    <script src="{{ asset('highcharts/highcharts.js') }}"></script>
-	<script src="{{ asset('highcharts/exporting.js') }}"></script>
-    <!--<script src="https://code.highcharts.com/highcharts.js"></script>
+    <!--<script src="{{ asset('highcharts/highcharts.js') }}"></script>-->
+	<!--<script src="{{ asset('highcharts/exporting.js') }}"></script>-->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>-->
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/themes/adaptive.js"></script>
     <!-- jQuery -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->

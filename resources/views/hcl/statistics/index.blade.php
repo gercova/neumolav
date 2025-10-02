@@ -42,7 +42,7 @@
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i class="bi bi-file-earmark-medical-fill"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Historias diarias</span>
+                                <span class="info-box-text">Controles y Citas</span>
                                 <span class="info-box-number" id="appointmentsCount"></span>
                             </div>
                         </div>
@@ -74,12 +74,6 @@
                         <div class="card-body">
                             <div class="col-md-12">
                                 <div id="histories" style="margin: 0 auto"></div>
-                            </div>
-                            <div class="col-md-12">
-                                <div id="exams" style="margin: 0 auto"></div>
-                            </div>
-                            <div class="col-md-12">
-                                <div id="appointments" style="margin: 0 auto"></div>
                             </div>
                         </div>
                     </div>
