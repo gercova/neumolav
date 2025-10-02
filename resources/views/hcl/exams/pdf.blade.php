@@ -105,20 +105,14 @@
             <span class="inline-block"><strong>Edad:</strong> {{ $hc[0]->age }} años</span>
         </p>
         <p><strong>Fecha:</strong> {{ $ex->created_at }}</p>
-
-        <span>Diagnóstico: <p>{{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p></span>
-        
-
+        <p><b>Diagnóstico:</b> {{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p>
         <h3>Rp.</h3>
         <ol>
             @foreach($mx as $key => $m)
                 <li>
                     <b>{{ $m->drug }}</b>
-                    <br>
                     @if (!empty($m->rp))
-                        {{ $m->rp }}
-                    @else
-                        <br>
+                        <br> {{ $m->rp }}
                     @endif
                     @if (!empty($m->quantity))
                         <strong>Cant:</strong> {{ $m->quantity }}

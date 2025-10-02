@@ -17,7 +17,6 @@ hcCount();
 
 const year = (new Date).getFullYear();
 annualData(year);
-
 diagnosisByExams();
 drugByExams();
 historiesBySex();
@@ -76,70 +75,6 @@ async function annualData(year) {
         console.error('Error cargando los datos:', error);
         document.getElementById('histories').innerHTML = '<p style="color:red;">No se pudieron cargar los datos.</p>';
     });
-}
-
-/**
- * 
- * 
- * */
-
-async function loadHistoriesChart(year) {
-    const monthNames = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-    
-    try {
-        const response = await axios.get(`${API_BASE_URL}/dashboard/histories/${year}`);
-        
-        if (response.data) {
-            console.log(response.data[0].data);
-            renderChart(
-                monthNames,
-                response.data[0].data,
-                year,
-                'Pacientes',
-                'histories',
-            );
-        }
-    } catch (error) {
-        console.error('Error loading histories data:', error);
-        showErrorNotification('No se pudo cargar los datos de historias clínicas');
-    }
-}
-
-async function loadExamsChart(year){
-    const monthNames = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-    try {
-        const response = await axios.get(`${API_BASE_URL}/dashboard/exams/${year}`);
-        if(response.status == 200){
-            renderChart(
-                monthNames, 
-                response.data[0].data, 
-                year,
-                'Exámenes',
-                'exams',
-            );
-        }
-    } catch (error) {
-        console.error('Error loading histories data:', error);
-        showErrorNotification('No se pudo cargar los datos de historias clínicas');
-    }
-}
-
-async function loadAppointmentsChart(year){
-    const monthNames = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-    try {
-        const response = await axios.get(`${API_BASE_URL}/dashboard/appointments/${year}`);
-        if(response.status == 200){
-            renderChart(
-                monthNames, 
-                response.data[0].data, 
-                year,
-                'Controles',
-                'appointments',
-            );
-        }
-    } catch (error) {
-        console.error(error);
-    }
 }
 
 async function diagnosisByExams(){
