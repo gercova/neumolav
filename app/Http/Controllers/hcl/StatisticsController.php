@@ -38,8 +38,7 @@ class StatisticsController extends Controller {
         return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
     }
 
-    public static function getPatientWithMonthOptimized($year)
-    {
+    public static function getPatientWithMonthOptimized($year) {
         return History::selectRaw('MONTH(fecha) as mes, COUNT(id) as cantidad')
             ->whereYear('fecha', $year)
             ->groupBy('mes')

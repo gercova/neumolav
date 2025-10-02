@@ -106,20 +106,17 @@ $(document).ready(function(){
             },
         },
         recordsLoaded: (event, data) => {
-            //if (permissions.add_exm) {
-                $('.add-new').click(function(e){
-                    e.preventDefault();
-                    const id = $(this).attr('value');
-                    window.location.href = `${API_BASE_URL}/exams/add/${id}`;
-                });
-            //}
-            //if(permissions.view_exm) {
-                $('.view-row').click(function(e) {
-                    e.preventDefault();
-                    const id = $(this).attr('value');
-                    window.location.href = `${API_BASE_URL}/exams/see/${id}`;
-                });
-            //}
+            $('.add-new').click(function(e){
+                e.preventDefault();
+                const id = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/exams/add/${id}`;
+            });
+            
+            $('.view-row').click(function(e) {
+                e.preventDefault();
+                const id = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/exams/see/${id}`;
+            });
         }
     });
     LoadRecordsButton = $('#LoadRecordsButton');

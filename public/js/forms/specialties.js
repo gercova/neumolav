@@ -1,15 +1,8 @@
 $(document).ready(function(){
     let slimSelect;
-    /*const manageSpecialtyTable = $("#specialty_data").DataTable({
-		'ajax': `${API_BASE_URL}/specialties/list`,
-		'order': [],
-        'processing': true,
-	});*/
-
     const tables = {
         specialtiesTable: $("#specialty_data").DataTable({ ajax: `${API_BASE_URL}/specialties/list`, processing: true, order: [] })
     };
-
     //Eliminar un registro
     DeleteHandler.initButtons([
         {
@@ -18,7 +11,6 @@ $(document).ready(function(){
             table: tables.specialtiesTable
         } 
     ]);
-
 	//boton modal
 	$('#btn-add-specialty').click(function(e){
         e.preventDefault();

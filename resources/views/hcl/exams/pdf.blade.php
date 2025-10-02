@@ -106,8 +106,8 @@
         </p>
         <p><strong>Fecha:</strong> {{ $ex->created_at }}</p>
 
-        <h3>Diagnóstico:</h3>
-        <p>{{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p>
+        <span>Diagnóstico: <p>{{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p></span>
+        
 
         <h3>Rp.</h3>
         <ol>

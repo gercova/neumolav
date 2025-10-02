@@ -161,8 +161,6 @@ class UsersController extends Controller {
             $cleanName = $this->cleanFileName($originalName);
             // Subir imagen manteniendo nombre original
             $path = $image->storeAs('users', $cleanName, 'public');
-            // Obtener URL pública
-            //$url = Storage::disk('public')->url($path);
         }
 
         $data           = array_merge($validated, [
@@ -294,12 +292,6 @@ class UsersController extends Controller {
     
         return strtolower($nickname);
     }
-
-    /*public function createUsername($name): string {
-        // $nickname = $this->createSummaryName($name);
-        // $count    = User::where('username', 'like', '%' . $nickname . '%')->count();
-        // return $count > 0 ? $nickname . $count : $nickname;
-    }*/
 
     public function show($id): JsonResponse {
         return response()->json(User::findOrFail($id), 200);
