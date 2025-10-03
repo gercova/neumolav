@@ -101,12 +101,12 @@
 
     <div class="content">
         <p>
-            <span class="inline-block"><strong>DNI:</strong> {{ $hc[0]->dni }}</span>
-            <span class="inline-block"><strong>Nombres:</strong> {{ $hc[0]->nombres }}</span>
-            <span class="inline-block"><strong>Edad:</strong> {{ $hc[0]->age }} años</span>
+            <span class="inline-block"><b>DNI:</b> {{ $hc[0]->dni }}</span>
+            <span class="inline-block"><b>Nombres:</b> {{ $hc[0]->nombres }}</span>
+            <span class="inline-block"><b>Edad:</b> {{ $hc[0]->age }} años</span>
+            <span class="inline-block"><b>Fecha:</b> {{ $ap->created_at }}</span>
         </p>
-        <p><b>Fecha:</b> {{ $ap->created_at }}</p>
-        <p><b>Diagnóstico:</b> {{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}
+        <p><b>Diagnóstico:</b> {{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p>
         <h3>Rp.</h3>
         <ol>
             @foreach($mx as $key => $m)
