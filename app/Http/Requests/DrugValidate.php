@@ -14,8 +14,8 @@ class DrugValidate extends FormRequest {
         return [
             'id_categoria'              => 'required',
             'id_presentacion'           => 'required',
-            'descripcion'               => 'required|string|max:50|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/|unique:drogas,descripcion,'.$this->id ?? NULL,
-            'detalle'                   => 'required|string|max:255|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/',
+            'descripcion'               => 'required|string|max:50|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/|unique:drogas,descripcion,'.$this->id ?? NULL,
+            'detalle'                   => 'required|string|max:255|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
         ];
     }
 
@@ -26,10 +26,10 @@ class DrugValidate extends FormRequest {
             'descripcion.required'      => 'El campo Descripción es requerido.',
             'descripcion.unique'        => 'La Descripción ya existe.',
             'descripcion.max'           => 'La Descripción no puede exceder los 50 caracteres.',
-            'descripcion.regex'         => 'La Descripción solo puede contener letras, números, espacios, puntos, comas y guiones.',
+            'descripcion.regex'         => 'La Descripción solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
             'detalle.required'          => 'El campo Detalle es requerido.',
             'detalle.max'               => 'El Detalle no puede exceder los 255 caracteres.',
-            'detalle.regex'             => 'El Detalle solo puede contener letras, números, espacios, puntos, comas y guiones.',
+            'detalle.regex'             => 'El Detalle solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
         ];
     }
 

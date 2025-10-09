@@ -12,7 +12,7 @@ class DiagnosticValidate extends FormRequest {
 
     public function rules(): array {
         return [
-            'descripcion' => 'required|string|max:50|regex:/^[a-zA-Z0-9\s.,]+$/|unique:diagnosticos,descripcion,'.$this->id ?? NULL
+            'descripcion' => 'required|string|max:50|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/|unique:diagnosticos,descripcion,'.$this->id ?? NULL
         ];
     }
 
@@ -22,7 +22,7 @@ class DiagnosticValidate extends FormRequest {
             'descripcion.string'    => 'El campo descripción debe ser un texto',
             'descripcion.max'       => 'El campo descripción no puede tener más de 50 caracteres',
             'descripcion.unique'    => 'El campo descripción ya existe',
-            'descripcion.regex'     => 'El campo descripción solo puede contener letras, números, espacios y solo (, . -)',
+            'descripcion.regex'     => 'El campo descripción solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
         ];
     }
 
