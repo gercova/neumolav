@@ -191,7 +191,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/risks/viewDetail/{id}',                [RisksController::class, 'viewRiskDetail']);
         Route::get('/risks/list/{id}',                      [RisksController::class, 'listRisks']);
         Route::get('/risks/listRisks/{id}',                 [RisksController::class, 'listRisksByDNI']);
-        Route::get('/risks/print/{id}',                     [RisksController::class, 'printRiskReportId']);
+        Route::get('/risks/print/{id}',                     [RisksController::class, 'printRiskReportId'])->name('hcl.risks.print');
         Route::post('/risks/store',                         [RisksController::class, 'store']);
         Route::delete('/risks/delete/{id}',                 [RisksController::class, 'destroy']);
     });

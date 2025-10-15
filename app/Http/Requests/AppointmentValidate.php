@@ -12,7 +12,7 @@ class AppointmentValidate extends FormRequest {
 
     public function rules(): array {
         return [
-            'dni'                       => 'required|digits:8',
+            'dni'                       => 'required',
             'sintomas'                  => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
             'diagnostico'               => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
             'plan'                      => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
@@ -24,7 +24,6 @@ class AppointmentValidate extends FormRequest {
     public function messages(): array {
         return [
             'dni.required'              => 'El campo DNI es requerido',
-            'dni.digits'                => 'El campo DNI debe tener 8 dígitos',
             'sintomas.required'         => 'El campo Síntomas es requerido',
             'sintomas.regex'            => 'El campo Síntomas solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
             'diagnostico.regex'         => 'El campo Diagnóstico solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',

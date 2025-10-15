@@ -97,22 +97,22 @@
         <p>{{ $rk->motivo }}</p>
         <br>
         <h3>Antecedentes:</h3>
-        <p>{{ $rk->antecedente }}</p>
+        <p>{!! $rk->antecedente !!}</p>
         <br>
         <h3>Síntomas:</h3>
-        <p>{{ $rk->sintomas }}</p>
+        <p>{!! $rk->sintomas !!}</p>
         <br>
         <h3>Examen fÍsico:</h3>
-        <p>{{ $rk->examen_fisico }}</p>
+        <p>{!! $rk->examen_fisico !!}</p>
         <br>
         <h3>Examen complementario:</h3>
-        <p>{{ $rk->examen_complementario }}</p>
+        <p>{!! $rk->examen_complementario !!}</p>
         <br>
         <h3>Riesgo neumológico:</h3>
-        <p>{{ $rk->riesgo_neumologico }}</p>
+        <p>{!! $rk->riesgo_neumologico !!}</p>
         <br>
         <h3>Sugerencia:</h3>
-        <p>{{ $rk->sugerencia }}</p>
+        <p>{!! $rk->sugerencia !!}</p>
         <br>
     </div>
     <div class="footer">

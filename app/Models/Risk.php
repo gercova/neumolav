@@ -12,7 +12,7 @@ class Risk extends Model
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'historia_riesgo';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['dni', 'motivo', 'antecedentes', 'sintomas', 'examen_fisico', 'examen_complementario', 'riesgo_neumologico', 'sugerencia', 'estado'];
+    protected $fillable     = ['dni', 'motivo', 'antecedente', 'sintomas', 'examen_fisico', 'examen_complementario', 'riesgo_neumologico', 'sugerencia', 'estado'];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'dni'                   => 'string',

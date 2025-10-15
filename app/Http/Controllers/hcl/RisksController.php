@@ -56,14 +56,14 @@ class RisksController extends Controller {
         // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
-            $report = empty($id) ? Risk::create($validated) : Risk::updateOrCreate(['id' => $id], $validated);
+            $report = Risk::updateOrCreate(['id' => $id], $validated);
             $id 	= $report->id;
             $dni    = $report->dni;
             DB::commit();
             return response()->json([
                 'status' 		=> true,
                 'type'			=> 'success',
-                'messages' 		=> empty($id) ? 'Se ha añadido un nuevo reporte' : 'Actualizado exitosamente',
+                'messages' 		=> $report->wasChanged() ? 'Se ha añadido un nuevo reporte' : 'Reporte actualizado exitosamente',
                 'route' 		=> route('hcl.risks.see', $dni),
                 'route_print' 	=> route('hcl.risks.print', $id)
             ], 200);
