@@ -59,7 +59,7 @@ class ReportsController extends Controller {
         // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
-            $report = empty($id) ? Report::create($validated) : Report::updateOrCreate(['id' => $id], $validated);
+            $report = Report::updateOrCreate(['id' => $id], $validated);
             $id 	= $report->id;
             $dni    = $report->dni;
             // Guardar diagnóstico, medicación y subir imagen si existen

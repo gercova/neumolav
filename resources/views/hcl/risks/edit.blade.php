@@ -59,31 +59,31 @@
                                                     <div class="row">
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="motivo">Motivo:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="motivo" name="motivo" rows="2">{{ $rk->motivo }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="motivo" name="motivo" rows="2">{{ $rk->motivo }}</textarea>
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="antecedente">Antecedente:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="antecedente" name="antecedente" rows="2">{{ $rk->antecedente }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="antecedente" name="antecedente" rows="2">{{ $rk->antecedente }}</textarea>
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="sintomas">Síntomas:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="sintomas" name="sintomas" rows="2">{{ $rk->sintomas }}</textarea>        
+                                                            <textarea class="form-control form-control-sm" id="sintomas" name="sintomas" rows="2">{{ $rk->sintomas }}</textarea>        
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="examen_fisico">Examen físico:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="examen_fisico" name="examen_fisico" rows="2">{{ $rk->examen_fisico }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="examen_fisico" name="examen_fisico" rows="2">{{ $rk->examen_fisico }}</textarea>
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="examen_complementario">Examen complementario:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="examen_complementario" name="examen_complementario" rows="2">{{ $rk->examen_complementario }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="examen_complementario" name="examen_complementario" rows="2">{{ $rk->examen_complementario }}</textarea>
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="riesgo_neumologico">Riesgo neumológico:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="riesgo_neumologico" name="riesgo_neumologico" rows="2">{{ $rk->riesgo_neumologico }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="riesgo_neumologico" name="riesgo_neumologico" rows="2">{{ $rk->riesgo_neumologico }}</textarea>
                                                         </div>
                                                         <div class="col-12">
                                                             <label class="col-form-label" for="sugerencia">Sugerencia:</label>
-                                                            <textarea class="form-control form-control-sm summernote" id="sugerencia" name="sugerencia" rows="2">{{ $rk->sugerencia }}</textarea>
+                                                            <textarea class="form-control form-control-sm" id="sugerencia" name="sugerencia" rows="2">{{ $rk->sugerencia }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>

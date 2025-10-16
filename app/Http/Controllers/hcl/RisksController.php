@@ -157,7 +157,7 @@ class RisksController extends Controller {
         $en = Enterprise::findOrFail(1);
 		$pdf = PDF::loadView('hcl.risks.pdf', compact('hc', 'rk', 'us', 'en'))
 			->setPaper('a4')
-        	->setOptions(['defaultFont' => 'sans-serif'])
+        	->setOptions(['defaultFont' => 'arial'])
         	->setOptions([
 				'margin-top' 	=> 0.5, 
 				'margin-bottom' => 0.5, 

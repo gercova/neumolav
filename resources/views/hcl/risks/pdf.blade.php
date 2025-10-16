@@ -2,41 +2,131 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Receta Médica</title>
+    <title>Receta Médica - {{ $en->nombre_comercial }}</title>
     <style>
+        /* Estilos generales */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 14px !important; /* Tamaño de fuente reducido */
+            color: #333;
+            line-height: 1.2; /* Reducido de 1.4 */
+            font-size: 12px;
         }
 
-        /* Encabezado */
+        /* Encabezado profesional */
         .header {
-            background-color: #f4f4f4;
-            padding: 5px; /* Padding reducido */
-            border-bottom: 1px solid #ddd;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 12px 15px; /* Reducido */
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 10px; /* Reducido */
         }
 
-        .header .company-info {
+        .header-content {
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .header .company-info h1 {
+        .logo-section {
+            flex: 1;
+        }
+
+        .clinic-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0056b3;
+            margin: 0 0 3px 0; /* Reducido */
+        }
+
+        .clinic-slogan {
+            font-size: 11px;
+            color: #6c757d;
+            margin: 0 0 5px 0; /* Reducido */
+            font-style: italic;
+        }
+
+        .doctor-info {
+            font-size: 11px;
             margin: 0;
-            font-size: 14px; /* Tamaño de fuente reducido */
         }
 
-        .header .company-info p {
-            margin: 0;
-            font-size: 10px; /* Tamaño de fuente reducido */
+        .doctor-credentials {
+            font-size: 10px;
+            margin: 2px 0; /* Reducido */
         }
 
-        /* Contenido principal */
-        .content {
-            padding: 5px; /* Padding reducido */
-            font-size: 12px; /* Tamaño de fuente reducido */
+        .clinic-address {
+            font-size: 10px;
+            margin: 2px 0 0 0; /* Reducido */
+        }
+
+        .patient-info-section {
+            flex: 1;
+            text-align: right;
+            border-left: 1px solid #dee2e6;
+            padding-left: 12px; /* Reducido */
+        }
+
+        .document-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #343a40;
+            margin: 0 0 8px 0; /* Reducido */
+        }
+
+        /* Información del paciente */
+        .patient-info {
+            background-color: #f8f9fa;
+            padding: 10px 12px; /* Reducido */
+            border-radius: 5px;
+            margin-bottom: 12px; /* Reducido */
+            border-left: 4px solid #007bff;
+        }
+
+        .patient-details {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .patient-field {
+            margin-right: 15px; /* Reducido */
+            margin-bottom: 3px; /* Reducido */
+        }
+
+        .patient-field strong {
+            color: #495057;
+        }
+
+        /* Secciones de contenido */
+        .content-section {
+            margin-bottom: 10px; /* Reducido de 15px */
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #0056b3;
+            padding-bottom: 3px; /* Reducido */
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 5px; /* Reducido */
+        }
+
+        .section-content {
+            padding: 0 5px;
+            text-align: justify;
+            margin-top: 0; /* Asegurar sin margen superior */
+        }
+
+        .section-content p {
+            margin: 2px 0; /* Reducido significativamente */
+        }
+
+        /* Eliminar espacios entre secciones */
+        .content-section + .content-section {
+            margin-top: -5px; /* Compensar espacio entre secciones */
         }
 
         /* Pie de página */
@@ -44,80 +134,162 @@
             position: fixed;
             bottom: 0;
             width: 100%;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 6px 0; /* Reducido */
+            border-top: 2px solid #007bff;
+            font-size: 10px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px; /* Reducido */
+        }
+
+        .footer-clinic {
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .footer-contact {
+            color: #6c757d;
+        }
+
+        /* Utilidades */
+        .page-break {
+            page-break-before: always;
+        }
+
+        .signature-area {
+            margin-top: 25px; /* Reducido de 40px */
             text-align: center;
-            background-color: #f4f4f4;
-            padding: 3px 0; /* Padding reducido */
-            border-top: 1px solid #ddd;
-            font-size: 10px; /* Tamaño de fuente reducido */
         }
 
-        .footer p {
-            margin: 0;
+        .signature-line {
+            width: 60%;
+            border-top: 1px solid #333;
+            margin: 0 auto 3px; /* Reducido */
         }
 
-        /* Estilos para reducir el espacio entre líneas */
-        .inline-block {
-            display: inline-block;
-            margin-right: 10px; /* Espacio entre elementos en la misma línea */
-        }
-
-        /* Reducir el espacio entre líneas en listas */
-        ol {
+        .doctor-signature {
+            font-size: 11px;
             margin-top: 0;
-            margin-bottom: 0;
-            padding-left: 20px; /* Padding reducido */
+            line-height: 1.1; /* Reducido */
         }
 
-        ol li {
-            margin-bottom: 3px; /* Margen inferior reducido */
+        /* Reducir espacios en elementos específicos */
+        h3 {
+            margin: 8px 0 5px 0; /* Reducido */
+        }
+
+        p {
+            margin: 3px 0; /* Reducido significativamente */
+        }
+
+        br {
+            margin-bottom: 2px; /* Reducir efecto de <br> */
         }
     </style>
 </head>
 <body>
+    <!-- Encabezado -->
     <div class="header">
-        <div class="company-info">
-            <div>
-                <h1><center><b>{{  $en->nombre_comercial }}</b></center></h1>
-                <p><center>{{ $en->slogan }}</center></p>
-                <p><center><b>{{ $en->representante_legal }} - Médico Neumólogo</b></center></p>
-                <p><center>CMP: 60432 || RNE: 39261</center></p>
-                <p><center>Dirección: {{ $en->direccion }}, {{ $en->ubigeo }}</center></p>
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="clinic-name">{{ $en->nombre_comercial }}</h1>
+                <p class="clinic-slogan">{{ $en->slogan }}</p>
+                <p class="doctor-info"><strong>{{ $en->representante_legal }} - Médico Neumólogo</strong></p>
+                <p class="doctor-credentials">CMP: 60432 | RNE: 39261</p>
+                <p class="clinic-address">Dirección: {{ $en->direccion }}, {{ $en->ubigeo }}</p>
+            </div>
+            <div class="patient-info-section">
+                <h2 class="document-title">RIESGO NEUMOLÓGICO</h2>
+                <p><strong>Fecha:</strong> {{ date('d/m/Y', strtotime($rk->created_at)) }}</p>
             </div>
         </div>
     </div>
-    <div class="content">
-        <p>
-            <span class="inline-block"><strong>DNI:</strong> {{ $hc[0]->dni }}</span>
-            <span class="inline-block"><strong>Nombres:</strong> {{ $hc[0]->nombres }}</span>
-            <span class="inline-block"><strong>Edad:</strong> {{ $hc[0]->age }} años</span>
-        </p>
-        <p><strong>Fecha:</strong> {{ $rk->created_at }}</p>
 
-        <h3>Motivo:</h3>
-        <p>{{ $rk->motivo }}</p>
-        <br>
-        <h3>Antecedentes:</h3>
-        <p>{!! $rk->antecedente !!}</p>
-        <br>
-        <h3>Síntomas:</h3>
-        <p>{!! $rk->sintomas !!}</p>
-        <br>
-        <h3>Examen fÍsico:</h3>
-        <p>{!! $rk->examen_fisico !!}</p>
-        <br>
-        <h3>Examen complementario:</h3>
-        <p>{!! $rk->examen_complementario !!}</p>
-        <br>
-        <h3>Riesgo neumológico:</h3>
-        <p>{!! $rk->riesgo_neumologico !!}</p>
-        <br>
-        <h3>Sugerencia:</h3>
-        <p>{!! $rk->sugerencia !!}</p>
-        <br>
+    <!-- Información del paciente -->
+    <div class="patient-info">
+        <div class="patient-details">
+            <div class="patient-field"><strong>DNI:</strong> {{ $hc[0]->dni }}</div>
+            <div class="patient-field"><strong>Paciente:</strong> {{ $hc[0]->nombres }}</div>
+            <div class="patient-field"><strong>Edad:</strong> {{ $hc[0]->age }} años</div>
+        </div>
     </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Motivo de consulta -->
+        <div class="content-section">
+            <h3 class="section-title">MOTIVO DE CONSULTA</h3>
+            <div class="section-content">
+                <p>{!! $rk->motivo !!}</p>
+            </div>
+        </div>
+
+        <!-- Antecedentes -->
+        <div class="content-section">
+            <h3 class="section-title">ANTECEDENTES</h3>
+            <div class="section-content">
+                <p>{!! $rk->antecedente !!}</p>
+            </div>
+        </div>
+
+        <!-- Síntomas -->
+        <div class="content-section">
+            <h3 class="section-title">SÍNTOMAS</h3>
+            <div class="section-content">
+                <p>{!! $rk->sintomas !!}</p>
+            </div>
+        </div>
+
+        <!-- Examen físico -->
+        <div class="content-section">
+            <h3 class="section-title">EXAMEN FÍSICO</h3>
+            <div class="section-content">
+                <p>{!! $rk->examen_fisico !!}</p>
+            </div>
+        </div>
+
+        <!-- Exámenes complementarios -->
+        <div class="content-section">
+            <h3 class="section-title">EXÁMENES COMPLEMENTARIOS</h3>
+            <div class="section-content">
+                <p>{!! $rk->examen_complementario !!}</p>
+            </div>
+        </div>
+
+        <!-- Riesgo neumológico -->
+        <div class="content-section">
+            <h3 class="section-title">RIESGO NEUMOLÓGICO</h3>
+            <div class="section-content">
+                <p>{!! $rk->riesgo_neumologico !!}</p>
+            </div>
+        </div>
+
+        <!-- Sugerencias -->
+        <div class="content-section">
+            <h3 class="section-title">SUGERENCIAS Y TRATAMIENTO</h3>
+            <div class="section-content">
+                <p>{!! $rk->sugerencia !!}</p>
+            </div>
+        </div>
+
+        <!-- Área de firma -->
+        <!--<div class="signature-area">
+            <div class="signature-line"></div>
+            <p class="doctor-signature">Dr. {{ $en->representante_legal }}<br>
+            CMP: 60432 | RNE: 39261</p>
+        </div>-->
+    </div>
+
+    <!-- Pie de página -->
     <div class="footer">
-        <p><center><b>Clínica Rodriguez y Especialistas II</b></center></p>
-        <p><center>Atención de lunes a sábado, cel: {{ $en->telefono }}</center></p>
+        <div class="footer-content">
+            <div class="footer-clinic">Clínica Rodriguez y Especialistas II</div>
+            <div class="footer-contact">Atención de lunes a sábado | Tel: {{ $en->telefono }}</div>
+        </div>
     </div>
 </body>
 </html>

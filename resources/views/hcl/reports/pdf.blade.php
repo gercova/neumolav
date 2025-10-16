@@ -105,21 +105,21 @@
         </p>
         <p><strong>Fecha:</strong> {{ $rk->created_at }}</p>
         <h3>Antecedentes:</h3>
-        <p>{{ $rk->antecedentes }}</p>
+        <p>{!! $rk->antecedentes !!}</p>
         <br>
         <h3>Historial enfermedad:</h3>
-        <p>{{ $rk->historial_enfermedad }}</p>
+        <p>{!! $rk->historial_enfermedad !!}</p>
         <br>
         <h3>Examen fÍsico:</h3>
-        <p>{{ $rk->examen_fisico }}</p>
+        <p>{!! $rk->examen_fisico !!}</p>
         <br>
         <h3>Examen complementario:</h3>
-        <p>{{ $rk->examen_complementario }}</p>
+        <p>{!! $rk->examen_complementario !!}</p>
         <br>
         <h3>Diagnóstico:</h3>
         <p>{{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p>
         <h3>Tratamiento:</h3>
-        <p>{{ $rk->tratamiento }}</p>
+        <p>{!! $rk->tratamiento !!}</p>
         <br>
     </div>
     <div class="footer">
