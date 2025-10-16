@@ -41,8 +41,6 @@
         const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     </script>
     <!-- Hightcharts -->
-    <!--<script src="{{ asset('highcharts/highcharts.js') }}"></script>-->
-	<!--<script src="{{ asset('highcharts/exporting.js') }}"></script>-->
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -81,6 +79,8 @@
     <script src="{{ asset('sweetalert2/sweetalert2@11.js') }}"></script>
     <!-- Axios -->
     <script src="{{ asset('js/axios.min.js') }}"></script>
+    <!-- CKEditor -->
+    <script src="{{ asset('plugins/ckeditor5/ckeditor.js') }}"></script>
     <!-- Funciones JS -->
     <script src="{{ asset('js/forms/funciones.js') }}"></script>
     <script src="{{ asset('js/forms/modalDetails.js') }}"></script>
