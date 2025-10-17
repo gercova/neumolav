@@ -210,12 +210,22 @@ class ReportsController extends Controller {
 		$en = Enterprise::findOrFail(1);
 		$pdf = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rk', 'us', 'en'))
 			->setPaper('a4')
-        	->setOptions(['defaultFont' => 'sans-serif'])
         	->setOptions([
 				'margin-top' 	=> 0.5, 
 				'margin-bottom' => 0.5, 
 				'margin-left' 	=> 0.5, 
 				'margin-right' 	=> 0.5,
+                'defaultFont'           => 'sans-serif',
+                'isHtml5ParserEnabled'  => true,
+                'isRemoteEnabled'       => true,
+                'isPhpEnabled'          => true,
+                'chroot'                => base_path(),
+                //'margin-top'            => 10,
+                //'margin-bottom'         => 10,
+                //'margin-left'           => 10,
+                //'margin-right'          => 10,
+                //'dpi'                   => 150,
+                //'fontHeightRatio'       => 0.9
 			]);
         return $pdf->stream("informe-de-riesgo-{$id}.pdf");
 	}
