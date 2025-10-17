@@ -13,11 +13,11 @@ class AppointmentValidate extends FormRequest {
     public function rules(): array {
         return [
             'dni'                       => 'required',
-            'sintomas'                  => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
-            'diagnostico'               => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
-            'plan'                      => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
-            'tratamiento'               => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
-            'recomendaciones'           => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
+            'sintomas'                  => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
+            'diagnostico'               => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
+            'plan'                      => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
+            'tratamiento'               => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
+            'recomendaciones'           => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
         ];
     }
 
@@ -25,13 +25,13 @@ class AppointmentValidate extends FormRequest {
         return [
             'dni.required'              => 'El campo DNI es requerido',
             'sintomas.required'         => 'El campo Síntomas es requerido',
-            'sintomas.regex'            => 'El campo Síntomas solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
-            'diagnostico.regex'         => 'El campo Diagnóstico solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
+            'sintomas.regex'            => 'El campo Síntomas solo puede contener letras, números, espacios y los siguientes caracteres :[]/,#-()_',
+            'diagnostico.regex'         => 'El campo Diagnóstico solo puede contener letras, números, espacios y los siguientes caracteres :[]/,#-()_',
             'plan.required'             => 'El campo Plan es requerido',
-            'plan.regex'                => 'El campo Plan solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
+            'plan.regex'                => 'El campo Plan solo puede contener letras, números, espacios y los siguientes caracteres :[]/,#-()_',
             'tratamiento.required'      => 'El campo Tratamiento es requerido',
-            'tratamiento.regex'         => 'El campo Tratamiento solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
-            'recomendaciones.regex'     => 'El campo Recomendaciones solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',
+            'tratamiento.regex'         => 'El campo Tratamiento solo puede contener letras, números, espacios y los siguientes caracteres :[]/,#-()_',
+            'recomendaciones.regex'     => 'El campo Recomendaciones solo puede contener letras, números, espacios y los siguientes caracteres :[]/,#-()_',
         ];
     }
 

@@ -220,12 +220,6 @@ class ReportsController extends Controller {
                 'isRemoteEnabled'       => true,
                 'isPhpEnabled'          => true,
                 'chroot'                => base_path(),
-                //'margin-top'            => 10,
-                //'margin-bottom'         => 10,
-                //'margin-left'           => 10,
-                //'margin-right'          => 10,
-                //'dpi'                   => 150,
-                //'fontHeightRatio'       => 0.9
 			]);
         return $pdf->stream("informe-de-riesgo-{$id}.pdf");
 	}
