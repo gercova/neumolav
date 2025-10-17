@@ -58,7 +58,7 @@
                             <div class="col-2">
                                 <div class="form-group">
                                     <label for="fecha_nacimiento">Fecha Nacimiento</label>
-                                    <input type="date:yyyy-mm-dd" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ $history->fecha_nacimiento }}" onchange="getAge(this.value);" required><!--onchange="getAge(this.value);"-->
+                                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ $history->fecha_nacimiento->format('yyy-mm-dd') }}" onchange="getAge(this.value);" required>
                                 </div>
                             </div>
                             <div class="col-2">
