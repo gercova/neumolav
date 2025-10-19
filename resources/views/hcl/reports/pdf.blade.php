@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Informe de Riesgo - {{ $en->nombre_comercial }}</title>
+    <title>Informe Neumológico - {{ $en->nombre_comercial }}</title>
     <link rel="stylesheet" href="{{ asset('css/pdf.report.css') }}">
 </head>
 <body>

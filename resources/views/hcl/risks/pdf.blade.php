@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Receta Médica - {{ $en->nombre_comercial }}</title>
+    <title>Informe de Risgos Neumológico - {{ $en->nombre_comercial }}</title>
     <link rel="stylesheet" href="{{ asset('css/pdf.risk.css') }}">
 </head>
 <body>
