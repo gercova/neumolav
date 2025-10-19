@@ -211,10 +211,10 @@ class ReportsController extends Controller {
 		$pdf = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rk', 'us', 'en'))
 			->setPaper('a4')
         	->setOptions([
-				'margin-top' 	=> 0.5, 
-				'margin-bottom' => 0.5, 
-				'margin-left' 	=> 0.5, 
-				'margin-right' 	=> 0.5,
+				'margin-top' 	        => 0.5, 
+				'margin-bottom'         => 0.5, 
+				'margin-left' 	        => 0.5, 
+				'margin-right' 	        => 0.5,
                 'defaultFont'           => 'sans-serif',
                 'isHtml5ParserEnabled'  => true,
                 'isRemoteEnabled'       => true,

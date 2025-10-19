@@ -172,10 +172,12 @@ $(document).ready(function(){
                     await Swal.fire({
                         icon: response.data.type || 'success', // Usar 'success' como valor predeterminado
                         title: response.data.messages || 'Información guardada correctamente',
-                        html: response.data.route_print ? 
-                            `<a class="btn btn-info" href="${response.data.route_print}" target="_blank">
+                        //html: response.data.route_print ? 
+                        html: `<div class="btn btn-group mb-1">
+                            <a class="btn btn-info" href="${response.data.route_print}" target="_blank">
                                 <i class="bi bi-file-earmark-pdf"></i> Imprimir prescripción
-                            </a>` : '',
+                            </a>   
+                        </div>`,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });

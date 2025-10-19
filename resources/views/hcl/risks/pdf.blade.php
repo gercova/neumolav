@@ -275,13 +275,6 @@
                 <p>{!! $rk->sugerencia !!}</p>
             </div>
         </div>
-
-        <!-- Área de firma -->
-        <!--<div class="signature-area">
-            <div class="signature-line"></div>
-            <p class="doctor-signature">Dr. {{ $en->representante_legal }}<br>
-            CMP: 60432 | RNE: 39261</p>
-        </div>-->
     </div>
 
     <!-- Pie de página -->

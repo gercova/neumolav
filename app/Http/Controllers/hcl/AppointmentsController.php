@@ -82,17 +82,19 @@ class AppointmentsController extends Controller {
             $appointment    = empty($id) ? Appointment::create($validated) : Appointment::updateOrCreate(['id' => $id], $validated);
             $id 	        = $appointment->id;
             $dni 	        = $appointment->dni;
+			$format 		= '';
             // Guardar diagnóstico, medicación y subir imagen si existen
             if ($diagnostics) 	$this->saveDiagnostic($id, $dni, $diagnostics);
             if ($drugs) 		$this->saveMedication($id, $dni, $drugs, $descriptions);
 
             DB::commit();
             return response()->json([
-                'status' 		=> true,
-                'type'			=> 'success',
-                'messages' 		=> empty($id) ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
-                'route' 		=> route('hcl.appointments.see', $dni),
-                'route_print' 	=> route('hcl.appointments.print', $id)
+                'status' 	=> true,
+                'type'		=> 'success',
+                'messages' 	=> empty($id) ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
+                'route' 	=> route('hcl.appointments.see', $dni),
+                'print_a5' 	=> route('hcl.appointments.print', [$id, 'a5']),
+				'print_a4' 	=> route('hcl.appointments.print', [$id, 'a4']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -110,6 +112,7 @@ class AppointmentsController extends Controller {
 				'id_control'    	=> $id,
 				'dni' 				=> $dni,
 				'id_diagnostico'	=> $diagnosticId,
+				'created_at' 		=> now(),
 			];
 		})->toArray();
 
@@ -126,6 +129,7 @@ class AppointmentsController extends Controller {
 				'dni'           => $dni,
 				'id_droga' 		=> $drugId[$i],
 				'descripcion'   => $description[$i],
+				'created_at'	=> now(),
 			];
 		}
 		// Inserta los datos en la base de datos
@@ -133,7 +137,7 @@ class AppointmentsController extends Controller {
 		return;
     }
 
-    public function listAppointments(string $dni): JsonResponse{
+    public function listAppointments(string $dni): JsonResponse {
 		$results 	= DB::select('CALL getAppointmentsByMedicalHistory(?)', [$dni]);
 		$data 		= collect($results)->map(function ($item, $index) {
 			$user   	= auth()->user();
@@ -291,22 +295,48 @@ class AppointmentsController extends Controller {
         ], 200);
     }
 
-    public function printPrescriptionId(int $id) {
-		$hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$id]);
-		$ap = Appointment::findOrFail($id);
-		$dx = DB::select('CALL getDiagnosticbyAppointment(?)', [$id]);
-		$mx = DB::select('CALL getMedicationByAppointment(?)', [$id]);
-		$us = Auth::user();
-		$en = Enterprise::findOrFail(1);
-		$pdf = PDF::loadView('hcl.appointments.pdf', compact('hc', 'ap', 'dx', 'mx', 'us', 'en'))
-			->setPaper('a5')
-        	->setOptions(['defaultFont' => 'sans-serif'])
-        	->setOptions([
-				'margin-top' 	=> 0.5, 
-				'margin-bottom' => 0.5, 
-				'margin-left' 	=> 0.5, 
-				'margin-right' 	=> 0.5,
-			]);
-        return $pdf->stream("control-{$id}.pdf");
-	}
+	public function printPrescriptionId(int $id, string $format = 'a5') {
+        // Validar formato
+        if (!in_array($format, ['a4', 'a5'])) {
+            $format = 'a5';
+        }
+
+        // Obtener datos
+        $hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$id]);
+        $ap = Appointment::findOrFail($id);
+        $dx = DB::select('CALL getDiagnosticbyAppointment(?)', [$id]);
+        $mx = DB::select('CALL getMedicationByAppointment(?)', [$id]);
+        $us = Auth::user();
+        $en = Enterprise::findOrFail(1);
+
+        // Configurar PDF según formato
+        if ($format === 'a4') {
+			$pdf = PDF::loadView('hcl.appointments.pdf-a4', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf->setPaper('a4', 'portrait')
+                ->setOptions([
+                    'margin_top' 	        => 10,
+                    'margin_bottom'         => 10,
+                    'margin_left' 	        => 15,
+                    'margin_right' 	        => 15,
+                    'defaultFont' 	        => 'sans-serif',
+                    'isHtml5ParserEnabled'  => true,
+                    'isRemoteEnabled'       => true
+                ]);
+        } else {
+			$pdf = PDF::loadView('hcl.appointments.pdf-a5', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf->setPaper('a5', 'portrait')
+                ->setOptions([
+                    'margin_top' 			=> 0.5,
+                    'margin_bottom' 		=> 0.5,
+                    'margin_left' 			=> 0.5,
+                    'margin_right' 			=> 0.5,
+                    'defaultFont' 			=> 'sans-serif',
+                    'isHtml5ParserEnabled' 	=> true,
+                    'isRemoteEnabled' 		=> true	
+                ]);
+        }
+
+        $filename = "receta-medica-{$id}-" . strtoupper($format) . ".pdf";
+        return $pdf->stream($filename);
+    }
 }

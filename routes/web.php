@@ -137,7 +137,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/exams/listDiagnostic/{id}',            [ExamsController::class, 'listOfDiagnosticsByExamId']);
         Route::get('/exams/listMedication/{id}',            [ExamsController::class, 'listOfMedicationByExamId']);
         Route::get('/exams/listImg/{id}',                   [ExamsController::class, 'listOfImagesByExamId']);
-        Route::get('/exams/print/{id}',                     [ExamsController::class, 'printPrescriptionId'])->name('hcl.exams.print');
+        Route::get('/exams/print/{id}/{format}',            [ExamsController::class, 'printPrescriptionId'])->name('hcl.exams.print');
         Route::delete('/exams/delete/{id}',                 [ExamsController::class, 'destroy']);
         Route::delete('/ex-dx/delete/{id}',                 [ExamsController::class, 'destroyExamDiagnostics']);
         Route::delete('/ex-mx/delete/{id}',                 [ExamsController::class, 'destroyPrescriptionDrug']);
@@ -154,7 +154,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/appointments/listDiagnostic/{id}',     [AppointmentsController::class, 'listOfDiagnosticsByAppointmentId']);
         Route::get('/appointments/listMedication/{id}',     [AppointmentsController::class, 'listOfMedicationByAppointmentId']);
         Route::post('/appointments/view-table',             [AppointmentsController::class, 'viewTable']);
-        Route::get('/appointments/print/{id}',              [AppointmentsController::class, 'printPrescriptionId'])->name('hcl.appointments.print');
+        Route::get('/appointments/print/{id}/{format}',     [AppointmentsController::class, 'printPrescriptionId'])->name('hcl.appointments.print');
         Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
         Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
         Route::get('/appointments/add/{id}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');

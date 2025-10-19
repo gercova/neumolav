@@ -79,9 +79,15 @@ const ModalDetails = (function() {
         const endpoint = type === 'appointments' ? 'appointments' : 'exams';
         return `
             <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Cerrar</button>
-            <a class="btn btn-primary pull-right" href="${API_BASE_URL}/${endpoint}/print/${id}" target="_blank">
-                <i class="bi bi-file-earmark-pdf"></i> Imprimir
-            </a>
+            <div class="pull-right">
+                Seleccione formato de impresión:
+                <a class="btn btn-primary pull-right" href="${API_BASE_URL}/${endpoint}/print/${id}/a4" target="_blank">
+                    <i class="bi bi-file-pdf-fill"></i> A4
+                </a>
+                <a class="btn btn-primary pull-right" href="${API_BASE_URL}/${endpoint}/print/${id}/a5" target="_blank">
+                    <i class="bi bi-file-pdf-fill"></i> A5
+                </a>
+            </div>
         `;
     };
 

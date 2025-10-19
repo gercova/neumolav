@@ -83,9 +83,6 @@ class ExamsController extends Controller {
             $id 	= $exam->id;
 			$dni 	= $validated['dni'];
             // Guardar diagnóstico, medicación y subir imagen si existen
-
-			// dd($validated['dni']);
-
             if ($diagnostics) 	$this->saveDiagnosis($id, $dni, $diagnostics);
             if ($drugs) 		$this->saveMedicacion($id, $dni, $drugs, $descriptions);
             if ($img) 			$this->uploadImage($img, $dni, $dateImg, $id);
@@ -114,6 +111,7 @@ class ExamsController extends Controller {
 				'id_examen'     	=> $id,
 				'dni' 				=> $dni,
 				'id_diagnostico'	=> $diagnosticId,
+				'created_at'		=> now(),
 			];
 		})->toArray();
 
@@ -129,7 +127,8 @@ class ExamsController extends Controller {
 				'id_examen'     => $id,
 				'dni'           => $dni,
 				'id_droga' 		=> $drugId[$i],
-				'descripcion'   => $description[$i], // Usa el valor correspondiente del array
+				'descripcion'   => $description[$i],
+				'created_at' 	=> now(),
 			];
 		}
 		
@@ -338,7 +337,52 @@ class ExamsController extends Controller {
 		], 200);
 	}
 
-	public function printPrescriptionId(int $id) {
+	public function printPrescriptionId(int $id, string $format = 'a5') {
+        // Validar formato
+        if (!in_array($format, ['a4', 'a5'])) {
+            $format = 'a5';
+        }
+
+        // Obtener datos
+        $hc = DB::select('CALL getMedicalHistoryByExam(?)', [$id]);
+        $ex = Exam::findOrFail($id);
+        $dx = DB::select('CALL getDiagnosticbyExam(?)', [$id]);
+		$mx = DB::select('CALL getMedicationByExam(?)', [$id]);
+        $us = Auth::user();
+        $en = Enterprise::findOrFail(1);
+
+        // Configurar PDF según formato
+        if ($format === 'a4') {
+			$pdf = PDF::loadView('hcl.exams.pdf-a4', compact('hc', 'ex', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf->setPaper('a4', 'portrait')
+                ->setOptions([
+                    'margin_top' 	        => 10,
+                    'margin_bottom'         => 10,
+                    'margin_left' 	        => 15,
+                    'margin_right' 	        => 15,
+                    'defaultFont' 	        => 'sans-serif',
+                    'isHtml5ParserEnabled'  => true,
+                    'isRemoteEnabled'       => true
+                ]);
+        } else {
+			$pdf = PDF::loadView('hcl.exams.pdf-a5', compact('hc', 'ex', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf->setPaper('a5', 'portrait')
+                ->setOptions([
+                    'margin_top' 			=> 0.5,
+                    'margin_bottom' 		=> 0.5,
+                    'margin_left' 			=> 0.5,
+                    'margin_right' 			=> 0.5,
+                    'defaultFont' 			=> 'sans-serif',
+                    'isHtml5ParserEnabled' 	=> true,
+                    'isRemoteEnabled' 		=> true	
+                ]);
+        }
+
+        $filename = "receta-medica-{$id}-" . strtoupper($format) . ".pdf";
+        return $pdf->stream($filename);
+    }
+
+	/*public function printPrescriptionId(int $id) {
 		$hc = DB::select('CALL getMedicalHistoryByExam(?)', [$id]);
 		$ex = Exam::findOrFail($id);
 		$dx = DB::select('CALL getDiagnosticbyExam(?)', [$id]);
@@ -355,5 +399,5 @@ class ExamsController extends Controller {
 				'margin-right' 	=> 0.5,
 			]);
         return $pdf->stream("examen-{$id}.pdf");
-	}
+	}*/
 }
