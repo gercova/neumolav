@@ -79,8 +79,8 @@ class ExamsController extends Controller {
 
         DB::beginTransaction();
         try {
-            $exam 	= empty($id) ? Exam::create($data) : Exam::updateOrCreate(['id' => $id], $data);
-            $id 	= $exam->id;
+            $result = Exam::updateOrCreate(['id' => $id], $data);
+            $id 	= $result->id;
 			$dni 	= $validated['dni'];
             // Guardar diagnóstico, medicación y subir imagen si existen
             if ($diagnostics) 	$this->saveDiagnosis($id, $dni, $diagnostics);
@@ -89,11 +89,12 @@ class ExamsController extends Controller {
 
             DB::commit();
             return response()->json([
-                'status' 		=> true,
-				'type'			=> 'success',
-                'messages' 		=> empty($id) ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
-				'route' 		=> route('hcl.exams.see', $dni),
-				'route_print' 	=> route('hcl.exams.print', $id)
+                'status' 	=> true,
+				'type'		=> 'success',
+                'message' 	=> $result->wasChanged() ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
+				'route' 	=> route('hcl.exams.see', $dni),
+				'print_a4' 	=> route('hcl.exams.print', [$id, 'a4']),
+				'print_a5' 	=> route('hcl.exams.print', [$id, 'a5']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -360,9 +361,10 @@ class ExamsController extends Controller {
                     'margin_bottom'         => 10,
                     'margin_left' 	        => 15,
                     'margin_right' 	        => 15,
-                    'defaultFont' 	        => 'sans-serif',
                     'isHtml5ParserEnabled'  => true,
-                    'isRemoteEnabled'       => true
+					'isRemoteEnabled'       => false,
+					'isPhpEnabled'          => false,
+					'chroot'                => realpath(base_path()),
                 ]);
         } else {
 			$pdf = PDF::loadView('hcl.exams.pdf-a5', compact('hc', 'ex', 'dx', 'mx', 'us', 'en', 'format'));
@@ -372,32 +374,14 @@ class ExamsController extends Controller {
                     'margin_bottom' 		=> 0.5,
                     'margin_left' 			=> 0.5,
                     'margin_right' 			=> 0.5,
-                    'defaultFont' 			=> 'sans-serif',
-                    'isHtml5ParserEnabled' 	=> true,
-                    'isRemoteEnabled' 		=> true	
+                    'isHtml5ParserEnabled'  => true,
+					'isRemoteEnabled'       => false,
+					'isPhpEnabled'          => false,
+					'chroot'                => realpath(base_path()),
                 ]);
         }
 
         $filename = "receta-medica-{$id}-" . strtoupper($format) . ".pdf";
         return $pdf->stream($filename);
     }
-
-	/*public function printPrescriptionId(int $id) {
-		$hc = DB::select('CALL getMedicalHistoryByExam(?)', [$id]);
-		$ex = Exam::findOrFail($id);
-		$dx = DB::select('CALL getDiagnosticbyExam(?)', [$id]);
-		$mx = DB::select('CALL getMedicationByExam(?)', [$id]);
-		$us = Auth::user();
-		$en = Enterprise::findOrFail(1);
-		$pdf = PDF::loadView('hcl.exams.pdf', compact('hc', 'ex', 'dx', 'mx', 'us', 'en'))
-			->setPaper('a5')
-        	->setOptions(['defaultFont' => 'sans-serif'])
-        	->setOptions([
-				'margin-top' 	=> 0.5,
-				'margin-bottom' => 0.5,
-				'margin-left' 	=> 0.5,
-				'margin-right' 	=> 0.5,
-			]);
-        return $pdf->stream("examen-{$id}.pdf");
-	}*/
 }

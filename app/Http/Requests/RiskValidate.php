@@ -12,7 +12,7 @@ class RiskValidate extends FormRequest {
 
     public function rules(): array {
         return [
-            'dni'                               => 'required|digits:8',
+            'dni'                               => 'required',
             'motivo'                            => 'required|string',
             'antecedente'                       => 'required|string',
             'sintomas'                          => 'required|string',
@@ -26,7 +26,6 @@ class RiskValidate extends FormRequest {
     public function messages(): array {
         return [
             'dni.required'                      => 'El campo DNI es requerido',
-            'dni.digits'                        => 'El campo DNI debe tener 8 dígitos.',
             'motivo.required'                   => 'El campo Motivo es requerido.',
             'motivo.string'                     => 'El campo Motivo debe ser una cadena de texto.',
             'antecedente.required'              => 'El campo Antecedente es requerido.',

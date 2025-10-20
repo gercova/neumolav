@@ -77,18 +77,26 @@ const ModalDetails = (function() {
     // Función privada para construir los botones
     const buildModalButtons = (id, type) => {
         const endpoint = type === 'appointments' ? 'appointments' : 'exams';
-        return `
-            <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Cerrar</button>
-            <div class="pull-right">
-                Seleccione formato de impresión:
-                <a class="btn btn-primary pull-right" href="${API_BASE_URL}/${endpoint}/print/${id}/a4" target="_blank">
-                    <i class="bi bi-file-pdf-fill"></i> A4
-                </a>
-                <a class="btn btn-primary pull-right" href="${API_BASE_URL}/${endpoint}/print/${id}/a5" target="_blank">
-                    <i class="bi bi-file-pdf-fill"></i> A5
-                </a>
+        return `<div class="d-flex justify-content-between align-items-center w-100">
+            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">
+                <i class="fas fa-times mr-2"></i> Cerrar
+            </button>
+    
+            <div class="text-center">
+                <small class="text-muted d-block mb-1">Formato de impresión</small>
+                <div class="row">
+                    <a class="btn btn-primary" href="${API_BASE_URL}/${endpoint}/print/${id}/a4" target="_blank">
+                        <i class="fas fa-print mr-2"></i> A4 
+                        <span class="badge badge-light ml-2">Carta</span>
+                    </a>
+                    &nbsp;
+                    <a class="btn btn-info" href="${API_BASE_URL}/${endpoint}/print/${id}/a5" target="_blank">
+                        <i class="fas fa-print mr-2"></i> A5
+                        <span class="badge badge-light ml-2">Medio</span>
+                    </a>
+                </div>
             </div>
-        `;
+        </div>`;
     };
 
     // Función pública para mostrar detalles

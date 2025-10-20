@@ -157,13 +157,16 @@ class RisksController extends Controller {
         $en = Enterprise::findOrFail(1);
 		$pdf = PDF::loadView('hcl.risks.pdf', compact('hc', 'rk', 'us', 'en'))
 			->setPaper('a4')
-        	->setOptions(['defaultFont' => 'arial'])
         	->setOptions([
-				'margin-top' 	=> 0.5, 
-				'margin-bottom' => 0.5, 
-				'margin-left' 	=> 0.5, 
-				'margin-right' 	=> 0.5,
-			]);
-        return $pdf->stream("informe-de-riesgo-{$id}-{$en->nombre_comercial}.pdf");
+                'margin-top' 	        => 0.5, 
+				'margin-bottom'         => 0.5, 
+				'margin-left' 	        => 0.5, 
+				'margin-right' 	        => 0.5,
+                'isHtml5ParserEnabled'  => true,
+                'isRemoteEnabled'       => false,
+                'isPhpEnabled'          => false,
+                'chroot'                => realpath(base_path()),
+            ]);
+        return $pdf->stream("informe-de-riesgo-{$id}.pdf");
 	}
 }

@@ -318,9 +318,6 @@ class AppointmentsController extends Controller {
                     'margin_bottom'         => 10,
                     'margin_left' 	        => 15,
                     'margin_right' 	        => 15,
-                    'defaultFont' 	        => 'sans-serif',
-                    'isHtml5ParserEnabled'  => true,
-                    'isRemoteEnabled'       => true
                 ]);
         } else {
 			$pdf = PDF::loadView('hcl.appointments.pdf-a5', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
@@ -330,9 +327,6 @@ class AppointmentsController extends Controller {
                     'margin_bottom' 		=> 0.5,
                     'margin_left' 			=> 0.5,
                     'margin_right' 			=> 0.5,
-                    'defaultFont' 			=> 'sans-serif',
-                    'isHtml5ParserEnabled' 	=> true,
-                    'isRemoteEnabled' 		=> true	
                 ]);
         }
 

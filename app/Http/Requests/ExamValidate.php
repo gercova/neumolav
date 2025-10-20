@@ -12,7 +12,7 @@ class ExamValidate extends FormRequest {
 
     public function rules(): array {
         return [
-            'dni' 		            => 'required|string',
+            'dni' 		            => 'required',
             'id_tipo' 	            => 'required|integer',
             'ta'                    => 'nullable|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.])+$/',
             'so2'                   => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
@@ -68,8 +68,6 @@ class ExamValidate extends FormRequest {
     public function messages(): array {
         return [
             'dni.required'              => 'El campo DNI es requerido',
-            'dni.string'                => 'El campo DNI debe ser un string',
-            //'dni.digits'                => 'El campo DNI debe tener 8 dígitos',
             'id_tipo.required'          => 'El campo tipo de examen es requerido',
             'id_tipo.integer'           => 'El campo tipo de examen debe ser un número',
             'ta.regex'                  => 'El campo TA solo puede contener letras, números, espacios y los siguientes caracteres: /,#-()',

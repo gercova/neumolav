@@ -148,6 +148,7 @@ $(document).ready(function(){
             const response = await axios.post(`${API_BASE_URL}/exams/store`, formData);
             // Validar que la respuesta sea exitosa y tenga los datos esperados
             if (response.status === 200 && response.data && response.data.status === true) {
+                console.log(response.data);
                 // Limpiar el formulario y mensajes de error
                 $('#examForm').trigger('reset');
                 $('#examForm').find('.text-danger').remove();
@@ -172,11 +173,23 @@ $(document).ready(function(){
                 if (result.dismiss === Swal.DismissReason.timer) {
                     await Swal.fire({
                         icon: response.data.type || 'success', // Usar 'success' como valor predeterminado
-                        title: response.data.messages || 'Información guardada correctamente',
-                        html: response.data.route_print ? 
-                            `<a class="btn btn-info" href="${response.data.route_print}" target="_blank">
-                                <i class="bi bi-file-earmark-pdf"></i> Imprimir prescripción
-                            </a>` : '',
+                        title: response.data.message || 'Información guardada correctamente',
+                        html: `<div class="text-center">
+                            <p class="mb-3">Selecciona el formato de impresión:</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a class="btn btn-outline-info d-flex flex-column align-items-center p-3" href="${response.data.print_a4}" target="_blank">
+                                    <i class="fas fa-file-pdf fa-2x mb-2"></i>
+                                    <span>Formato A4</span>
+                                    <small class="badge badge-light mt-1">Carta</small>
+                                </a>
+                                &nbsp;
+                                <a class="btn btn-outline-success d-flex flex-column align-items-center p-3" href="${response.data.print_a5}" target="_blank">
+                                    <i class="fas fa-file-pdf fa-2x mb-2"></i>
+                                    <span>Formato A5</span>
+                                    <small class="badge badge-light mt-1">Medio</small>
+                                </a>
+                            </div>
+                        </div>`,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });
