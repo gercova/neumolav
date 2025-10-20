@@ -162,6 +162,7 @@ class RisksController extends Controller {
 				'margin-bottom'         => 0.5, 
 				'margin-left' 	        => 0.5, 
 				'margin-right' 	        => 0.5,
+                'fontDefault'           => 'sans-serif',
                 'isHtml5ParserEnabled'  => true,
                 'isRemoteEnabled'       => false,
                 'isPhpEnabled'          => false,
