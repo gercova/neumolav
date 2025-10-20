@@ -13,11 +13,11 @@ class AppointmentValidate extends FormRequest {
     public function rules(): array {
         return [
             'dni'                       => 'required',
-            'sintomas'                  => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
-            'diagnostico'               => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
-            'plan'                      => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
-            'tratamiento'               => 'required|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
-            'recomendaciones'           => 'nullable|string|regex:/^(?:[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\/,#\-\(\)\.:_\[\]])+$/',
+            'sintomas'                  => 'required|string',
+            'diagnostico'               => 'nullable|string',
+            'plan'                      => 'required|string',
+            'tratamiento'               => 'required|string',
+            'recomendaciones'           => 'nullable|string',
         ];
     }
 
