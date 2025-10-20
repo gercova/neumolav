@@ -98,7 +98,7 @@
                                                 </div>
                                                 <div class="col-1">
                                                     <div class="form-group">
-                                                        <label for="talla">Talla (cm)</label>
+                                                        <label for="talla">Talla (m)</label>
                                                         <input type="text" class="form-control form-control-sm" id="talla" name="talla">
                                                     </div>
                                                 </div>

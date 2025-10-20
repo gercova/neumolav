@@ -79,7 +79,7 @@ class AppointmentsController extends Controller {
         // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
-            $appointment    = empty($id) ? Appointment::create($validated) : Appointment::updateOrCreate(['id' => $id], $validated);
+            $appointment    = Appointment::updateOrCreate(['id' => $id], $validated);
             $id 	        = $appointment->id;
             $dni 	        = $appointment->dni;
 			$format 		= '';
@@ -91,7 +91,7 @@ class AppointmentsController extends Controller {
             return response()->json([
                 'status' 	=> true,
                 'type'		=> 'success',
-                'messages' 	=> empty($id) ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
+                'messages' 	=> empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
                 'route' 	=> route('hcl.appointments.see', $dni),
                 'print_a5' 	=> route('hcl.appointments.print', [$id, 'a5']),
 				'print_a4' 	=> route('hcl.appointments.print', [$id, 'a4']),

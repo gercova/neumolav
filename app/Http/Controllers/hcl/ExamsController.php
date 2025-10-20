@@ -91,7 +91,7 @@ class ExamsController extends Controller {
             return response()->json([
                 'status' 	=> true,
 				'type'		=> 'success',
-                'message' 	=> $result->wasChanged() ? 'Se ha añadido un nuevo examen' : 'Actualizado exitosamente',
+                'message' 	=> $result->wasChanged() ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
 				'route' 	=> route('hcl.exams.see', $dni),
 				'print_a4' 	=> route('hcl.exams.print', [$id, 'a4']),
 				'print_a5' 	=> route('hcl.exams.print', [$id, 'a5']),
@@ -343,7 +343,6 @@ class ExamsController extends Controller {
         if (!in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
-
         // Obtener datos
         $hc = DB::select('CALL getMedicalHistoryByExam(?)', [$id]);
         $ex = Exam::findOrFail($id);
