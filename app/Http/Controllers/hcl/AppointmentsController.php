@@ -82,7 +82,6 @@ class AppointmentsController extends Controller {
             $appointment    = Appointment::updateOrCreate(['id' => $id], $validated);
             $id 	        = $appointment->id;
             $dni 	        = $appointment->dni;
-			$format 		= '';
             // Guardar diagnóstico, medicación y subir imagen si existen
             if ($diagnostics) 	$this->saveDiagnostic($id, $dni, $diagnostics);
             if ($drugs) 		$this->saveMedication($id, $dni, $drugs, $descriptions);
@@ -300,7 +299,6 @@ class AppointmentsController extends Controller {
         if (!in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
-
         // Obtener datos
         $hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$id]);
         $ap = Appointment::findOrFail($id);
@@ -308,7 +306,6 @@ class AppointmentsController extends Controller {
         $mx = DB::select('CALL getMedicationByAppointment(?)', [$id]);
         $us = Auth::user();
         $en = Enterprise::findOrFail(1);
-
         // Configurar PDF según formato
         if ($format === 'a4') {
 			$pdf = PDF::loadView('hcl.appointments.pdf-a4', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
