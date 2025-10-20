@@ -44,5 +44,4 @@ class Appointment extends Model {
     public function medicationAppointment(){
         return $this->hasMany(MedicationAppointment::class, 'id_control', 'id');
     }
-
 }

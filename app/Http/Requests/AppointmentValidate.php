@@ -37,7 +37,7 @@ class AppointmentValidate extends FormRequest {
 
     protected function prepareForValidation(): void {
         $this->merge([
-            'dni'                       => filter_var(trim($this->dni), FILTER_SANITIZE_NUMBER_INT),
+            'dni'                       => trim(($this->dni), FILTER_SANITIZE_NUMBER_INT),
             'sintomas'                  => trim(strip_tags($this->sintomas)),
             'diagnostico'               => trim(strip_tags($this->diagnostico)),
             'plan'                      => trim(strip_tags($this->plan)),
