@@ -35,14 +35,14 @@ class AppointmentValidate extends FormRequest {
         ];
     }
 
-    /*protected function prepareForValidation(): void {
+    protected function prepareForValidation(): void {
         $this->merge([
-            'dni'                       => trim(($this->dni), FILTER_SANITIZE_NUMBER_INT),
+            'dni'                       => trim(strip_tags($this->dni)),
             'sintomas'                  => trim(strip_tags($this->sintomas)),
             'diagnostico'               => trim(strip_tags($this->diagnostico)),
             'plan'                      => trim(strip_tags($this->plan)),
             'tratamiento'               => trim(strip_tags($this->tratamiento)),
-            'recomendaciones'           => $this->recomendaciones ? trim(strip_tags($this->recomendaciones)) : null,
+            'recomendaciones'           => trim(strip_tags($this->recomendaciones)),
         ]);
-    }*/  
+    }
 }
