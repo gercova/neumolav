@@ -2,8 +2,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
-        <img src="{{ asset('storage/'.$enterprise[0]->logo) }}" class="brand-image img-circle elevation-3">
-        <span class="brand-text font-weight-light">{{ $enterprise[0]->nombre_comercial }}</span>
+        <img src="{{ asset('storage/'.$enterprise->logo) }}" class="brand-image img-circle elevation-3">
+        <span class="brand-text font-weight-light">{{ $enterprise->nombre_comercial }}</span>
     </a>
     <!-- Sidebar -->
     <div class="sidebar">

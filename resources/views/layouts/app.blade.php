@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise[0]->logo) }}">
-    <title>@yield('title', $enterprise[0]->nombre_comercial)</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise->logo) }}">
+    <title>@yield('title', $enterprise->nombre_comercial)</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!---->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
     <script>
         const API_BASE_URL = "{{ url('/') }}";
-        const NAME_ENTERPRISE = "{{ $enterprise[0]->nombre_comercial }}";
+        const NAME_ENTERPRISE = "{{ $enterprise->nombre_comercial }}";
         const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     </script>
     <!-- Hightcharts -->

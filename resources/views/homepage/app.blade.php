@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise[0]->logo) }}">
-    <title>@yield('title', $enterprise[0]->nombre_comercial . ' - Especialista en enfermedades respiratorias')</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise->logo) }}">
+    <title>@yield('title', $enterprise->nombre_comercial . ' - Especialista en enfermedades respiratorias')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="@yield('description', 'Especialista en enfermedades respiratorias')">
     <meta name="keywords" content="@yield('keywords', 'enfermedades respiratorias, neumotar, neumotar.com')">
@@ -14,24 +14,24 @@
     <link rel="canonical" href="{{ request()->url() }}">
     <meta property="og:locale" content="{{ app()->getLocale() }}">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="@yield('title', $enterprise[0]->nombre_comercial . ' - Especialista en enfermedades respiratorias')">
+    <meta property="og:title" content="@yield('title', $enterprise->nombre_comercial . ' - Especialista en enfermedades respiratorias')">
     <meta property="og:description" content="@yield('description', 'Especialista en enfermedades respiratorias')">
-    <meta property="og:image" content="{{ asset('storage/'.$enterprise[0]->logo) }}">
+    <meta property="og:image" content="{{ asset('storage/'.$enterprise->logo) }}">
     <meta property="og:description" content="@yield('description', 'Especialista en enfermedades respiratorias')">
     <meta property="og:url" content="{{ request()->url() }}">
-    <meta property="og:site_name" content="{{ $enterprise[0]->nombre_comercial }}">
+    <meta property="og:site_name" content="{{ $enterprise->nombre_comercial }}">
     <!--<meta property="article:section" content="Tutoriales">-->
-    <meta property="og:updated_time" content="{{ $enterprise[0]->updated_at }}">
+    <meta property="og:updated_time" content="{{ $enterprise->updated_at }}">
     <!--<meta property="og:image" content="https://laravelole.es/wp-content/uploads/2024/12/integracion-ia-aplicacion-laravel.jpg">-->
     <!--<meta property="og:image:secure_url" content="https://laravelole.es/wp-content/uploads/2024/12/integracion-ia-aplicacion-laravel.jpg">-->
     <!--<meta property="og:image:width" content="1080">-->
     <!--<meta property="og:image:height" content="480">-->
     <!--<meta property="og:image:alt" content="integracion-ia-aplicacion-laravel">-->
     <meta property="og:image:type" content="image/jpeg">
-    <meta property="article:published_time" content="{!! $enterprise[0]->created_at !!}">
-    <meta property="article:modified_time" content="{!! $enterprise[0]->updated_at !!}">
+    <meta property="article:published_time" content="{!! $enterprise->created_at !!}">
+    <meta property="article:modified_time" content="{!! $enterprise->updated_at !!}">
     <!--<meta name="twitter:card" content="summary_large_image">-->
-    <meta name="twitter:title" content="@yield('title', $enterprise[0]->nombre_comercial . ' - Especialista en enfermedades respiratorias')">
+    <meta name="twitter:title" content="@yield('title', $enterprise->nombre_comercial . ' - Especialista en enfermedades respiratorias')">
     <meta name="twitter:description" content="@yield('description', 'Especialista en enfermedades respiratorias')">
     <!--<meta name="twitter:image" content="https://laravelole.es/wp-content/uploads/2024/12/integracion-ia-aplicacion-laravel.jpg">-->
     <!--<meta name="twitter:label1" content="Escrito por">-->
@@ -65,13 +65,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-sm-5">
-                    <p>Bienvenido a {{ $enterprise[0]->nombre_comercial }}</p>
+                    <p>Bienvenido a {{ $enterprise->nombre_comercial }}</p>
                 </div>
                 <div class="col-md-8 col-sm-7 text-align-right">
-                    <span class="phone-icon"><i class="fa fa-phone"></i>{{ $enterprise[0]->codigo_pais.' '.$enterprise[0]->telefono }}</span>
+                    <span class="phone-icon"><i class="fa fa-phone"></i>{{ $enterprise->codigo_pais.' '.$enterprise->telefono }}</span>
 
                     <span class="date-icon"><i class="fa fa-calendar-plus-o"></i> 2:00 PM - 7:00 PM (Lunes - Viernes)</span>
-                    <span class="email-icon"><i class="fa fa-envelope-o"></i> <a href="#">{{ $enterprise[0]->email }}</a></span>
+                    <span class="email-icon"><i class="fa fa-envelope-o"></i> <a href="#">{{ $enterprise->email }}</a></span>
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@
                     <span class="icon icon-bar"></span>
                 </button>
                 <!-- lOGO TEXT HERE -->
-                <a href="{{ url('/') }}" class="navbar-brand">{{ $enterprise[0]->nombre_comercial }}</a>
+                <a href="{{ url('/') }}" class="navbar-brand">{{ $enterprise->nombre_comercial }}</a>
             </div>
             <!-- MENU LINKS -->
             <div class="collapse navbar-collapse">
@@ -109,10 +109,10 @@
                 <div class="col-md-4 col-sm-4">
                     <div class="footer-thumb"> 
                         <h4 class="wow fadeInUp" data-wow-delay="0.4s">Información de contacto</h4>
-                        <p>{{ $enterprise[0]->descripcion }}</p>
+                        <p>{{ $enterprise->descripcion }}</p>
                         <div class="contact-info">
-                            <p><i class="fa fa-phone"></i> {{ $enterprise[0]->telefono }}</p>
-                            <p><i class="fa fa-envelope-o"></i> <a href="#">{{ $enterprise[0]->email }}</a></p>
+                            <p><i class="fa fa-phone"></i> {{ $enterprise->telefono }}</p>
+                            <p><i class="fa fa-envelope-o"></i> <a href="#">{{ $enterprise->email }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                 <div class="col-md-12 col-sm-12 border-top">
                     <div class="col-md-4 col-sm-6">
                         <div class="copyright-text"> 
-                            <p>{{ $enterprise[0]->nombre_comercial }} &copy; {{ date('Y') }} | Diseñado por Tamayiyo</p>
+                            <p>{{ $enterprise->nombre_comercial }} &copy; {{ date('Y') }} | Diseñado por Tamayiyo</p>
                         </div>
                     </div>
                     <!--<div class="col-md-6 col-sm-6">

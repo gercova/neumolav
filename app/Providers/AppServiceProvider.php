@@ -14,25 +14,19 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider {
 
     public function register(): void {
-        /*$this->app->singleton(SummaryService::class, function () {
-            return new SummaryService();
-        });*/
-
-        /*$this->app->bind('moc-summary', function() {
-            return new MocSummaryService();
-        });*/
+        //
     }
 
     public function boot(): void {
         setlocale(LC_TIME, 'es_ES.utf8', 'es_ES', 'es');
         // Usar un View Composer para compartir variables
         View::composer('layouts.app', function ($view) {
-            $enterprise = Enterprise::where('id', 1)->get();
+            $enterprise = Enterprise::findOrFail(1);
             $view->with(['enterprise' => $enterprise]);
         });
 
         View::composer('homepage.app', function ($view) {
-            $enterprise = Enterprise::where('id', 1)->get();
+            $enterprise = Enterprise::findOrFail(1);
             $recentPost = Post::where('id','<>', 21)->orderBy('id', 'desc')->limit(2)->get();
             $view->with(['enterprise' => $enterprise, 'recentPost' => $recentPost]);
         });
