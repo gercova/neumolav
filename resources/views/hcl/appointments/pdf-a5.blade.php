@@ -132,7 +132,7 @@
 
         .drug-details {
             color: #555;
-            font-size: 11px;
+            font-size: 12px !important;
             line-height: 1.4;
         }
 
@@ -237,7 +237,6 @@
                 <span class="inline-block"><b>Fecha:</b> {{ \Carbon\Carbon::parse($ap->created_at)->format('d/m/Y H:i') }}</span>
             </p>
         </div>
-        
         <div class="diagnosis-section">
             <p><b>Diagnóstico:</b> {{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</p>
         </div>
