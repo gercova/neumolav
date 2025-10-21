@@ -146,7 +146,7 @@ class HistoriesController extends Controller {
 		DB::beginTransaction();    
         try {
 			$result = History::updateOrCreate(['id' => $request->input('id')], $data);
-			if(!$result->wasRecentlyCreated){
+			if(!$result->wasChanged()){
 				DB::table('citas')->insert(['id_historia' => $result->id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
 			}
 			DB::commit();
