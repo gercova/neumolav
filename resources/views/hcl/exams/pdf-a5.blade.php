@@ -127,12 +127,12 @@
             color: #2c3e50;
             display: block;
             margin-bottom: 3px;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .drug-details {
             color: #555;
-            font-size: 11px;
+            font-size: 13px !important;
             line-height: 1.4;
         }
 

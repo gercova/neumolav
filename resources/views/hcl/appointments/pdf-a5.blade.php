@@ -127,12 +127,12 @@
             color: #2c3e50;
             display: block;
             margin-bottom: 3px;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .drug-details {
             color: #555;
-            font-size: 12px !important;
+            font-size: 13px !important;
             line-height: 1.4;
         }
 
@@ -150,7 +150,6 @@
             color: #2e7d32;
             margin-top: 3px;
         }
-
         /* PIE DE PÁGINA FIJADO */
         .footer {
             position: fixed;
@@ -178,7 +177,6 @@
             font-size: 10px;
             opacity: 0.9;
         }
-
         /* MEJORAS PARA IMPRESIÓN */
         @media print {
             body {
@@ -204,7 +202,6 @@
                 padding-bottom: 70px;
             }
         }
-
         /* UTILIDADES */
         .text-center {
             text-align: center;
