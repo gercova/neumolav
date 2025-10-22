@@ -382,7 +382,7 @@ class ExamsController extends Controller {
                 ]);
         }
 
-        $filename = "receta-medica-{$id}-" . strtoupper($format) . ".pdf";
+        $filename = "receta-medica-examen-{$id}-" . strtoupper($format) . ".pdf";
         return $pdf->stream($filename);
     }
 }

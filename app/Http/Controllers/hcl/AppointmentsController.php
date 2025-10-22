@@ -337,7 +337,7 @@ class AppointmentsController extends Controller {
                 ]);
         }
 
-        $filename = "receta-medica-{$id}-" . strtoupper($format) . ".pdf";
+        $filename = "receta-medica-control-{$id}-" . strtoupper($format) . ".pdf";
         return $pdf->stream($filename);
     }
 }
