@@ -33,4 +33,13 @@ class UserValidate extends FormRequest {
             'avatar.max'                        => 'Límite de la imagen excedida',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'name'      => trim(strip_tags($this->name)),
+            'biografia' => trim(strip_tags($this->biografia)),
+            'specialty' => trim(strip_tags($this->specialty)),
+            'role_id'   => trim(strip_tags($this->role_id))
+        ]);
+    }
 }

@@ -27,13 +27,21 @@ class SubmoduleValidate extends FormRequest {
             'descripcion.required'  => 'La descripción es requerida',
             'descripcion.string'    => 'La descripción es inválida',
             'descripcion.unique'    => 'La descripción ya existe',
-            'nombre.required'       => 'La descripción es requerida',
-            'nombre.string'         => 'La descripción es inválida',
-            'nombre.unique'         => 'La descripción ya existe',
-            'detalle.required'      => 'El detalle es requerido',
+            'nombre.required'       => 'El Nombre es requerido',
+            'nombre.unique'         => 'El Nombre ya existe',
+            'detalle.required'      => 'El Detalle es requerido',
             'detalle.string'        => 'El detalle es inválido',
             'icono.required'        => 'El icono es requerido',
             'icono.string'          => 'El icono es inválido',
         ];
+    }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'module_id'     => trim(strip_tags($this->module_id)),
+            'descripcion'   => trim(strip_tags($this->descripcion)),
+            'nombre'        => trim(strip_tags($this->nombre)),
+            'detalle'       => trim(strip_tags($this->detalle)),
+        ]);
     }
 }

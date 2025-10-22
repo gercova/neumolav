@@ -35,4 +35,11 @@ class ResetPasswordValidate extends FormRequest
             'password_confirmation' => 'confirmar contraseña',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'password'              => trim(strip_tags($this->password)),
+            'password_confirmation' => trim(strip_tags($this->password_confirmation)),
+        ]);
+    }
 }

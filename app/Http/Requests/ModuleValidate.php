@@ -28,4 +28,11 @@ class ModuleValidate extends FormRequest {
             'icono.required'         => 'El campo icono es obligatorio',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'descripcion'   => trim(strip_tags($this->descripcion)),
+            'detalle'       => trim(strip_tags($this->detalle)),
+        ]);
+    }
 }

@@ -23,4 +23,10 @@ class OccupationValidate extends FormRequest {
             'descripcion.unique'        => 'La descripción ya existe.',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'descripcion'   => trim(strip_tags($this->descripcion)),
+        ]);
+    }
 }

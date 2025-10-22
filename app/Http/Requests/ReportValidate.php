@@ -34,4 +34,16 @@ class ReportValidate extends FormRequest {
             'tratamiento.required'              => 'El campo Tratamiento es requerido',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'dni'                   => trim(strip_tags($this->dni)),
+            'antecedentes'          => trim(strip_tags($this->antecedentes)),
+            'historial_enfermedad'  => trim(strip_tags($this->historial_enfermedad)),
+            'examen_fisico'         => trim(strip_tags($this->examen_fisico)),
+            'examen_complementario' => trim(strip_tags($this->examen_complementario)),
+            'sugerencia'            => trim(strip_tags($this->sugerencia)),
+            'tratamiento'           => trim(strip_tags($this->tratamiento)),
+        ]);
+    }
 }

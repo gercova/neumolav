@@ -27,4 +27,12 @@ class SpecialtyValidate extends FormRequest {
             'detalle.string'        => 'El campo Detalle debe ser una cadena de texto.',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'id_ocupacion'  => trim(strip_tags($this->id_ocupacion)),
+            'descripcion'   => trim(strip_tags($this->descripcion)),
+            'detalle'       => trim(strip_tags($this->detalle)),
+        ]);
+    }
 }

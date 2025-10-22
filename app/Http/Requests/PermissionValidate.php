@@ -27,4 +27,12 @@ class PermissionValidate extends FormRequest {
             'guard_name.string'     => 'El campo Nombre de Guardia debe ser un string',
         ];    
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'name'          => trim(strip_tags($this->name)),
+            'description'   => trim(strip_tags($this->description)),
+            'guard_name'    => trim(strip_tags($this->guard_name)),
+        ]);
+    }
 }

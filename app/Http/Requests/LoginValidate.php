@@ -26,4 +26,11 @@ class LoginValidate extends FormRequest
             'password.min'      => 'El campo Contraseña debe tener más de 6 caracteres',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'email'     => trim(strip_tags($this->email)),
+            'password'  => trim(strip_tags($this->password)),
+        ]);
+    }
 }

@@ -39,4 +39,16 @@ class RiskValidate extends FormRequest {
             'riesgo_neumologico.required'       => 'El campo Riesgo Neumológ ico es requerido.',
         ];
     }
+
+    protected function prepareForValidation(): void {
+        $this->merge([
+            'dni'           => trim(strip_tags($this->dni)),
+            'motivo'        => trim(strip_tags($this->motivo)),
+            'antecedente'   => trim(strip_tags($this->antecedente)),
+            'sintomas'      => trim(strip_tags($this->sintomas)),
+            'examen_fisico' => trim(strip_tags($this->examen_fisico)),
+            'examen_complementario' => trim(strip_tags($this->examen_complementario)),
+            'riesgo_neumologico' => trim(strip_tags($this->riesgo_neumologico)),
+        ]);
+    }
 }
