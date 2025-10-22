@@ -175,62 +175,62 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="surgeries">Cirugías</label>
-                                        <input type="text" class="form-control" name="surgeries" id="surgeries" value="{{ $history->cirugias }}">
+                                        <label for="cirugias">Cirugías</label>
+                                        <input type="text" class="form-control" name="cirugias" id="cirugias" value="{{ $history->cirugias }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="transfusions">Transfusiones sanguíneas</label>
-                                        <input type="text" class="form-control" name="transfusions" id="transfusions" value="{{ $history->transfusiones }}">
+                                        <label for="transfusiones">Transfusiones sanguíneas</label>
+                                        <input type="text" class="form-control" name="transfusiones" id="transfusiones" value="{{ $history->transfusiones }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="trauma">Traumatismos</label>
-                                        <input type="text" class="form-control" name="trauma" id="trauma" value="{{ $history->traumatismos }}">
+                                        <label for="traumatismos">Traumatismos</label>
+                                        <input type="text" class="form-control" name="traumatismos" id="traumatismos" value="{{ $history->traumatismos }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="hospitalizations">Hospitalizaciones previas</label>
-                                        <input type="text" class="form-control" name="hospitalizations" id="hospitalizations" value="{{ $history->hospitalizaciones }}">
+                                        <label for="hospitalizaciones">Hospitalizaciones previas</label>
+                                        <input type="text" class="form-control" name="hospitalizaciones" id="hospitalizaciones" value="{{ $history->hospitalizaciones }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="drugs">Consumo de drogas sociales</label>
-                                        <input type="text" class="form-control" name="drugs" id="drugs" value="{{ $history->drogas }}">
+                                        <label for="drogas">Consumo de drogas sociales</label>
+                                        <input type="text" class="form-control" name="drogas" id="drogas" value="{{ $history->drogas }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="fh">Antecedentes familiares</label>
-                                        <input type="text" class="form-control" name="fh" id="fh" value="{{ $history->antecedentes }}">
+                                        <label for="antecedentes">Antecedentes familiares</label>
+                                        <input type="text" class="form-control" name="antecedentes" id="antecedentes" value="{{ $history->antecedentes }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="bs">Estado basal</label>
-                                        <input type="text" class="form-control" name="bs" id="bs" value="{{ $history->estadobasal }}">
+                                        <label for="estadobasal">Estado basal</label>
+                                        <input type="text" class="form-control" name="estadobasal" id="estadobasal" value="{{ $history->estadobasal }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="medication">RAMS</label>
-                                        <input type="text" class="form-control" name="medication" id="medication" value="{{ $history->medicacion }}">
+                                        <label for="medicacion">RAMS</label>
+                                        <input type="text" class="form-control" name="medicacion" id="medicacion" value="{{ $history->medicacion }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="animals">Animales en casa</label>
-                                        <input type="text" class="form-control" name="animals" id="animals" value="{{ $history->animales }}">
+                                        <label for="animales">Animales en casa</label>
+                                        <input type="text" class="form-control" name="animales" id="animales" value="{{ $history->animales }}">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="otros">Otros</label>
-                                        <textarea class="form-control" cols="96" name="others" id="otros">{{ $history->otros }}</textarea>
+                                        <textarea class="form-control" cols="96" name="otros" id="otros">{{ $history->otros }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -238,8 +238,8 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="ba">Asma bronquial</label>
-                                        <input type="text" class="form-control" name="ba" id="ba" value="{{ $history->asmabronquial }}">
+                                        <label for="asmabronquial">Asma bronquial</label>
+                                        <input type="text" class="form-control" name="asmabronquial" id="asmabronquial" value="{{ $history->asmabronquial }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -256,32 +256,32 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pt">Tuberculosis</label>
-                                        <input type="text" class="form-control" name="pt" id="pt" value="{{ $history->tuberculosis }}">
+                                        <label for="tuberculosis">Tuberculosis</label>
+                                        <input type="text" class="form-control" name="tuberculosis" id="tuberculosis" value="{{ $history->tuberculosis }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="lg">Cáncer al pulmón</label>
-                                        <input type="text" class="form-control" name="lg" id="lg" value="{{ $history->cancerpulmon }}">
+                                        <label for="cancerpulmon">Cáncer al pulmón</label>
+                                        <input type="text" class="form-control" name="cancerpulmon" id="cancerpulmon" value="{{ $history->cancerpulmon }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pe">Efusión pleural</label>
-                                        <input type="text" class="form-control" name="pe" id="pe" value="{{ $history->efusionpleural }}">
+                                        <label for="efusionpleural">Efusión pleural</label>
+                                        <input type="text" class="form-control" name="efusionpleural" id="efusionpleural" value="{{ $history->efusionpleural }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pneumonia">Neumonías</label>
-                                        <input type="text" class="form-control" name="pneumonia" id="pneumonia" value="{{ $history->neumonias }}">
+                                        <label for="neumonias">Neumonías</label>
+                                        <input type="text" class="form-control" name="neumonias" id="neumonias" value="{{ $history->neumonias }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="smoking">Tabaquismo</label>
-                                        <input type="text" class="form-control" name="smoking" id="smoking" value="{{ $history->tabaquismo }}">
+                                        <label for="tabaquismo">Tabaquismo</label>
+                                        <input type="text" class="form-control" name="tabaquismo" id="tabaquismo" value="{{ $history->tabaquismo }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -304,25 +304,25 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label for="af">Años fumando</label>
-                                        <input type="number" class="form-control" name="af" min="0" value="0" id="af" value="{{ $history->aniosfum }}">
+                                        <input type="number" class="form-control" name="aniosfum" min="0" value="0" id="af" value="{{ $history->aniosfum }}">
                                     </div>
                                 </div>
                                 <div class="col-1">
                                     <div class="form-group">
                                         <label for="r">Resultado</label>
-                                        <input type="number" class="form-control" name="r" min="0" step="any" value="0" id="r" value="{{ $history->result }}">
+                                        <input type="number" class="form-control" name="result" min="0" step="any" value="0" id="r" value="{{ $history->result }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="tbcc">Contacto TBC / COVID</label>
-                                        <input type="text" class="form-control" name="tbcc" id="tbcc" value="{{ $history->contactotbc }}">
+                                        <label for="contactotbc">Contacto TBC / COVID</label>
+                                        <input type="text" class="form-control" name="contactotbc" id="contactotbc" value="{{ $history->contactotbc }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="be">Exposición a biomasa</label>
-                                        <input type="text" class="form-control" name="be" id="be" value="{{ $history->exposicionbiomasa }}">
+                                        <label for="exposicionbiomasa">Exposición a biomasa</label>
+                                        <input type="text" class="form-control" name="exposicionbiomasa" id="exposicionbiomasa" value="{{ $history->exposicionbiomasa }}">
                                     </div>
                                 </div>
                             </div>
@@ -330,14 +330,14 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="rfc">Motivo consulta</label>
-                                        <input type="text" class="form-control" name="rfc" id="rfc" value="{{ $history->motivoconsulta }}">
+                                        <label for="motivoconsulta">Motivo consulta</label>
+                                        <input type="text" class="form-control" name="motivoconsulta" id="motivoconsulta" value="{{ $history->motivoconsulta }}">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="cs">Síntomas cardinales</label>
-                                        <input type="text" class="form-control" name="cs" id="cs" value="{{ $history->sintomascardinales }}">
+                                        <label for="sintomascardinales">Síntomas cardinales</label>
+                                        <input type="text" class="form-control" name="sintomascardinales" id="sintomascardinales" value="{{ $history->sintomascardinales }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -360,8 +360,8 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="ca">Relato cronológico</label>
-                                        <textarea class="form-control" name="ca" id="ca" cols="96" rows="3">{{ $history->relatocronologico }}</textarea>
+                                        <label for="relatocronologico">Relato cronológico</label>
+                                        <textarea class="form-control" name="relatocronologico" id="relatocronologico" cols="96" rows="3">{{ $history->relatocronologico }}</textarea>
                                     </div>
                                 </div>
                             </div>

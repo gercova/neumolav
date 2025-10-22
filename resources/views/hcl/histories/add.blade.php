@@ -157,62 +157,62 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="surgeries">Cirugías</label>
-                                        <input type="text" class="form-control" name="surgeries" id="surgeries" value="{{ old('surgeries') }}">
+                                        <label for="cirugias">Cirugías</label>
+                                        <input type="text" class="form-control" name="cirugias" id="cirugias" value="{{ old('cirugias') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="transfusions">Transfusiones sanguíneas</label>
-                                        <input type="text" class="form-control" name="transfusions" id="transfusions" value="{{ old('transfusions') }}">
+                                        <label for="transfusiones">Transfusiones sanguíneas</label>
+                                        <input type="text" class="form-control" name="transfusiones" id="transfusiones" value="{{ old('transfusiones') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="trauma">Traumatismos</label>
-                                        <input type="text" class="form-control" name="trauma" id="trauma" value="{{ old('trauma') }}">
+                                        <label for="traumatismos">Traumatismos</label>
+                                        <input type="text" class="form-control" name="traumatismos" id="traumatismos" value="{{ old('traumatismos') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="hospitalizations">Hospitalizaciones previas</label>
-                                        <input type="text" class="form-control" name="hospitalizations" id="hospitalizations" value="{{ old('hospitalizations') }}">
+                                        <label for="hospitalizaciones">Hospitalizaciones previas</label>
+                                        <input type="text" class="form-control" name="hospitalizaciones" id="hospitalizaciones" value="{{ old('hospitalizaciones') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="drugs">Consumo de drogas sociales</label>
-                                        <input type="text" class="form-control" name="drugs" id="drugs" value="{{ old('drugs') }}">
+                                        <label for="drogas">Consumo de drogas sociales</label>
+                                        <input type="text" class="form-control" name="drogas" id="drogas" value="{{ old('drogas') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="fh">Antecedentes familiares</label>
-                                        <input type="text" class="form-control" name="fh" id="fh" value="{{ old('fh') }}">
+                                        <label for="antecedentes">Antecedentes familiares</label>
+                                        <input type="text" class="form-control" name="antecedentes" id="antecedentes" value="{{ old('antecedentes') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="bs">Estado basal</label>
-                                        <input type="text" class="form-control" name="bs" id="bs" value="{{ old('bs') }}">
+                                        <label for="estadobasal">Estado basal</label>
+                                        <input type="text" class="form-control" name="estadobasal" id="estadobasal" value="{{ old('estadobasal') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="medication">RAMS</label>
-                                        <input type="text" class="form-control" name="medication" id="medication" value="{{ old('medication') }}">
+                                        <label for="medicacion">RAMS</label>
+                                        <input type="text" class="form-control" name="medicacion" id="medicacion" value="{{ old('medicacion') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="animals">Animales en casa</label>
-                                        <input type="text" class="form-control" name="animals" id="animals" value="{{ old('animals') }}">
+                                        <label for="animales">Animales en casa</label>
+                                        <input type="text" class="form-control" name="animales" id="animales" value="{{ old('animales') }}">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="otros">Otros</label>
-                                        <textarea class="form-control" cols="96" name="others" id="otros">{{ old('others') }}</textarea>
+                                        <textarea class="form-control" cols="96" name="otros" id="otros">{{ old('otros') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -220,8 +220,8 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="ba">Asma bronquial</label>
-                                        <input type="text" class="form-control" name="ba" id="ba" value="{{ old('ba') }}">
+                                        <label for="asmabronquial">Asma bronquial</label>
+                                        <input type="text" class="form-control" name="asmabronquial" id="asmabronquial" value="{{ old('asmabronquial') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -238,32 +238,32 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pt">Tuberculosis</label>
-                                        <input type="text" class="form-control" name="pt" id="pt" value="{{ old('pt') }}">
+                                        <label for="tuberculosis">Tuberculosis</label>
+                                        <input type="text" class="form-control" name="tuberculosis" id="tuberculosis" value="{{ old('tuberculosis') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="lg">Cáncer al pulmón</label>
-                                        <input type="text" class="form-control" name="lg" id="lg" value="{{ old('lg') }}">
+                                        <label for="cancerpulmon">Cáncer al pulmón</label>
+                                        <input type="text" class="form-control" name="cancerpulmon" id="cancerpulmon" value="{{ old('cancerpulmon') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pe">Efusión pleural</label>
-                                        <input type="text" class="form-control" name="pe" id="pe" value="{{ old('pe') }}">
+                                        <label for="efusionpleural">Efusión pleural</label>
+                                        <input type="text" class="form-control" name="efusionpleural" id="efusionpleural" value="{{ old('efusionpleural') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="pneumonia">Neumonías</label>
-                                        <input type="text" class="form-control" name="pneumonia" id="pneumonia" value="{{ old('pneumonia') }}">
+                                        <label for="neumonias">Neumonías</label>
+                                        <input type="text" class="form-control" name="neumonias" id="neumonias" value="{{ old('neumonias') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="smoking">Tabaquismo</label>
-                                        <input type="text" class="form-control" name="smoking" id="smoking" value="{{ old('smoking') }}">
+                                        <label for="tabaquismo">Tabaquismo</label>
+                                        <input type="text" class="form-control" name="tabaquismo" id="tabaquismo" value="{{ old('tabaquismo') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -286,25 +286,25 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label for="af">Años fumando</label>
-                                        <input type="number" class="form-control" name="af" min="0" value="0" id="af" value="{{ old('af') }}">
+                                        <input type="number" class="form-control" name="aniosfum" min="0" value="0" id="af" value="{{ old('aniosfum') }}">
                                     </div>
                                 </div>
                                 <div class="col-1">
                                     <div class="form-group">
                                         <label for="r">Resultado</label>
-                                        <input type="number" class="form-control" name="r" min="0" step="any" value="0" id="r" value="{{ old('r') }}">
+                                        <input type="number" class="form-control" name="result" min="0" step="any" value="0" id="r" value="{{ old('result') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="tbcc">Contacto TBC / COVID</label>
-                                        <input type="text" class="form-control" name="tbcc" id="tbcc" value="{{ old('tbcc') }}">
+                                        <label for="contactotbc">Contacto TBC / COVID</label>
+                                        <input type="text" class="form-control" name="contactotbc" id="contactotbc" value="{{ old('contactotbc') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="be">Exposición a biomasa</label>
-                                        <input type="text" class="form-control" name="be" id="be" value="{{ old('be') }}">
+                                        <label for="exposicionbiomasa">Exposición a biomasa</label>
+                                        <input type="text" class="form-control" name="exposicionbiomasa" id="exposicionbiomasa" value="{{ old('exposicionbiomasa') }}">
                                     </div>
                                 </div>
                             </div>
@@ -312,14 +312,14 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="rfc">Motivo consulta</label>
-                                        <input type="text" class="form-control" name="rfc" id="rfc" value="{{ old('rfc') }}">
+                                        <label for="motivoconsulta">Motivo consulta</label>
+                                        <input type="text" class="form-control" name="motivoconsulta" id="motivoconsulta" value="{{ old('motivoconsulta') }}">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="cs">Síntomas cardinales</label>
-                                        <input type="text" class="form-control" name="cs" id="cs" value="{{ old('cs') }}">
+                                        <label for="sintomascardinales">Síntomas cardinales</label>
+                                        <input type="text" class="form-control" name="sintomascardinales" id="sintomascardinales" value="{{ old('sintomascardinales') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -342,8 +342,8 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="ca">Relato cronológico</label>
-                                        <textarea class="form-control" cols="96" name="ca" id="ca" value="{{ old('ca') }}"></textarea>
+                                        <label for="relatocronologico">Relato cronológico</label>
+                                        <textarea class="form-control" cols="96" name="relatocronologico" id="relatocronologico" value="{{ old('relatocronologico') }}"></textarea>
                                     </div>
                                 </div>
                             </div>
