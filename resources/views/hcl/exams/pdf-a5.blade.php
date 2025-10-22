@@ -112,7 +112,7 @@
         }
 
         .prescription-list li {
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             padding: 3px;
             border-bottom: 1px solid #e0e0e0;
             page-break-inside: avoid;
@@ -126,8 +126,8 @@
             font-weight: bold;
             color: #2c3e50;
             display: block;
-            margin-bottom: 3px;
-            font-size: 14px;
+            margin-bottom: 2px;
+            font-size: 13px !important;
         }
 
         .drug-details {
@@ -150,7 +150,6 @@
             color: #2e7d32;
             margin-top: 3px;
         }
-
         /* PIE DE PÁGINA FIJADO */
         .footer {
             position: fixed;
@@ -227,7 +226,6 @@
             </div>
         </div>
     </div>
-
     <div class="content">
         <div class="patient-info">
             <p>
@@ -261,7 +259,6 @@
             </ol>
         </div>
     </div>
-
     <div class="footer">
         <div class="footer-content">
             <div class="footer-clinic">Clínica Rodriguez y Especialistas II</div>

@@ -112,7 +112,7 @@
         }
 
         .prescription-list li {
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             padding: 3px;
             border-bottom: 1px solid #e0e0e0;
             page-break-inside: avoid;
@@ -126,8 +126,8 @@
             font-weight: bold;
             color: #2c3e50;
             display: block;
-            margin-bottom: 3px;
-            font-size: 14px;
+            margin-bottom: 2px;
+            font-size: 13px !important;
         }
 
         .drug-details {
@@ -177,6 +177,7 @@
             font-size: 10px;
             opacity: 0.9;
         }
+
         /* MEJORAS PARA IMPRESIÓN */
         @media print {
             body {
@@ -202,6 +203,7 @@
                 padding-bottom: 70px;
             }
         }
+
         /* UTILIDADES */
         .text-center {
             text-align: center;
