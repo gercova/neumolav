@@ -96,43 +96,6 @@ class HistoriesController extends Controller {
 
 	public function store(HistoryValidate $request): JsonResponse {
 		$validated = $request->validated();
-		$extraDataMap = [
-			'ubigeo_extranjero'   	=> 'extranjero',
-			'cirugias'            	=> 'surgeries',
-			'transfusiones'       	=> 'transfusions',
-			'traumatismos'        	=> 'trauma',
-			'hospitalizaciones' 	=> 'hospitalizations',
-			'drogas' 				=> 'drugs',
-			'antecedentes' 			=> 'fh',
-			'estadobasal' 			=> 'bs',
-			'medicacion' 			=> 'medication',
-			'animales' 				=> 'animals',
-			'otros' 				=> 'others',
-			'asmabronquial' 		=> 'ba',
-			'epoc' 					=> 'epoc',
-			'epid' 					=> 'epid',
-			'tuberculosis' 			=> 'pt',
-			'cancerpulmon' 			=> 'lg',
-			'efusionpleural' 		=> 'pe',
-			'neumonias' 			=> 'pneumonia',
-			'tabaquismo' 			=> 'smoking',
-			'id_ct' 			    => 'tipo',
-			'cig' 					=> 'cig',
-			'aniosfum' 				=> 'af',
-			'result' 				=> 'r',
-			'contactotbc' 			=> 'tbcc',
-			'exposicionbiomasa' 	=> 'be',
-			'motivoconsulta' 		=> 'rfc',
-			'sintomascardinales' 	=> 'cs',
-			'te' 					=> 'te',
-			'fi' 					=> 'fi',
-			'c' 					=> 'c',
-			'relatocronologico' 	=> 'ca',
-		];
-	
-		$extraData = collect($extraDataMap)->mapWithKeys(fn ($input, $field) => [
-			$field => strtoupper(trim($request->input($input)))
-		])->filter()->toArray();
 	
 		$processedFields = [
 			'nombres' 			=> strtoupper($validated['nombres']),
@@ -141,7 +104,7 @@ class HistoriesController extends Controller {
 			'id_ocupacion' 		=> $this->getStringId($validated['id_ocupacion']),
 		];
 	
-		$data = array_merge($validated, $extraData, $processedFields);
+		$data = array_merge($validated, $processedFields);
 
 		DB::beginTransaction();    
         try {
@@ -153,7 +116,7 @@ class HistoriesController extends Controller {
 			return response()->json([
 				'status'    => (bool) $result,
 				'type'      => $result ? 'success' : 'error',
-				'messages'  => $result ? ($result->wasRecentlyCreated ? 'Nueva historia clínica registrada' : 'Historia clínica actualizada') : 'Error al guardar, recargue la página he intente de nuevo',
+				'messages'  => $result ? ($result->wasChanged() ? 'Historia clínica actualizada' : 'Nueva historia clínica registrada') : 'Error al guardar, recargue la página he intente de nuevo',
 				'route'  	=> route('hcl.histories.home')
 			]);
 		} catch (\Exception $e) {
