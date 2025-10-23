@@ -40,7 +40,7 @@ class RiskValidate extends FormRequest {
         ];
     }
 
-    protected function prepareForValidation(): void {
+    /*protected function prepareForValidation(): void {
         $this->merge([
             'dni'           => trim(strip_tags($this->dni)),
             'motivo'        => trim(strip_tags($this->motivo)),
@@ -50,5 +50,5 @@ class RiskValidate extends FormRequest {
             'examen_complementario' => trim(strip_tags($this->examen_complementario)),
             'riesgo_neumologico' => trim(strip_tags($this->riesgo_neumologico)),
         ]);
-    }
+    }*/
 }

@@ -35,7 +35,7 @@ class ReportValidate extends FormRequest {
         ];
     }
 
-    protected function prepareForValidation(): void {
+    /*protected function prepareForValidation(): void {
         $this->merge([
             'dni'                   => trim(strip_tags($this->dni)),
             'antecedentes'          => trim(strip_tags($this->antecedentes)),
@@ -45,5 +45,5 @@ class ReportValidate extends FormRequest {
             'sugerencia'            => trim(strip_tags($this->sugerencia)),
             'tratamiento'           => trim(strip_tags($this->tratamiento)),
         ]);
-    }
+    }*/
 }
