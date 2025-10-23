@@ -292,13 +292,3 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
 
 //Route::get('{view}', ApplicationController::class)->where('view', '(.*)')->middleware('auth');
 #Route::resource('presentations', DPController::class)->parameters(['presentations' => 'id'])->names('maintenance.presentations');
-
-#user: atencion-citas@neumotar.com
-#pass: Fy-=19XuLVNE
-
-#DB_CONNECTION=mysql
-#DB_HOST=127.0.0.1
-#DB_PORT=3306
-#DB_DATABASE=neumotar_neo_neumotar
-#DB_USERNAME=neumotar_neo
-#DB_PASSWORD=eRhsB_PiO-K3
