@@ -201,13 +201,13 @@ $(document).ready(function(){
                             <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc[0].nombres}</p>
                             <div class="card">
                                 <div class="card-body">
-                                    <strong>Motivo:</strong><textarea class="col-12" disabled>${rk.motivo}</textarea>
-                                    <strong>Antecedente:</strong><textarea class="col-12" disabled>${rk.antecedente}</textarea>
-                                    <strong>Síntomas:</strong><textarea class="col-12" disabled>${rk.sintomas}</textarea>
-                                    <strong>Examen físico:</strong><textarea class="col-12" disabled>${rk.examen_fisico}</textarea>
-                                    <strong>Examen complementario:</strong><textarea class="col-12" disabled>${rk.examen_complementario}</textarea>
-                                    <strong>Riesgo neumologico:</strong><textarea class="col-12" disabled>${rk.riesgo_neumologico}</textarea>
-                                    <strong>Sugerencia:</strong><textarea class="col-12" disabled>${rk.sugerencia}</textarea>
+                                    <strong>Motivo:</strong><p>${rk.motivo}</p>
+                                    <strong>Antecedente:</strong><p>${rk.antecedente}</p>
+                                    <strong>Síntomas:</strong><p>${rk.sintomas}</p>
+                                    <strong>Examen físico:</strong><p>${rk.examen_fisico}</p>
+                                    <strong>Examen complementario:</strong><p>${rk.examen_complementario}</p>
+                                    <strong>Riesgo neumologico:</strong><p>${rk.riesgo_neumologico}</p>
+                                    <strong>Sugerencia:</strong><p>${rk.sugerencia}</p>
                                 </div>
                             </div>
                         </div>
@@ -219,8 +219,8 @@ $(document).ready(function(){
                         <i class="bi bi-file-earmark-pdf"></i> Imprimir
                     </a>
                 `;
-                $('.modal-body').append(html);
-                $('.modal-footer').append(button);
+                $('.modal-body').empty().append(html);
+                $('.modal-footer').empty().append(button);
                 $('#modal-default').modal('show');
             }else {
                 throw new Error('Datos de la respuesta no válidos');
