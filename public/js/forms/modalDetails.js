@@ -17,61 +17,59 @@ const ModalDetails = (function() {
     const buildModalContent = (data, type) => {
         const { hc, diagnostic, medication } = data;
         const record = type == 'appointments' ? data.ap : data.ex;
-        return `
-            <div class="row">
-                <div class="col-12">
-                    <table class="table table-hover table-condensed">
+        return `<div class="row">
+            <div class="col-12">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th width="70%">DNI: ${hc[0].dni}</th>
+                            <th>Fecha: ${formatDate(record.created_at)}</th>
+                        </tr>
+                    </thead>
+                </table>
+                <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc[0].nombres}</p>
+                <p><strong>Diagnóstico:</strong></p>
+                <div class="col-12" style="float: none; margin: 0 auto;">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th width="70%">DNI: ${hc[0].dni}</th>
-                                <th>Fecha: ${formatDate(record.created_at)}</th>
+                                <th>#</th>
+                                <th>Diagnóstico</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            ${diagnostic.map((value, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td>${value.diagnostic}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
                     </table>
-                    <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc[0].nombres}</p>
-                    <p><strong>Diagnóstico:</strong></p>
-                    <div class="col-12" style="float: none; margin: 0 auto;">
-                        <table class="table table-hover">
-                            <thead>
+                </div>
+                <p><strong>Receta:</strong></p>
+                <div class="col-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fármaco</th>
+                                <th>Receta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${medication.map((value, i) => `
                                 <tr>
-                                    <th>#</th>
-                                    <th>Diagnóstico</th>
+                                    <td>${i + 1}</td>
+                                    <td>${value.drug}</td>
+                                    <td>${value.rp || ''}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                ${diagnostic.map((value, i) => `
-                                    <tr>
-                                        <td>${i + 1}</td>
-                                        <td>${value.diagnostic}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    <p><strong>Receta:</strong></p>
-                    <div class="col-12">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fármaco</th>
-                                    <th>Receta</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${medication.map((value, i) => `
-                                    <tr>
-                                        <td>${i + 1}</td>
-                                        <td>${value.drug}</td>
-                                        <td>${value.rp || ''}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        `;
+        </div>`;
     };
 
     // Función privada para construir los botones
