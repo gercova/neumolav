@@ -173,12 +173,6 @@
             margin: 0 auto 3px; /* Reducido */
         }
 
-        .doctor-signature {
-            font-size: 11px;
-            margin-top: 0;
-            line-height: 1.1; /* Reducido */
-        }
-
         /* Reducir espacios en elementos específicos */
         h3 {
             margin: 8px 0 5px 0; /* Reducido */
