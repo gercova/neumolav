@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model {
@@ -33,15 +35,15 @@ class Appointment extends Model {
             ->where('controles.id', $id)->get();
     }
 
-    public function history(){
+    public function history(): BelongsTo {
         return $this->belongsTo(History::class);
     }
 
-    public function diagnosticAppointment(){
+    public function diagnosticAppointment(): HasMany {
         return $this->hasMany(DiagnosticAppointment::class, 'id_control', 'id');
     }
 
-    public function medicationAppointment(){
+    public function medicationAppointment(): HasMany {
         return $this->hasMany(MedicationAppointment::class, 'id_control', 'id');
     }
 }

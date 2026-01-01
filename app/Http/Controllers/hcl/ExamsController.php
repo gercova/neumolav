@@ -4,6 +4,7 @@ namespace App\Http\Controllers\hcl;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ExamValidate;
+use App\Http\Resources\ImageResource;
 use App\Models\DiagnosticExam;
 use App\Models\Exam;
 use App\Models\Enterprise;
@@ -17,9 +18,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Request;
 
 class ExamsController extends Controller {
-    
+
     public function __construct() {
         $this->middleware(['auth', 'prevent.back']);
 		$this->middleware('permission:examen_acceder')->only('index');
@@ -33,34 +35,30 @@ class ExamsController extends Controller {
         return view('hcl.exams.index');
     }
 
-    public function add(string $dni): View {
+    public function add(History $hc): View {
         $te = ExamType::get();
-		$hc = History::where('dni', $dni)->get();
         return view('hcl.exams.add', compact('te', 'hc'));
     }
 
-    public function edit(int $id): View {
+    public function edit(Exam $ex): View {
 		$te = ExamType::get();
-		$hc	= Exam::seePatientByExam($id);
-		$ex = Exam::findOrFail($id);
+		$hc	= History::where('dni', $ex->dni)->get();
 		return view('hcl.exams.edit', compact('te', 'hc', 'ex'));
     }
 
-	public function seeExams(string $dni): View {
-		$hc = History::where('dni', $dni)->get();
+	public function seeExams(History $hc): View {
 		return view('hcl.exams.see', compact('hc'));
 	}
 
-	public function viewDetail(int $id): JsonResponse {
-		$data['ex'] 		= Exam::findOrFail($id);
-		$data['hc']			= Exam::seePatientByExam($id);
-		$data['diagnostic'] = DB::select('CALL getDiagnosticByExam(?)', [$id]);
-		$data['medication'] = DB::select('CALL getMedicationByExam(?)', [$id]);
-		return response()->json($data, 200);
+	public function viewDetail(Exam $ex): JsonResponse {
+		$hc			= History::where('dni', $ex->dni)->get();
+		$diagnostic = DB::select('CALL getDiagnosticByExam(?)', [$ex->id]);
+		$medication = DB::select('CALL getMedicationByExam(?)', [$ex->id]);
+		return response()->json(compact('ex', 'hc', 'diagnostic', 'medication'), 200);
 	}
 
-	public function viewExamImage(int $id): JsonResponse {
-		return response()->json(Imagen::findOrFail($id), 200);
+	public function viewExamImage(Imagen $image): JsonResponse {
+		return response()->json(ImageResource::make($image), 200);
 	}
 
     public function store(ExamValidate $request): JsonResponse {
@@ -132,7 +130,7 @@ class ExamsController extends Controller {
 				'created_at' 	=> now(),
 			];
 		}
-		
+
 		MedicationExam::insert($data);
 		return;
     }
@@ -178,7 +176,7 @@ class ExamsController extends Controller {
             }
 
 			if($user->can('informe_actualizar')){
-				$editRoute = route('hcl.exams.edit', ['id' => $item->id]);
+				$editRoute = route('hcl.exams.edit', ['ex' => $item->id]);
                 $buttons .= sprintf(
                     '<a type="button" class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>&nbsp;',
                     htmlspecialchars($editRoute, ENT_QUOTES, 'UTF-8'),
@@ -298,56 +296,51 @@ class ExamsController extends Controller {
 		return response()->json(compact('exam', 'medicacion', 'diagnostic'), 200);
 	}
 
-    public function destroy(int $id): JsonResponse {
-		$result = Exam::findOrFail($id);
-		$result->delete();
+    public function destroy(Exam $ex): JsonResponse {
+		$ex->delete();
 		return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El examen fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $ex,
+            'type'      => $ex ? 'success' : 'error',
+            'messages'  => $ex ? 'El examen fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-	public function destroyExamDiagnostics(int $id): JsonResponse {
-		$result = DiagnosticExam::findOrFail($id);
-		$result->delete();
+	public function destroyExamDiagnostics(DiagnosticExam $dx): JsonResponse {
+		$dx->delete();
 		return response()->json([
-			'status' 	=> (bool) $result,
-			'type'   	=> $result ? 'success' : 'error',
-			'messages' 	=> $result ? 'El diagnóstico fue quitado de este examen' : 'Recargue la página, algo salió mal',
+			'status' 	=> (bool) $dx,
+			'type'   	=> $dx ? 'success' : 'error',
+			'messages' 	=> $dx ? 'El diagnóstico fue quitado de este examen' : 'Recargue la página, algo salió mal',
 		], 200);
 	}
 
-	public function destroyPrescriptionDrug(int $id): JsonResponse {
-		$result = MedicationExam::findOrFail($id);
-		$result->delete();
+	public function destroyPrescriptionDrug(MedicationExam $mx): JsonResponse {
+		$mx->delete();
 		return response()->json([
-			'status' 	=> (bool) $result,
-			'type'   	=> $result ? 'success' : 'error',
-			'messages' 	=> $result ? 'El fármaco de la receta fue quitado' : 'Recargue la página, algo salió mal',
+			'status' 	=> (bool) $mx,
+			'type'   	=> $mx ? 'success' : 'error',
+			'messages' 	=> $mx ? 'El fármaco de la receta fue quitado' : 'Recargue la página, algo salió mal',
 		], 200);
 	}
 
-	public function destroyExamImage(int $id): JsonResponse {
-		$result = Imagen::findOrFail($id);
-		$result->delete();
+	public function destroyExamImage(Imagen $ix): JsonResponse {
+		$ix->delete();
 		return response()->json([
-			'status'    => (bool) $result,
-			'type'      => $result ? 'success' : 'error',
-			'messages'  => $result ? 'La imagen fue eliminada' : 'Recargue la página, algo salió mal',
+			'status'    => (bool) $ix,
+			'type'      => $ix ? 'success' : 'error',
+			'messages'  => $ix ? 'La imagen fue eliminada' : 'Recargue la página, algo salió mal',
 		], 200);
 	}
 
-	public function printPrescriptionId(int $id, string $format = 'a5') {
+	public function printPrescriptionId(Exam $ex, string $format = 'a5') {
         // Validar formato
         if (!in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
         // Obtener datos
-        $hc = DB::select('CALL getMedicalHistoryByExam(?)', [$id]);
-        $ex = Exam::findOrFail($id);
-        $dx = DB::select('CALL getDiagnosticbyExam(?)', [$id]);
-		$mx = DB::select('CALL getMedicationByExam(?)', [$id]);
+        $hc = DB::select('CALL getMedicalHistoryByExam(?)', [$ex->id]);
+        $dx = DB::select('CALL getDiagnosticbyExam(?)', [$ex->id]);
+		$mx = DB::select('CALL getMedicationByExam(?)', [$ex->id]);
         $us = Auth::user();
         $en = Enterprise::findOrFail(1);
 

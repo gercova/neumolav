@@ -60,13 +60,13 @@ class HistoriesController extends Controller {
 			$record->Permissions = $permissions; // Agregar permisos al registro
 			return $record;
 		});
-	
+
 		$jTableResult = [
 			'Result'            => 'OK',
 			'Records'           => $data,
 			'TotalRecordCount'  => $count,
 		];
-	
+
 		return response()->json($jTableResult);
 	}
 
@@ -80,33 +80,32 @@ class HistoriesController extends Controller {
         return view('hcl.histories.add', compact('dt', 'sx', 'bg', 'di', 'ms', 'tb'));
     }
 
-	public function edit($id): View {
+	public function edit(History $history): View {
 		$dt 			= DocumentType::where('id', '!=', 2)->get();
 		$sx				= Sex::get();
         $bg 			= BloodGroups::get();
         $di 			= DegreesInstruction::get();
         $ms 			= MaritalStatus::get();
         $tb 			= Smoking::get();
-		$history 		= History::findOrFail($id);
-		$occupation 	= History::getOccupationByHistoryId($id);
-		$unacimiento 	= History::getUBirthByHistoryId($id);
-		$uresidencia 	= History::getUResidenceByHistoryId($id);
+		$occupation 	= History::getOccupationByHistoryId($history->id);
+		$unacimiento 	= History::getUBirthByHistoryId($history->id);
+		$uresidencia 	= History::getUResidenceByHistoryId($history->id);
         return view('hcl.histories.edit', compact('dt', 'sx', 'bg', 'di', 'ms', 'tb', 'history', 'occupation', 'unacimiento', 'uresidencia'));
     }
 
 	public function store(HistoryValidate $request): JsonResponse {
 		$validated = $request->validated();
-	
+
 		$processedFields = [
 			'nombres' 			=> strtoupper($validated['nombres']),
 			'ubigeo_nacimiento' => isset($request->ubigeo_nacimiento) ? ($this->getStringId($request->input('ubigeo_nacimiento'))) : '220901',
 			'ubigeo_residencia' => $this->getStringId($validated['ubigeo_residencia']),
 			'id_ocupacion' 		=> $this->getStringId($validated['id_ocupacion']),
 		];
-	
+
 		$data = array_merge($validated, $processedFields);
 
-		DB::beginTransaction();    
+		DB::beginTransaction();
         try {
 			$result = History::updateOrCreate(['id' => $request->input('id')], $data);
 			if(!$result->wasChanged()){
@@ -132,15 +131,15 @@ class HistoriesController extends Controller {
 	public function searchDni(Request $request) {
 		$dni = $request->input('dni');
 		$token = 'sk_9811.oyi4O6HZhGzEXQKAyygNmMyfgbXbd4rW';
-		
+
 		try {
 			$response = Http::withHeaders([
 				'Authorization' => 'Bearer ' . $token,
 				'Accept' => 'application/json',
 			])->timeout(30)->get('https://api.decolecta.com/v1/reniec/dni?numero=' . $dni);
-			
+
 			return $response->body();
-			
+
 		} catch (\Exception $e) {
 			return response()->json([
 				'error' => 'Error en la consulta: ' . $e->getMessage()
@@ -180,7 +179,7 @@ class HistoriesController extends Controller {
 			->where('citas.id_estado', 1)
 			->orderBy('citas.created_at', 'desc') // Ordenar por fecha de creación
 			->get();
-		
+
 		$data = $results->map(function ($item, $index) {
 			$buttons = '';
 			$buttons = sprintf(
@@ -205,7 +204,7 @@ class HistoriesController extends Controller {
             	htmlspecialchars(route('hcl.risks.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para riesgo
 				htmlspecialchars(route('hcl.histories.edit', 	['id' => $item->hid]), ENT_QUOTES, 'UTF-8') // Para editar historia
 			);
-		
+
 			return [
 				$index + 1,
 				$item->dni,
@@ -223,11 +222,11 @@ class HistoriesController extends Controller {
 		]);
 	}
 
-	public function addQuotes(Request $request, int $id): JsonResponse {
+	public function addQuotes(Request $request, History $hc): JsonResponse {
 		$fecha = Carbon::now()->format('Y-m-d');
 		// Validar si ya existe cita hoy
-		$validate = DB::table('citas')->where('id_historia', $id)->where('id_estado', 1)->whereDate('created_at', $fecha)->count();
-		
+		$validate = DB::table('citas')->where('id_historia', $hc->id)->where('id_estado', 1)->whereDate('created_at', $fecha)->count();
+
 		if ($validate > 0) {
 			$response = [
 				'status' 	=> false,
@@ -237,11 +236,11 @@ class HistoriesController extends Controller {
 		} else {
 			try {
 				DB::table('citas')->insert([
-					'id_historia' 	=> $id,
+					'id_historia' 	=> $hc->id,
 					'created_at' 	=> Carbon::now(),
 					'updated_at' 	=> Carbon::now()
 				]);
-				
+
 				$response = [
 					'status' 	=> true,
 					'type' 		=> 'success',
@@ -253,10 +252,9 @@ class HistoriesController extends Controller {
 					'type' 		=> 'error',
 					'messages' 	=> 'Algo salió mal, intente de nuevo'
 				];
-				// Opcional: Log::error($e->getMessage());
 			}
 		}
-		
+
 		return response()->json($response, 200);
 	}
 
@@ -270,13 +268,12 @@ class HistoriesController extends Controller {
 		]);
 	}
 
-	public function destroy($id): JsonResponse {
-		$result = History::findOrFail($id);
-		$result->delete();
+	public function destroy(History $hc): JsonResponse {
+		$hc->delete();
 		return response()->json([
-			'status' 	=> (bool) $result,
-			'type'		=> $result ? 'success' : 'error',
-			'messages'	=> $result ? 'Se ha eliminado la historia clínica' : 'Algo salió mal, recargue la página he intente de nuevo',
+			'status' 	=> (bool) $hc,
+			'type'		=> $hc ? 'success' : 'error',
+			'messages'	=> $hc ? 'Se ha eliminado la historia clínica' : 'Algo salió mal, recargue la página he intente de nuevo',
 		], 200);
 	}
 }

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Nuevo control') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -21,7 +22,7 @@
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
-                    NUEVO CONTROL DE {{ $hc[0]['dni'].' :: '.$hc[0]['nombres'] }}
+                    NUEVO CONTROL DE {{ $hc->dni.' :: '.$hc->nombres }}
                 </div>
                 <form id="appointmentForm" method="post">
                     <div class="card-body">
@@ -40,8 +41,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>DNI :: NOMBRES</label>
-                                    <input type="text" class="form-control" value="{{ $hc[0]['dni'].' :: '.$hc[0]['nombres'] }}" readonly>
-                                    <input type="hidden" name="dni" id="dni" value="{{ $hc[0]['dni'] }}">
+                                    <input type="text" class="form-control" value="{{ $hc->dni.' :: '.$hc->nombres }}" readonly>
+                                    <input type="hidden" name="dni" id="dni" value="{{ $hc->dni }}">
                                 </div>
                             </div>
                         </div>
@@ -50,7 +51,7 @@
                             <div class="col-7">
                                 @role('administrador|especialista')
                                     <div class="row">
-                                    
+
                                         <div class="col-12">
                                             <div class="card card-info">
                                                 <div class="card-header">
@@ -84,7 +85,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>    
+                                            </div>
                                         </div>
                                         <div class="col-12">
                                             <div class="card card-info">

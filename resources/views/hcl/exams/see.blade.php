@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Ver exámenes') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -29,12 +30,12 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="alert alert-info">
-                                        <p>Menu de registros de exámenes {{ $hc[0]['id_sexo'] == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc[0]['nombres'] }}</b> identificado con DNI: <b>{{ $hc[0]['dni'] }}</b></p>
+                                        <p>Menu de registros de exámenes {{ $hc->id_sexo == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc->nombres }}</b> identificado con DNI: <b>{{ $hc->dni }}</b></p>
                                     </div>
-                                    <input type="hidden" id="dni" name="dni" value="{{ $hc[0]['dni'] }}">
+                                    <input type="hidden" id="dni" name="dni" value="{{ $hc->dni }}">
                                     @can('examen_crear')
                                         <hr>
-                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.exams.add', ['id' => $hc[0]['dni']]) }}">Agregar nuevo examen</a>
+                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.exams.add', ['hc' => $hc->dni]) }}">Agregar nuevo examen</a>
                                     @endcan
                                     <hr>
                                 </div>
@@ -56,7 +57,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>    
+                            </div>
                         </div>
                     </div>
                 </div>

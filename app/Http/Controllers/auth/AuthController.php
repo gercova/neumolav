@@ -31,16 +31,16 @@ class AuthController extends Controller {
         if (!$user) {
             RateLimiter::hit($this->throttleKey($request));
             return response()->json([
-                'status' => false,
-                'message' => 'Credenciales inválidas.' // Mensaje genérico por seguridad
+                'status'    => false,
+                'message'   => 'Credenciales inválidas.' // Mensaje genérico por seguridad
             ], 401);
         }
 
         // Verificar si el usuario está activo/baneado (si tu app tiene este campo)
         if (isset($user->is_active) && !$user->is_active) {
             return response()->json([
-                'status' => false,
-                'message' => 'Tu cuenta está desactivada.'
+                'status'    => false,
+                'message'   => 'Tu cuenta está desactivada.'
             ], 403);
         }
 
@@ -48,8 +48,8 @@ class AuthController extends Controller {
         if (!Auth::attempt($validated)) {
             RateLimiter::hit($this->throttleKey($request));
             return response()->json([
-                'status' => false,
-                'message' => 'Credenciales inválidas.'
+                'status'    => false,
+                'message'   => 'Credenciales inválidas.'
             ], 401);
         }
 
@@ -59,8 +59,8 @@ class AuthController extends Controller {
 
         // Registrar último login
         UserLastLogin::updateOrCreate(
-            ['id_user' => Auth::id()],
-            ['last_login' => now(), 'ip_address' => $request->ip()]
+            ['id_user'      => Auth::id()],
+            ['last_login'   => now(), 'ip_address' => $request->ip()]
         );
 
         // Obtener permisos

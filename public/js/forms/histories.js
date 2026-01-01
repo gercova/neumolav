@@ -57,7 +57,7 @@ $(document).ready(function(){
         ajax: {
             type: 'POST',
             url: `${API_BASE_URL}/histories/location`,
-            dataType: 'json', 
+            dataType: 'json',
             delay: 300,
             data: function(params) {
                 return {
@@ -92,7 +92,7 @@ $(document).ready(function(){
         ajax: {
             type: 'POST',
             url: `${API_BASE_URL}/histories/location`,
-            dataType: 'json', 
+            dataType: 'json',
             delay: 300,
             data: function(params) {
                 return {
@@ -127,7 +127,7 @@ $(document).ready(function(){
         ajax: {
             type: 'POST',
             url: `${API_BASE_URL}/histories/occupation`,
-            dataType: 'json', 
+            dataType: 'json',
             delay: 300,
             data: function(params) {
                 return {
@@ -265,13 +265,13 @@ $(document).ready(function(){
                     console.error(error);
                 }
             });
-            
+
             $('.edit-row').click(function(e){
                 e.preventDefault();
                 let id = $(this).attr('value');
                 window.location.href = `${API_BASE_URL}/histories/edit/${id}`;
             });
-            
+
             $('.delete-row').click(async function(e) {
                 e.preventDefault();
                 const id = $(this).attr('value');
@@ -287,7 +287,7 @@ $(document).ready(function(){
                         cancelButtonText: 'Cancelar',
                     });
                     if (result.isConfirmed) {
-                        const response = await axios.delete(`${API_BASE_URL}/histories/${id}`);    
+                        const response = await axios.delete(`${API_BASE_URL}/histories/${id}`);
                         if(response.status == 200 && response.data.status == true){
                             Swal.fire({
                                 title: 'Cargando...',
@@ -317,12 +317,12 @@ $(document).ready(function(){
                         }
                     }
                 } catch (error) {
-                    console.error(error);   
+                    console.error(error);
                 }
             });
         }
     });
-    
+
     LoadRecordsButton = $('#LoadRecordsButton');
     LoadRecordsButton.click(function (e) {
         e.preventDefault();
@@ -381,15 +381,21 @@ $(document).ready(function(){
     });
 });
 
-//Funcion calular edad
+let fechaInput = $('#fecha_nacimiento');
+if(fechaInput.val()) {
+    getAge(fechaInput.val());
+}
+
+// Funcion calular edad
 function getAge(dateString){
-    var today       = new Date(); 
+    var today       = new Date();
     var birthDate   = new Date(dateString);
     var age         = today.getFullYear() - birthDate.getFullYear();
     var m           = today.getMonth() - birthDate.getMonth();
     if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())){age--;}
     $("#age").val(age);
 }
+
 //ingresar solo numeros
 function solo_numeros(e){
 	let keynum = window.event ? window.event.keyCode : e.which;

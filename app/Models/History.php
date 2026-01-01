@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -13,9 +15,61 @@ class History extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'historias';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_td', 'dni', 'nombres', 'fecha_nacimiento', 'id_sexo', 'telefono', 'email', 'id_gs', 'ubigeo_extranjero', 'lugar_nacimiento', 'lugar_residencia', 'ubigeo_nacimiento', 'ubigeo_residencia', 'id_gi', 'ocupacion', 'id_ocupacion', 'id_estado', 'cirugias', 'transfusiones', 'traumatismos', 'hospitalizaciones', 'drogas', 'antecedentes', 'estadobasal', 'medicacion', 'animales', 'consumoagua', 'alimentacion', 'otros', 'asmabronquial', 'epoc', 'epid', 'tuberculosis', 'cancerpulmon', 'efusionpleural', 'neumonias', 'tabaquismo', 'id_ct', 'cig', 'aniosfum', 'result', 'contactotbc', 'exposicionbiomasa', 'motivoconsulta', 'sintomascardinales', 'te', 'fi', 'c', 'relatocronologico', 'estado'];
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
-    protected $casts        = [
+    protected $fillable     = [
+        'id_td',
+        'dni',
+        'nombres',
+        'fecha_nacimiento',
+        'id_sexo',
+        'telefono',
+        'email',
+        'id_gs',
+        'ubigeo_extranjero',
+        'lugar_nacimiento',
+        'lugar_residencia',
+        'ubigeo_nacimiento',
+        'ubigeo_residencia',
+        'id_gi',
+        'ocupacion',
+        'id_ocupacion',
+        'id_estado',
+        'cirugias',
+        'transfusiones',
+        'traumatismos',
+        'hospitalizaciones',
+        'drogas',
+        'antecedentes',
+        'estadobasal',
+        'medicacion',
+        'animales',
+        'consumoagua',
+        'alimentacion',
+        'otros',
+        'asmabronquial',
+        'epoc',
+        'epid',
+        'tuberculosis',
+        'cancerpulmon',
+        'efusionpleural',
+        'neumonias',
+        'tabaquismo',
+        'id_ct',
+        'cig',
+        'aniosfum',
+        'result',
+        'contactotbc',
+        'exposicionbiomasa',
+        'motivoconsulta',
+        'sintomascardinales',
+        'te',
+        'fi',
+        'c',
+        'relatocronologico',
+        'estado'
+    ];
+
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $casts = [
         'id_td'             => 'integer',
         'dni'               => 'string',
         'nombres'           => 'string',
@@ -145,79 +199,79 @@ class History extends Model {
 			->toArray();
 	}
 
-    public function documentType(){
+    public function documentType(): HasOne {
         return $this->hasOne(DocumentType::class, 'id_td', 'id');
     }
 
-    public function appointments() {
+    public function appointments(): HasMany {
         return $this->hasMany(Appointment::class, 'dni', 'dni');
     }
 
-    public function exams() {
+    public function exams(): HasMany {
         return $this->hasMany(Exam::class, 'dni', 'dni');
     }
 
-    public function reports() {
+    public function reports(): HasMany {
         return $this->hasMany(Report::class, 'dni', 'dni');
     }
 
-    public function risks(){
+    public function risks(): HasMany {
         return $this->hasMany(Risk::class, 'dni', 'dni');
     }
 
-    public function history(){
+    public function history(): HasOne {
         return $this->hasOne(History::class, 'dni', 'dni');
     }
 
-    public function diagnosticAppointment(){
+    public function diagnosticAppointment(): HasMany {
         return $this->hasMany(DiagnosticAppointment::class, 'dni', 'dni');
     }
 
-    public function diagnosticExam(){
+    public function diagnosticExam(): HasMany {
         return $this->hasMany(DiagnosticExam::class, 'dni', 'dni');
     }
 
-    public function medicationExam(){
+    public function medicationExam(): HasMany {
         return $this->hasMany(MedicationExam::class, 'dni', 'dni');
     }
 
-    public function medication_appointment(){
+    public function medication_appointment(): HasMany {
         return $this->hasMany(MedicationAppointment::class, 'dni', 'dni');
     }
 
-    public  function imagen(){
+    public  function imagen(): HasMany {
         return $this->hasMany(Imagen::class, 'dni', 'dni');
     }
 
-    public function locationBirth(){
+    public function locationBirth(): HasOne {
         return $this->hasOne(UbigeoDistrict::class, 'ubigeo_nacimiento', 'id');
     }
 
-    public function locationResidence(){
+    public function locationResidence(): HasOne {
         return $this->hasOne(UbigeoDistrict::class, 'ubigeo_residencia', 'id');
     }
 
-    public function occupation(){
+    public function occupation(): HasOne {
         return $this->hasOne(Occupation::class, 'id_occupation', 'id');
     }
 
-    public function sex(){
+    public function sex(): HasOne {
         return $this->hasOne(Sex::class, 'id_sexo', 'id');
     }
 
-    public function maritalStatus(){
+    public function maritalStatus(): HasOne {
         return $this->hasOne(MaritalStatus::class, 'id_estado', 'id');
     }
 
-    public function degreesInstruction(){
+    public function degreesInstruction(): HasOne {
         return $this->hasOne(DegreesInstruction::class, 'id_gi', 'id');
     }
 
-    public function bloodGroup(){
+    public function bloodGroup(): HasOne {
         return $this->hasOne(BloodGroups::class, 'id_gs', 'id');
     }
 
-    public function smoking(){
+    public function smoking(): HasOne {
         return $this->hasOne(Smoking::class, 'id_ct', 'id');
     }
 }

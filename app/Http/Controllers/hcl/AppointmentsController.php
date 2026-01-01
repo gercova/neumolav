@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class AppointmentsController extends Controller {
-    
+
 	protected $tableViewService;
 	public function __construct(TableViewService $tableViewService) {
 		$this->tableViewService = $tableViewService;
@@ -34,19 +34,16 @@ class AppointmentsController extends Controller {
         return view('hcl.appointments.index');
     }
 
-    public function add(string $dni): View {
-		$hc = History::where('dni', $dni)->get();
+    public function add(History $hc): View {
         return view('hcl.appointments.add', compact('hc'));
     }
 
-    public function edit(int $id): View {
-        $hc	= Appointment::seePatientByAppointment($id);
-		$ap = Appointment::findOrFail($id);
+    public function edit(Appointment $ap): View {
+        $hc	= History::where('dni', $ap->dni)->get();
 		return view('hcl.appointments.edit', compact('hc', 'ap'));
     }
 
-	public function seeAppointments(string $dni): View {
-		$hc = History::where('dni', $dni)->get();
+	public function seeAppointments(History $hc): View {
 		return view('hcl.appointments.see', compact('hc'));
 	}
 
@@ -152,7 +149,7 @@ class AppointmentsController extends Controller {
 			if($user->can('control_actualizar')){
                 $buttons .= sprintf(
                     '<a type="button" class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>&nbsp;',
-                    route('hcl.appointments.edit', ['id' => $item->id]),
+                    route('hcl.appointments.edit', ['ap' => $item->id]),
                 );
             }
 
@@ -190,7 +187,7 @@ class AppointmentsController extends Controller {
                 )
             ];
         });
-        
+
         return response()->json([
             "sEcho"					=> 1,
             "iTotalRecords"			=> $data->count(),
@@ -224,7 +221,7 @@ class AppointmentsController extends Controller {
 			"aaData"				=> $data ?? [],
 		], 200);
 	}
-	
+
 	public function listOfMedicationByAppointmentId(int $id): JsonResponse {
 		$results 		= DB::select('CALL getMedicationByAppointment(?)', [$id]);
 		$data 			= collect($results)->map(function ($item, $index) {
@@ -264,13 +261,12 @@ class AppointmentsController extends Controller {
 		return response()->json($data, 200);
 	}
 
-    public function destroy(int $id): JsonResponse {
-        $result = Appointment::findOrFail($id);
-        $result->delete();
+    public function destroy(Appointment $ap): JsonResponse {
+        $ap->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El control fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $ap,
+            'type'      => $ap ? 'success' : 'error',
+            'messages'  => $ap ? 'El control fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 

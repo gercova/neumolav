@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Nuevo examen') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -20,7 +21,7 @@
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
-                    NUEVO EXAMEN DE {{ $hc[0]['dni'].' :: '.$hc[0]['nombres'] }}
+                    NUEVO EXAMEN DE {{ $hc->dni.' :: '.$hc->nombres }}
                 </div>
                 <form id="examForm" method="post" enctype="multipart/form-data">
                     @csrf
@@ -40,8 +41,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>DNI :: NOMBRES</label>
-                                    <input type="text" class="form-control" value="{{ $hc[0]['dni'].' :: '.$hc[0]['nombres'] }}" readonly>
-                                    <input type="hidden" name="dni" value="{{ $hc[0]['dni'] }}">
+                                    <input type="text" class="form-control" value="{{ $hc->dni.' :: '.$hc->nombres }}" readonly>
+                                    <input type="hidden" name="dni" value="{{ $hc->dni }}">
                                 </div>
                             </div>
                             <div class="col-2">
@@ -152,7 +153,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>    
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="card card-info">
@@ -426,15 +427,15 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label" for="diagnostics">Buscar:</label>
                                                         <div class="col-sm-9">
-                                                            <input type="text" class="form-control form-control-sm" id="diagnostics" placeholder="Buscar por código o nombre">
+                                                            <select type="text" class="form-control form-control-sm searchDiagnostics" id="diagnostics" placeholder="Buscar por código o nombre"></select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-4">
+                                                <!--<div class="col-4">
                                                     <div class="form-group row">
                                                         <button id="btn-add-diagnostic" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar diagnóstico</button>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                                 <div class="col-12">
                                                     <table id="tableDiagnostics" class="table table-hover">
                                                         <thead>
@@ -461,13 +462,8 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label" for="drugs">Buscar:</label>
                                                         <div class="col-sm-9">
-                                                            <input type="text" class="form-control form-control-sm" id="drugs" placeholder="Buscar por descripción">
+                                                            <select type="text" class="form-control form-control-sm searchDrugs" id="drugs" placeholder="Buscar por descripción"></select>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4">
-                                                    <div class="form-group row">
-                                                        <button id="btn-add-drug" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar fármaco</button>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

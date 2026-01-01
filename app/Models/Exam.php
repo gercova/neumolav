@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Exam extends Model {
@@ -74,11 +76,23 @@ class Exam extends Model {
             ->where('examenes.id', $id)->get();
     }
 
-    public function history() {
+    public function history(): BelongsTo {
         return $this->belongsTo(History::class, 'dni');
     }
 
-    public function type() {
+    public function type(): BelongsTo {
         return $this->belongsTo(ExamType::class, 'id_tipo', 'id');
+    }
+
+    public function diagnosis(): BelongsTo {
+        return $this->belongsTo(DiagnosticExam::class, 'id_examen', 'id');
+    }
+
+    public function medication(): BelongsTo {
+        return $this->belongsTo(MedicationExam::class, 'id_examen', 'id');
+    }
+
+    public function image(): HasMany {
+        return $this->hasMany(Imagen::class, 'id_examen', 'id');
     }
 }

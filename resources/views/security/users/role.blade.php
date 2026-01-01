@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Asignar roles a usuario') <!-- Título dinámico -->
 @section('content')
 <style>
     .badge-heredado {
@@ -78,7 +79,7 @@
                                     <div class="col-md-5">
                                         <div class="card">
                                             <div class="card-header bg-info">
-                                                <h3 class="card-title">Permisos Disponibles 
+                                                <h3 class="card-title">Permisos Disponibles
                                                     <span class="badge badge-light counter-badge" id="availableCount">{{ $availablePermissions->count() }}</span>
                                                 </h3>
                                                 <div class="card-tools">
@@ -143,7 +144,7 @@
                                     <div class="col-md-5">
                                         <div class="card">
                                             <div class="card-header bg-success">
-                                                <h3 class="card-title">Permisos Asignados 
+                                                <h3 class="card-title">Permisos Asignados
                                                     <span class="badge badge-light counter-badge" id="assignedCount">{{ $directPermissions->count() }}</span>
                                                 </h3>
                                                 <div class="card-tools">
@@ -191,7 +192,7 @@
                                 <input type="hidden" name="user_id" id="userId" value="{{ $user->id }}">
                                 <!-- Input oculto para los permisos seleccionados -->
                                 <input type="hidden" name="permissions" id="selectedPermissions" value="{{ $directPermissions->pluck('id')->implode(',') }}">
-                                
+
                                 <div class="form-group mt-3 text-center">
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
                                     <a href="{{ route('security.users.home') }}" class="btn btn-danger"><i class="fas fa-times"></i> Cancelar</a>
@@ -261,13 +262,13 @@ const PermissionManager = (function() {
         selectedPermissions: '#selectedPermissions',
         form: '#assignPermissionsForm'
     };
-    
+
     // Estado de la aplicación
     let state = {
         selectedAvailable: [],
         selectedAssigned: []
     };
-    
+
     // Inicializar el módulo
     function init() {
         bindEvents();
@@ -275,7 +276,7 @@ const PermissionManager = (function() {
         updateCounters();
         setupRowSelection();
     }
-    
+
     // Vincular eventos
     function bindEvents() {
         // Agregar permiso individual
@@ -283,52 +284,52 @@ const PermissionManager = (function() {
             const permissionId = $(this).data('id');
             movePermission(permissionId, config.availableTable, config.assignedTable, 'add');
         });
-        
+
         // Quitar permiso individual
         $(document).on('click', '.remove-permission', function(e) {
             const permissionId = $(this).data('id');
             movePermission(permissionId, config.assignedTable, config.availableTable, 'remove');
         });
-        
+
         // Agregar todos los permisos
         $(config.addAllBtn).on('click', addAllPermissions);
-        
+
         // Quitar todos los permisos
         $(config.removeAllBtn).on('click', removeAllPermissions);
-        
+
         // Agregar seleccionados
         $(config.addSelectedBtn).on('click', addSelectedPermissions);
-        
+
         // Quitar seleccionados
         $(config.removeSelectedBtn).on('click', removeSelectedPermissions);
-        
+
         // Enviar formulario
         //$(config.form).on('submit', submitForm);
     }
-    
+
     // Configurar búsqueda
     function setupSearch() {
         // Búsqueda en tabla de disponibles
         $(config.availableSearch).on('keyup', function() {
             searchTable(config.availableTable, $(this).val());
         });
-        
+
         // Búsqueda en tabla de asignados
         $(config.assignedSearch).on('keyup', function() {
             searchTable(config.assignedTable, $(this).val());
         });
-        
+
         // Limpiar búsqueda disponibles
         $('#clearAvailableSearch').on('click', function() {
             $(config.availableSearch).val('').trigger('keyup');
         });
-        
+
         // Limpiar búsqueda asignados
         $('#clearAssignedSearch').on('click', function() {
             $(config.assignedSearch).val('').trigger('keyup');
         });
     }
-    
+
     // Configurar selección de filas
     function setupRowSelection() {
         // Toggle selection on row click
@@ -339,24 +340,24 @@ const PermissionManager = (function() {
             }
         });
     }
-    
+
     // Actualizar estado de selección
     function updateSelectionState() {
         state.selectedAvailable = [];
         $(`${config.availableTable} tr.highlight`).each(function() {
             state.selectedAvailable.push($(this).data('id'));
         });
-        
+
         state.selectedAssigned = [];
         $(`${config.assignedTable} tr.highlight`).each(function() {
             state.selectedAssigned.push($(this).data('id'));
         });
-        
+
         // Mostrar/ocultar botones de selección
         toggleButton(config.addSelectedBtn, state.selectedAvailable.length > 0);
         toggleButton(config.removeSelectedBtn, state.selectedAssigned.length > 0);
     }
-    
+
     // Mostrar/ocultar botón
     function toggleButton(buttonSelector, show) {
         if (show) {
@@ -365,15 +366,15 @@ const PermissionManager = (function() {
             $(buttonSelector).hide();
         }
     }
-    
+
     // Mover un permiso entre tablas
     function movePermission(permissionId, fromTable, toTable, action) {
         const row = $(`tr[data-id="${permissionId}"]`);
-        
+
         if (row.length) {
             // Destacar la fila que se está moviendo
             row.addClass('highlight');
-            
+
             // Cambiar el botón según la acción
             if (action === 'add') {
                 row.find('.add-permission')
@@ -388,24 +389,24 @@ const PermissionManager = (function() {
                     .html('<i class="fas fa-plus"></i> Agregar')
                     .data('id', permissionId);
             }
-            
+
             // Mover la fila
             row.appendTo(`${toTable} tbody`);
-            
+
             // Reordenar y actualizar
             renumberTable(fromTable);
             renumberTable(toTable);
             updateHiddenInput();
             updateCounters();
             updateSelectionState();
-            
+
             // Quitar el highlight después de un tiempo
             setTimeout(() => {
                 row.removeClass('highlight');
             }, 1000);
         }
     }
-    
+
     // Agregar todos los permisos
     function addAllPermissions() {
         $(`${config.availableTable} tbody tr`).each(function() {
@@ -413,7 +414,7 @@ const PermissionManager = (function() {
             movePermission(permissionId, config.availableTable, config.assignedTable, 'add');
         });
     }
-    
+
     // Quitar todos los permisos
     function removeAllPermissions() {
         $(`${config.assignedTable} tbody tr`).each(function() {
@@ -421,7 +422,7 @@ const PermissionManager = (function() {
             movePermission(permissionId, config.assignedTable, config.availableTable, 'remove');
         });
     }
-    
+
     // Agregar permisos seleccionados
     function addSelectedPermissions() {
         state.selectedAvailable.forEach(permissionId => {
@@ -429,7 +430,7 @@ const PermissionManager = (function() {
         });
         state.selectedAvailable = [];
     }
-    
+
     // Quitar permisos seleccionados
     function removeSelectedPermissions() {
         state.selectedAssigned.forEach(permissionId => {
@@ -437,7 +438,7 @@ const PermissionManager = (function() {
         });
         state.selectedAssigned = [];
     }
-    
+
     // Buscar en una tabla
     function searchTable(tableId, searchText) {
         const value = searchText.toLowerCase();
@@ -446,40 +447,40 @@ const PermissionManager = (function() {
             $(this).toggle(rowText.indexOf(value) > -1);
         });
     }
-    
+
     // Renumerar tabla
     function renumberTable(tableId) {
         $(`${tableId} tbody tr`).each(function(index) {
             $(this).find('td:first').text(index + 1);
         });
     }
-    
+
     // Actualizar contadores
     function updateCounters() {
         const availableCount = $(`${config.availableTable} tbody tr:visible`).length;
         const assignedCount = $(`${config.assignedTable} tbody tr:visible`).length;
-        
+
         $(config.availableCount).text(availableCount);
         $(config.assignedCount).text(assignedCount);
     }
-    
+
     // Actualizar input oculto
     function updateHiddenInput() {
         const permissionIds = [];
         $(`${config.assignedTable} tbody tr`).each(function() {
             permissionIds.push($(this).data('id'));
         });
-        
+
         $(config.selectedPermissions).val(permissionIds.join(','));
     }
-    
+
     // Enviar formulario
     /*function submitForm(e) {
         e.preventDefault();
-        
+
         const formData = $(this).serialize();
         const url = $(this).attr('action');
-        
+
         $.ajax({
             url: url,
             type: 'POST',
@@ -500,10 +501,10 @@ const PermissionManager = (function() {
     // En el submit del formulario
     $('#assignPermissionsForm').submit(async function(e) {
         e.preventDefault(); // Agrega esto para prevenir el submit normal
-        
+
         const userId = $('#userId').val();
         const selectedCount = $('#assignedPermissions tbody tr').not(':has(.text-muted)').length;
-        
+
         if (selectedCount === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -516,13 +517,13 @@ const PermissionManager = (function() {
         const submitButton = $(this).find('button[type="submit"]');
         const originalButtonText = submitButton.html();
         submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Cargando...');
-        
+
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/users/storePermission/${userId}`, 
+                `${API_BASE_URL}/users/storePermission/${userId}`,
                 $(this).serialize() // Mejor usar serialize() para forms
             );
-            
+
             if(response.data.status){
                 Swal.fire({
                     icon: 'success',
@@ -538,7 +539,7 @@ const PermissionManager = (function() {
                     text: response.data.message,
                 });
             }
-            
+
         } catch (error) {
             console.error('Error:', error);
             Swal.fire({
@@ -550,7 +551,7 @@ const PermissionManager = (function() {
             submitButton.prop('disabled', false).html(originalButtonText);
         }
     });
-    
+
     // Mostrar notificación
     function showToast(type, title, message) {
         const Toast = Swal.mixin({
@@ -564,14 +565,14 @@ const PermissionManager = (function() {
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         });
-        
+
         Toast.fire({
             icon: type,
             title: title,
             text: message
         });
     }
-    
+
     // Exponer métodos públicos
     return {
         init: init

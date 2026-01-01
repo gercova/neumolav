@@ -36,9 +36,9 @@
     <!-- Bootstrap Icon -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
     <script>
-        const API_BASE_URL = "{{ url('/') }}";
-        const NAME_ENTERPRISE = "{{ $enterprise->nombre_comercial }}";
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const API_BASE_URL      = "{{ url('/') }}";
+        const NAME_ENTERPRISE   = "{{ $enterprise->nombre_comercial }}";
+        const token             = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     </script>
     <!-- Hightcharts -->
     <script src="https://code.highcharts.com/highcharts.js"></script>

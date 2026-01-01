@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Actualizar examen') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -161,7 +162,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>    
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="card card-info">
@@ -435,13 +436,8 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label" for="diagnostics">Buscar:</label>
                                                         <div class="col-sm-9">
-                                                            <input type="text" class="form-control form-control-sm" id="diagnostics" placeholder="Buscar por código o nombre">
+                                                            <select type="text" class="form-control form-control-sm searchDiagnostics" id="diagnostics" placeholder="Buscar por código o nombre"></select>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4">
-                                                    <div class="form-group row">
-                                                        <button id="btn-add-diagnostic" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar diagnóstico</button>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -483,13 +479,8 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label" for="drugs">Buscar:</label>
                                                         <div class="col-sm-9">
-                                                            <input type="text" class="form-control form-control-sm" id="drugs" placeholder="Buscar por descripción">
+                                                            <input type="text" class="form-control form-control-sm searchDrugs" id="drugs" placeholder="Buscar por descripción">
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4">
-                                                    <div class="form-group row">
-                                                        <button id="btn-add-drug" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar fármaco</button>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

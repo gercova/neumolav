@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Examen Inicio') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">

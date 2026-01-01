@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Especialidades inicio') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -65,7 +66,7 @@
                             <select class="slim-select" id="id_ocupacion" name="id_ocupacion">
                                 <option value="">-- Seleccione --</option>
                                 @foreach ($oc as $o)
-                                    <option value="{{ $o->id }}">{{ $o->descripcion }}</option>    
+                                    <option value="{{ $o->id }}">{{ $o->descripcion }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -81,7 +82,7 @@
                     <div class="modal-footer justify-content-between">
                         <input type="hidden" name="specialtyId" id="specialtyId">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Guardar</button>
+                        <button type="submit" class="btn btn-primary"> Guardar</button>
                     </div>
                 </form>
             </div>

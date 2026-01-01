@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Categorías Inicio') <!-- Título dinámico -->
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -70,7 +71,7 @@
                     <div class="modal-footer justify-content-between">
                         <input type="hidden" name="categoryId" id="categoryId">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Guardar</button>
+                        <button type="submit" class="btn btn-primary"> Guardar</button>
                     </div>
                 </form>
             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DrugValidate;
+use App\Http\Resources\DrugResource;
 use App\Models\Category;
 use App\Models\Drug;
 use App\Models\Presentation;
@@ -13,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DrugsController extends Controller {
-    
+
     public function __construct() {
         $this->middleware('auth');
         $this->middleware('permission:farmaco_acceder')->only('index');
@@ -77,51 +78,25 @@ class DrugsController extends Controller {
         ], 200);
     }
 
-    public function show($id): JsonResponse {
-        return response()->json(Drug::findOrFail($id), 200);
+    public function show(Drug $drug): JsonResponse {
+        return response()->json(DrugResource::make($drug), 200);
     }
 
     public function search(Request $request): JsonResponse {
-        $results = Drug::selectRaw('id, UPPER(descripcion) label')->where('descripcion', 'like', '%'.$request->input('q').'%')->get()->toArray();
-        return response()->json($results, 200);
+        $drugs = Drug::where('descripcion', 'like', '%'.$request->input('q').'%')
+            ->selectRaw('id, UPPER(descripcion) text')
+            ->limit(5)
+            ->get()
+            ->toArray();
+        return response()->json($drugs);
     }
 
-    public function destroy($id): JsonResponse {
-        $result = Drug::findOrFail($id);
-        $result->delete();
+    public function destroy(Drug $drug): JsonResponse {
+        $drug->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El fármaco fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $drug,
+            'type'      => $drug ? 'success' : 'error',
+            'messages'  => $drug ? 'El fármaco fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
-
-    /*public function destroy($id) {
-        try {
-            // Buscar el fármaco y eliminarlo directamente
-            $drug = Drug::findOrFail($id);
-            $drug->delete();
-    
-            // Respuesta en caso de éxito
-            return response()->json([
-                'status' => true,
-                'type' => 'success',
-                'message' => 'El fármaco fue eliminado exitosamente.'
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Respuesta en caso de que no se encuentre el registro
-            return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'message' => 'El fármaco no fue encontrado.'
-            ], 404);
-        } catch (\Exception $e) {
-            // Respuesta en caso de error general
-            return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'message' => 'Ocurrió un error al intentar eliminar el fármaco.'
-            ], 500);
-        }
-    }*/
 }

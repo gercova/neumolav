@@ -6,9 +6,9 @@ $(document).ready(function(){
             const result = await swal.fire({
                 title: '¿Quieres salir del sistema?',
                 text: '¿Estás seguro que quieres cerrar la sesión?',
-                type: 'warning',   
-                showCancelButton: true,   
-                confirmButtonColor: "#16a085",   
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#16a085",
                 confirmButtonText: "Si, salir",
                 cancelButtonText: "No, cancelar",
                 closeOnConfirm: false,
@@ -18,116 +18,160 @@ $(document).ready(function(){
                 const response = await axios.post(`${API_BASE_URL}/logout`);
                 if(response.status == 200 && response.data.status == true){
                     window.location.href = response.data.redirect;
-                }  
+                }
             }
         } catch (error) {
-            console.error('Error al cerrar la sesión:', error);   
+            console.error('Error al cerrar la sesión:', error);
         }
     });
 
-    //Función para buscar  un diagnóstico 
-    $('#diagnostics').autocomplete({
-        source: async function(request, response){
-            try {
-                // Realizar la solicitud con Axios
-                const result = await axios.post(`${API_BASE_URL}/diagnostics/search`, {
-                    q: request.term // Término de búsqueda
-                });
-                // Procesar la respuesta y pasar los datos al autocomplete
-                response(result.data);
-            } catch (error) {
-                console.error('Error en la búsqueda:', error);
-                response([]); // Enviar un array vacío en caso de error
-            }
+    // Inicialización de Select2 para la búsqueda de diagnósticos
+    $('.searchDiagnostics').select2({
+        placeholder: "Buscar diagnóstico por código o descripción",
+        minimumInputLength: 3,
+        ajax: {
+            type: 'POST',
+            url: `${API_BASE_URL}/diagnostics/search`,
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data,
+                };
+            },
+            cache: true
         },
-        minLength: 2,
-        select: function(event, ui){
-            data = `${ui.item.id}*${ui.item.label}`;
-            $('#btn-add-diagnostic').val(data);
+        escapeMarkup: function(markup) {
+            return markup;
+        },
+        templateResult: function(data) {
+            if (data.loading) {
+                return data.text;
+            }
+            var markup = "<option value='" + data.id + "'>" + data.text + "</option>";
+            return markup;
+        },
+        templateSelection: function(data) {
+            return data.text || data.id;
         },
     });
-	//Funciones para agregar diagnostico
-    $('#btn-add-diagnostic').on('click', function(){
-        const data = $(this).val();
-        if(data != ''){
-            const diagnostic        = data.split('*');
-            const diagnosticId      = diagnostic[0];
-            const diagnosticName    = diagnostic[1];
-            if ($(`input[value="${diagnosticId}"]`).length > 0) {
-                Swal.fire('¡Duplicado!', 'El diagnóstico ya está en la lista.', 'warning');
-                $('#diagnostics').val(null);
-                return;
-            }
-            const html_data = `
-                <tr>
-                    <td><input type="hidden" name="diagnostic_id[]" value="${diagnosticId}">${diagnosticName}</td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-xs btn-remove-diagnosis" value="${diagnosticId}"><i class="bi bi-x-lg"></i></button>
-                    </td>
-                </tr>
-            `;
-            $('#tableDiagnostics tbody').append(html_data);
-            $('#diagnostics').val(null);
-            $('#btn-add-diagnostic').val(null);
-            alertNotify('success', `<h5>${diagnosticName} agregado</h5>`);
-        }else{
-            Swal.fire('¡Vacío!', 'Escribe algo', 'error');
+
+    // Funciones para agregar diagnóstico al seleccionar en Select2
+    $('#diagnostics').on('select2:select', async function (e) {
+        // Obtenemos el objeto completo del diagnóstico seleccionado
+        const selectedData = e.params.data;
+
+        // Si el elemento seleccionado no tiene ID, es un placeholder o algo incompleto, salimos.
+        if (!selectedData.id) return;
+
+        // Extraer datos del diagnóstico seleccionado
+        const id    = selectedData.id;
+        const name  = selectedData.text; // La etiqueta completa (código - descripción)
+
+        // Obtener solo la descripción para la tabla
+        const formattedName = name?.includes(' - ') ? name.split(' - ')[1] : name;
+        // --- 1. Validar Duplicado en la Lista Local (El chequeo en tu tabla HTML) ---
+        // Tu validador usa un input hidden con el ID como valor.
+        if ($(`input[name="diagnostic_id[]"][value="${id}"]`).length) {
+            Swal.fire('¡Duplicado!', 'El diagnóstico ya está en la lista local.', 'warning');
+            // Limpiar el select2 después del aviso
+            $('#diagnostics').val(null).trigger('change');
+            return;
         }
+
+        // --- 3. Insertar en la Tabla ---
+        $('#tableDiagnostics tbody').append(`
+            <tr>
+                <td><input type="hidden" name="diagnostic_id[]" value="${id}">${formattedName}</td>
+                <td><button type="button" class="btn btn-danger btn-xs btn-remove-diagnosis" value="${id}">
+                    <i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `);
+
+        // Limpiar el select2 después de la inserción exitosa
+        $('#diagnostics').val(null).trigger('change');
+        alertNotify('success', `<h5><b>${formattedName}</b> agregado</h5>`);
     });
+
     //Función para quitar las filas de la table de diagnósticos
     $(document).on('click','.btn-remove-diagnosis', function(){
         $(this).closest('tr').remove();
     });
     //Funciones para agregar diagnostico
-	$('#drugs').autocomplete({
-        source: async function (request, response) {
-            try {
-                // Realizar la solicitud con Axios
-                const result = await axios.post(`${API_BASE_URL}/drugs/search`, {
-                    q: request.term // Término de búsqueda
-                });
-                // Procesar la respuesta y pasar los datos al autocomplete
-                response(result.data);
-            } catch (error) {
-                console.error('Error en la búsqueda:', error);
-                response([]); // Enviar un array vacío en caso de error
-            }
+    // Funciones para agregar diagnostico
+    $('.searchDrugs').select2({
+        placeholder: "Buscar diagnóstico por código o descripción",
+        minimumInputLength: 3,
+        ajax: {
+            type: 'POST',
+            url: `${API_BASE_URL}/drugs/search`,
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data,
+                };
+            },
+            cache: true
         },
-        minLength: 2, // Mínimo de caracteres para iniciar la búsqueda
-        select: function (event, ui) {
-            // Lógica cuando se selecciona un elemento
-            const data = `${ui.item.id}*${ui.item.label}`;
-            $('#btn-add-drug').val(data);
-        }
-    });
-    //Función para agregar el diagnóstico a la lista
-    $('#btn-add-drug').on('click', function(){
-        data = $(this).val();
-        if(data){
-            const drug = data.split('*');
-            const drugId = drug[0];
-            const drugName = drug[1];
-            if ($(`input[value="${drugId}"]`).length > 0) {
-                Swal.fire('¡Duplicado!', 'El fármaco ya está en la lista.', 'warning');
-                $('#drugs').val(null);
-                return;
+        escapeMarkup: function(markup) {
+            return markup;
+        },
+        templateResult: function(data) {
+            if (data.loading) {
+                return data.text;
             }
-            const html_data = `
-                <tr>
-                    <td><input type="hidden" name="drug_id[]" value="${drugId}">${drugName}</td>
-                    <td><input type="text" class="form-control" name="description[]" placeholder="Ingrese descripción"></td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-xs btn-remove-drug" value="${drugId}"><i class="bi bi-x-lg"></i></button>
-                    </td>
-                </tr>
-            `;
-            $('#tableDrugs tbody').append(html_data);
-            $('#drugs').val(null);
-            $('#btn-add-drug').val(null);
-            alertNotify('success', `<h5>${drug[1]} agregado</h5>`);
-        }else{
-            Swal.fire('¡Vacío!', 'Escribe algo', 'error');
+            var markup = "<option value='" + data.id + "'>" + data.text + "</option>";
+            return markup;
+        },
+        templateSelection: function(data) {
+            return data.text || data.id;
+        },
+    });
+
+    $('#drugs').on('select2:select', async function (e) {
+        // Obtenemos el objeto completo del diagnóstico seleccionado
+        const selectedData = e.params.data;
+
+        // Si el elemento seleccionado no tiene ID, es un placeholder o algo incompleto, salimos.
+        if (!selectedData.id) return;
+
+        // Extraer datos del diagnóstico seleccionado
+        const id = selectedData.id;
+        const name = selectedData.text; // La etiqueta completa (código - descripción)
+
+        // Obtener solo la descripción para la tabla
+        const formattedName = name?.includes(' - ') ? name.split(' - ')[1] : name;
+
+        if ($(`input[name="drug_id[]"][value="${id}"]`).length) {
+            Swal.fire('¡Duplicado!', 'El fármaco ya está en la lista local.', 'warning');
+            // Limpiar el select2 después del aviso
+            $('#drugs').val(null).trigger('change');
+            return;
         }
+
+        $('#tableDrugs tbody').append(`
+            <tr>
+                <td><input type="hidden" name="drug_id[]" value="${id}">${name}</td>
+                <td><input type="text" class="form-control" name="description[]" placeholder="Ingrese descripción"></td>
+                <td><button type="button" class="btn btn-danger btn-xs btn-remove-drug" value="${id}"><i class="bi bi-trash"></i></button></td>
+            </tr>
+        `);
+
+        // Limpiar el select2 después de la inserción exitosa
+        $('#drugs').val(null).trigger('change');
+        alertNotify('success', `<h5><b>${formattedName}</b> agregado</h5>`);
     });
     //Función para quitar las filas de la table de recetas
     $(document).on('click','.btn-remove-drug', function(){
@@ -146,7 +190,7 @@ function alertNotify(icon, messages){
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         }
-    })  
+    })
     Toast.fire({
         icon: icon,
         //title: 'Operación realizada',

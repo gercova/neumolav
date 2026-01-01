@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MedicationExam extends Model
@@ -25,15 +26,15 @@ class MedicationExam extends Model
         'deleted_at'    => 'datetime'
     ];
 
-    public function history(){
+    public function history(): BelongsTo {
         return $this->belongsTo(History::class, 'dni', 'dni');
     }
 
-    public function exam(){
+    public function exam(): BelongsTo {
         return $this->belongsTo(Exam::class, 'id_examen', 'id');
     }
 
-    public function drug(){
+    public function drug(): BelongsTo {
         return $this->belongsTo(Drug::class, 'id_droga', 'id');
     }
 }

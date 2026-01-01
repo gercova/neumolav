@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Nuevo usuario') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -41,7 +42,7 @@
                                             <select class="form-control" id="role_id" name="role_id">
                                                 <option value="">-- Seleccione --</option>
                                                 @foreach ($rl as $r)
-                                                    <option value="{{ $r->id }}" {{ old('role_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> 
+                                                    <option value="{{ $r->id }}" {{ old('role_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -52,7 +53,7 @@
                                             <select class="form-control" id="specialty" name="specialty">
                                                 <option value="">-- Seleccione --</option>
                                                 @foreach ($es as $e)
-                                                    <option value="{{ $e->id }}" {{ old('specialty') == $e->id ? 'selected' : '' }}>{{ $e->descripcion }}</option> 
+                                                    <option value="{{ $e->id }}" {{ old('specialty') == $e->id ? 'selected' : '' }}>{{ $e->descripcion }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -84,7 +85,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Guardar</button>
+                            <button type="submit" class="btn btn-primary"> Guardar</button>
                         </div>
                     </div>
                 </form>

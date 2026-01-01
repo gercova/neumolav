@@ -9,7 +9,7 @@ $(document).ready(function(){
         imgId: $('#image_data').DataTable({ ajax: `${API_BASE_URL}/exams/listImg/${examId}`, searching: false, bLengthChange: false, processing: true }),
         //Receta por examen
         examId: $('#medication_data').DataTable({ ajax: `${API_BASE_URL}/exams/listMedication/${examId}`, searching: false, bLengthChange: false, processing: true }),
-        //Tabla de pdf 
+        //Tabla de pdf
         documentId: $('#document_data').DataTable({ ajax: `${API_BASE_URL}/listDocument/${examId}`, searching: false, bLengthChange: false, processing: true }),
     };
     //Eliminar un registro
@@ -100,7 +100,7 @@ $(document).ready(function(){
                             </button>&nbsp;
                         `;
                     }
-                    
+
                     return buttons;
                 }
             },
@@ -111,7 +111,7 @@ $(document).ready(function(){
                 const id = $(this).attr('value');
                 window.location.href = `${API_BASE_URL}/exams/add/${id}`;
             });
-            
+
             $('.view-row').click(function(e) {
                 e.preventDefault();
                 const id = $(this).attr('value');
@@ -258,7 +258,7 @@ $(document).ready(function(){
                 });
             }
         } catch (error) {
-            console.error(error);   
+            console.error(error);
         }
     });
     //añadir campo imagen / fecha / botón remover

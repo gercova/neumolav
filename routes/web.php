@@ -112,42 +112,42 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
      * HISTORIAS
      */
     Route::middleware(['permission:historias'])->group(function(){
-        Route::get('/histories/home',                       [HistoriesController::class, 'index'])->name('hcl.histories.home');
-        Route::get('/histories/add',                        [HistoriesController::class, 'add'])->name('hcl.histories.add');
-        Route::get('/histories/edit/{id}',                  [HistoriesController::class, 'edit'])->name('hcl.histories.edit');
-        Route::post('/histories/location',                  [HistoriesController::class, 'searchLocation']);
-        Route::post('/histories/occupation',                [HistoriesController::class, 'searchOccupation']);
-        Route::post('/histories/dni',                       [HistoriesController::class, 'searchDni']);
-        Route::post('/histories/store',                     [HistoriesController::class, 'store']);
-        Route::post('/histories/list',                      [HistoriesController::class, 'list']);
-        Route::delete('/histories/{id}',                    [HistoriesController::class, 'destroy']);
+        Route::get('/histories/home',           [HistoriesController::class, 'index'])->name('hcl.histories.home');
+        Route::get('/histories/add',            [HistoriesController::class, 'add'])->name('hcl.histories.add');
+        Route::get('/histories/edit/{history}', [HistoriesController::class, 'edit'])->name('hcl.histories.edit');
+        Route::post('/histories/location',      [HistoriesController::class, 'searchLocation']);
+        Route::post('/histories/occupation',    [HistoriesController::class, 'searchOccupation']);
+        Route::post('/histories/dni',           [HistoriesController::class, 'searchDni']);
+        Route::post('/histories/store',         [HistoriesController::class, 'store']);
+        Route::post('/histories/list',          [HistoriesController::class, 'list']);
+        Route::delete('/histories/{hc}',        [HistoriesController::class, 'destroy']);
     });
     /**
      * EXÁMENES
      */
     Route::middleware(['permission:examenes'])->group(function(){
-        Route::get('/exams/home',                           [ExamsController::class, 'index'])->name('hcl.exams.home');
-        Route::get('/exams/add/{id}',                       [ExamsController::class, 'add'])->name('hcl.exams.add');
-        Route::get('/exams/edit/{id}',                      [ExamsController::class, 'edit'])->name('hcl.exams.edit');
-        Route::get('/exams/see/{id}',                       [ExamsController::class, 'seeExams'])->name('hcl.exams.see');
-        Route::post('/exams/store',                         [ExamsController::class, 'store']);
-        Route::get('/exams/viewDetail/{id}',                [ExamsController::class, 'viewDetail']);
-        Route::get('/exams/viewImg/{id}',                   [ExamsController::class, 'viewExamImage']);
-        Route::get('/exams/list/{id}',                      [ExamsController::class, 'listExams']);
-        Route::get('/exams/listDiagnostic/{id}',            [ExamsController::class, 'listOfDiagnosticsByExamId']);
-        Route::get('/exams/listMedication/{id}',            [ExamsController::class, 'listOfMedicationByExamId']);
-        Route::get('/exams/listImg/{id}',                   [ExamsController::class, 'listOfImagesByExamId']);
-        Route::get('/exams/print/{id}/{format}',            [ExamsController::class, 'printPrescriptionId'])->name('hcl.exams.print');
-        Route::delete('/exams/delete/{id}',                 [ExamsController::class, 'destroy']);
-        Route::delete('/ex-dx/delete/{id}',                 [ExamsController::class, 'destroyExamDiagnostics']);
-        Route::delete('/ex-mx/delete/{id}',                 [ExamsController::class, 'destroyPrescriptionDrug']);
-        Route::delete('/ex-img/delete/{id}',                [ExamsController::class, 'destroyExamImage']);
+        Route::get('/exams/home',                   [ExamsController::class, 'index'])->name('hcl.exams.home');
+        Route::get('/exams/add/{hc}',               [ExamsController::class, 'add'])->name('hcl.exams.add');
+        Route::get('/exams/edit/{ex}',              [ExamsController::class, 'edit'])->name('hcl.exams.edit');
+        Route::get('/exams/see/{hc}',               [ExamsController::class, 'seeExams'])->name('hcl.exams.see');
+        Route::post('/exams/store',                 [ExamsController::class, 'store']);
+        Route::get('/exams/viewDetail/{ex}',        [ExamsController::class, 'viewDetail']);
+        Route::get('/exams/viewImg/{image}',        [ExamsController::class, 'viewExamImage']);
+        Route::get('/exams/list/{id}',              [ExamsController::class, 'listExams']);
+        Route::get('/exams/listDiagnostic/{exam}',  [ExamsController::class, 'listOfDiagnosticsByExamId']);
+        Route::get('/exams/listMedication/{exam}',  [ExamsController::class, 'listOfMedicationByExamId']);
+        Route::get('/exams/listImg/{id}',           [ExamsController::class, 'listOfImagesByExamId']);
+        Route::get('/exams/print/{ex}/{format}',    [ExamsController::class, 'printPrescriptionId'])->name('hcl.exams.print');
+        Route::delete('/exams/delete/{ex}',         [ExamsController::class, 'destroy']);
+        Route::delete('/ex-dx/delete/{dx}',         [ExamsController::class, 'destroyExamDiagnostics']);
+        Route::delete('/ex-mx/delete/{mx}',         [ExamsController::class, 'destroyPrescriptionDrug']);
+        Route::delete('/ex-img/delete/{ix}',        [ExamsController::class, 'destroyExamImage']);
     });
     /**
      * CONTROLES
      */
     Route::middleware(['permission:controles'])->group(function(){
-        Route::get('/appointments/see/{id}',                [AppointmentsController::class, 'seeAppointments'])->name('hcl.appointments.see');
+        Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'seeAppointments'])->name('hcl.appointments.see');
         Route::get('/appointments/viewDetail/{id}',         [AppointmentsController::class, 'viewDetail']);
         Route::get('/appointments/list/{id}',               [AppointmentsController::class, 'listAppointments']);
         Route::get('/appointments/listAppointments/{id}',   [AppointmentsController::class, 'listAppointmentsByDNI']);
@@ -157,8 +157,8 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/appointments/print/{id}/{format}',     [AppointmentsController::class, 'printPrescriptionId'])->name('hcl.appointments.print');
         Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
         Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
-        Route::get('/appointments/add/{id}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
-        Route::get('/appointments/edit/{id}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
+        Route::get('/appointments/add/{hc}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
+        Route::get('/appointments/edit/{ap}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
         Route::delete('/appointments/delete/{id}',          [AppointmentsController::class, 'destroy']);
         Route::delete('/ap-dx/delete/{id}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
         Route::delete('/ap-mx/delete/{id}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
@@ -219,12 +219,12 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
      * DROGA
      */
     Route::middleware(['permission:farmacos'])->group(function(){
-        Route::get('/drugs',                                [DrugsController::class, 'index'])->name('maintenance.drugs');
-        Route::get('/drugs/list',                           [DrugsController::class, 'list']);
-        Route::get('/drugs/{id}',                           [DrugsController::class, 'show']);
-        Route::post('/drugs/store',                         [DrugsController::class, 'store']);
-        Route::post('/drugs/search',                        [DrugsController::class, 'search']);
-        Route::delete('/drugs/delete/{id}',                 [DrugsController::class, 'destroy']);
+        Route::get('/drugs',                    [DrugsController::class, 'index'])->name('maintenance.drugs');
+        Route::get('/drugs/list',               [DrugsController::class, 'list']);
+        Route::get('/drugs/{drug}',             [DrugsController::class, 'show']);
+        Route::post('/drugs/store',             [DrugsController::class, 'store']);
+        Route::post('/drugs/search',            [DrugsController::class, 'search']);
+        Route::delete('/drugs/delete/{drug}',   [DrugsController::class, 'destroy']);
     });
     /**
      * DIAGNOSTÍCO
@@ -232,11 +232,11 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
     Route::middleware(['permission:diagnosticos'])->group(function(){
         Route::get('/diagnostics',                          [DiagnosticsController::class, 'index'])->name('maintenance.diagnostics');
         Route::get('/diagnostics/list',                     [DiagnosticsController::class, 'list']);
-        Route::get('/diagnostics/{id}',                     [DiagnosticsController::class, 'show']);
+        Route::get('/diagnostics/{diagnostic}',             [DiagnosticsController::class, 'show']);
         Route::get('/diagnostics/autocomplete',             [DiagnosticsController::class, 'advancedSearch']);
         Route::post('/diagnostics/store',                   [DiagnosticsController::class, 'store']);
         Route::post('/diagnostics/search',                  [DiagnosticsController::class, 'search']);
-        Route::delete('/diagnostics/delete/{id}',           [DiagnosticsController::class, 'destroy']);
+        Route::delete('/diagnostics/delete/{diagnostic}',   [DiagnosticsController::class, 'destroy']);
     });
     /**
      * OCUPACIONES

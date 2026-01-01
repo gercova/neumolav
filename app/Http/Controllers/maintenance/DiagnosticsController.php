@@ -4,7 +4,9 @@ namespace App\Http\Controllers\maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DiagnosticValidate;
+use App\Http\Resources\DiagnosticResource;
 use App\Models\Diagnostic;
+use App\Models\Drug;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -71,12 +73,15 @@ class DiagnosticsController extends Controller {
         ], 200);
     }
 
-    public function show($id): JsonResponse {
-        return response()->json(Diagnostic::findOrFail($id), 200);
+    public function show(Diagnostic $diagnostic): JsonResponse {
+        return response()->json(DiagnosticResource::make($diagnostic), 200);
     }
 
     public function search(Request $request): JsonResponse {
-        $results = Diagnostic::selectRaw('id, UPPER(descripcion) label')->where('descripcion', 'LIKE', '%'.$request->input('q').'%')->get()->toArray();
+        $results = Diagnostic::selectRaw('id, UPPER(descripcion) text')
+            ->where('descripcion', 'like', '%'.$request->input('q').'%')
+            ->get()
+            ->toArray();
         return response()->json($results, 200);
     }
 
@@ -88,13 +93,12 @@ class DiagnosticsController extends Controller {
         return response()->json($keywords);
     }
 
-    public function destroy($id): JsonResponse {
-        $result = Diagnostic::findOrFail($id);
-        $result->delete();
+    public function destroy(Diagnostic $diagnostic): JsonResponse {
+        $diagnostic->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $diagnostic,
+            'type'      => $diagnostic ? 'success' : 'error',
+            'messages'  => $diagnostic ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 }

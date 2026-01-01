@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', config('global.site_name').' - Actualizar usuario') <!-- Título dinámico -->
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
@@ -63,7 +64,7 @@
                                                         <select class="form-control" id="role_id" name="role_id">
                                                             <option value="">-- Seleccione --</option>
                                                             @foreach ($rl as $r)
-                                                                <option value="{{ $r->id }}" {{ $ur[0]->role_id == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> 
+                                                                <option value="{{ $r->id }}" {{ $ur[0]->role_id == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -74,7 +75,7 @@
                                                         <select class="form-control" id="specialty" name="specialty">
                                                             <option value="">-- Seleccione --</option>
                                                             @foreach ($es as $e)
-                                                                <option value="{{ $e->id }}" {{ $us->specialty == $e->id ? 'selected' : '' }}>{{ $e->descripcion }}</option> 
+                                                                <option value="{{ $e->id }}" {{ $us->specialty == $e->id ? 'selected' : '' }}>{{ $e->descripcion }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -115,8 +116,8 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="alert alert-warning" role="alert">
-                                                        <i class="bi bi-exclamation-triangle-fill"></i> 
-                                                        <strong>Advertencia:</strong> 
+                                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                                        <strong>Advertencia:</strong>
                                                         Al cambiar la contraseña, se perderá el acceso al sistema. Por favor, asegúrese de recordar la nueva contraseña.
                                                     </div>
                                                     <label for="password">Nueva contraseña: </label>
