@@ -4,6 +4,7 @@ namespace App\Http\Controllers\maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryValidate;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,7 @@ class CategoriesController extends Controller {
         $this->middleware('permission:categoria_ver')->only('list', 'show');
         $this->middleware('permission:categoria_borrar')->only('destroy');
     }
-    
+
     public function index(): View {
         return view('maintenance.categories.index');
     }
@@ -70,17 +71,16 @@ class CategoriesController extends Controller {
         ], 200);
     }
 
-    public function show($id){
-        return response()->json(Category::findOrFail($id), 200);
+    public function show(Category $cat){
+        return response()->json(CategoryResource::make($cat), 200);
     }
 
-    public function destroy($id) : JsonResponse {
-        $result = Category::findOrFail($id);
-        $result->delete();
+    public function destroy(Category $cat) : JsonResponse {
+        $cat->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'La categoría fue eliminada' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $cat,
+            'type'      => $cat ? 'success' : 'error',
+            'messages'  => $cat ? 'La categoría fue eliminada' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 }

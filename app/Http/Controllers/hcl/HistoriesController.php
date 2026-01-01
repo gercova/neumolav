@@ -199,10 +199,10 @@ class HistoriesController extends Controller {
 					</div>
 				</div>',
 				htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8'),  // Para el botón update
-            	htmlspecialchars(route('hcl.exams.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para examen
+            	htmlspecialchars(route('hcl.exams.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para examen
             	htmlspecialchars(route('hcl.reports.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para informe
             	htmlspecialchars(route('hcl.risks.add', 		['id' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para riesgo
-				htmlspecialchars(route('hcl.histories.edit', 	['id' => $item->hid]), ENT_QUOTES, 'UTF-8') // Para editar historia
+				htmlspecialchars(route('hcl.histories.edit', 	['history' => $item->hid]), ENT_QUOTES, 'UTF-8') // Para editar historia
 			);
 
 			return [

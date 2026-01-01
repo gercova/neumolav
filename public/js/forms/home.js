@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    
+
     $("#quotes_data").DataTable({ ajax: `${API_BASE_URL}/qoutes`, processing: true, order: []})
 
     $(document).on('click', '.changeStatus', async function(e) {

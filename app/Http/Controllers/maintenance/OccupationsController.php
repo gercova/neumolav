@@ -4,6 +4,7 @@ namespace App\Http\Controllers\maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OccupationValidate;
+use App\Http\Resources\OccupationResource;
 use App\Models\Occupation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -44,7 +45,7 @@ class OccupationsController extends Controller {
                     htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
-            
+
             return [
                 $index + 1,
                 $item->descripcion,
@@ -77,17 +78,16 @@ class OccupationsController extends Controller {
         return response()->json($occupations);
     }
 
-    public function show($id): JsonResponse {
-        return response()->json(Occupation::findOrFail($id), 200);
+    public function show(Occupation $oc): JsonResponse {
+        return response()->json(OccupationResource::make($oc), 200);
     }
 
-    public function destroy($id): JsonResponse {
-        $result = Occupation::findOrFail($id);
-        $result->delete();
+    public function destroy(Occupation $oc): JsonResponse {
+        $oc->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'La ocupación ha sido eliminada' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $oc,
+            'type'      => $oc ? 'success' : 'error',
+            'messages'  => $oc ? 'La ocupación ha sido eliminada' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 }
