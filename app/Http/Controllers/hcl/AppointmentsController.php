@@ -39,7 +39,7 @@ class AppointmentsController extends Controller {
     }
 
     public function edit(Appointment $ap): View {
-        $hc	= History::where('dni', $ap->dni)->get();
+        $hc	= History::where('id', $ap->id_historia)->get();
 		return view('hcl.appointments.edit', compact('hc', 'ap'));
     }
 
@@ -59,11 +59,10 @@ class AppointmentsController extends Controller {
         return $this->tableViewService->generateTableView($table, $dni);
     }
 
-    public function viewDetail(int $id): JsonResponse {
-		$ap 		= Appointment::findOrFail($id);
-		$hc			= Appointment::seePatientByAppointment($id);
-		$diagnostic = DB::select('CALL getDiagnosticByAppointment(?)', [$id]);
-		$medication = DB::select('CALL getMedicationByAppointment(?)', [$id]);
+    public function viewDetail(Appointment $ap): JsonResponse {
+		$hc			= History::where('id', $ap->id_historia)->get();
+		$diagnostic = DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
+		$medication = DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
 		return response()->json(compact('ap', 'hc', 'diagnostic', 'medication'), 200);
 	}
 
@@ -136,8 +135,8 @@ class AppointmentsController extends Controller {
 		return;
     }
 
-    public function listAppointments(string $dni): JsonResponse {
-		$results 	= DB::select('CALL getAppointmentsByMedicalHistory(?)', [$dni]);
+    public function listAppointments(Appointment $ap): JsonResponse {
+		$results 	= DB::select('CALL PA_getAppointmentsByMedicalHistory(?)', [$ap->id_historia]);
 		$data 		= collect($results)->map(function ($item, $index) {
 			$user   	= auth()->user();
 			$buttons 	= '';
@@ -178,8 +177,8 @@ class AppointmentsController extends Controller {
  		], 200);
 	}
 
-	public function listAppointmentsByDNI(string $dni): JsonResponse {
-        $results    = DB::select('CALL getAppointmentsByDNI(?)', [$dni]);
+	public function listAppointmentsByHC(Appointment $ap): JsonResponse {
+        $results    = DB::select('CALL PA_getAppointmentsByHC(?)', [$ap->id_historia]);
         $data       = collect($results)->map(function ($item, $index) {
             return [
                 $index + 1,
@@ -199,8 +198,8 @@ class AppointmentsController extends Controller {
         ], 200);
     }
 
-    public function listOfDiagnosticsByAppointmentId(int $id): JsonResponse {
-		$results    	= DB::select('CALL getDiagnosticByAppointment(?)', [$id]);
+    public function listOfDiagnosticsByApp(Appointment $ap): JsonResponse {
+		$results    	= DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
 		$data       	= collect($results)->map(function ($item, $index) {
 			$user 		= auth()->user();
 			$buttons 	= '';
@@ -225,8 +224,8 @@ class AppointmentsController extends Controller {
 		], 200);
 	}
 
-	public function listOfMedicationByAppointmentId(int $id): JsonResponse {
-		$results 		= DB::select('CALL getMedicationByAppointment(?)', [$id]);
+	public function listOfMedicationByApp(Appointment $ap): JsonResponse {
+		$results 		= DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
 		$data 			= collect($results)->map(function ($item, $index) {
 			$user 		= auth()->user();
 			$buttons 	= '';
@@ -273,36 +272,33 @@ class AppointmentsController extends Controller {
         ], 200);
     }
 
-    public function destroyDiagnosticAppointment(int $id): JsonResponse {
-        $result = DiagnosticAppointment::findOrFail($id);
-        $result->delete();
+    public function destroyDiagnosticAppointment(DiagnosticAppointment $dx): JsonResponse {
+        $dx->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $dx,
+            'type'      => $dx ? 'success' : 'error',
+            'messages'  => $dx ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyMedicationAppointment(int $id): JsonResponse {
-        $result = MedicationAppointment::findOrFail($id);
-        $result->delete();
+    public function destroyMedicationAppointment(MedicationAppointment $mx): JsonResponse {
+        $mx->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $mx,
+            'type'      => $mx ? 'success' : 'error',
+            'messages'  => $mx ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-	public function printPrescriptionId(int $id, string $format = 'a5') {
+	public function printPrescriptionId(Appointment $ap, string $format = 'a5') {
         // Validar formato
         if (!in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
         // Obtener datos
-        $hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$id]);
-        $ap = Appointment::findOrFail($id);
-        $dx = DB::select('CALL getDiagnosticbyAppointment(?)', [$id]);
-        $mx = DB::select('CALL getMedicationByAppointment(?)', [$id]);
+        $hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$ap->id]);
+        $dx = DB::select('CALL getDiagnosticbyAppointment(?)', [$ap->id]);
+        $mx = DB::select('CALL getMedicationByAppointment(?)', [$ap->id]);
         $us = Auth::user();
         $en = Enterprise::findOrFail(1);
         // Configurar PDF según formato
@@ -336,7 +332,7 @@ class AppointmentsController extends Controller {
                 ]);
         }
 
-        $filename = "receta-medica-control-{$id}-" . strtoupper($format) . ".pdf";
+        $filename = "receta-medica-control-{$ap->id}-" . strtoupper($format) . ".pdf";
         return $pdf->stream($filename);
     }
 }
