@@ -1,20 +1,4 @@
 $(document).ready(function(){
-    //validar dni
-    /*$("#dni").change(function() {
-        let dni = $(this).val();
-        let regex = /^\d{8}$/;
-        if (!regex.test(dni)) {
-            swal.fire({
-                icon: 'error',
-                title: 'Ingrese un número de 8 dígitos',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar',
-            });
-            $('#dni').addClass('is-invalid').focus();
-        }else{
-            $('#dni').removeClass('is-invalid');
-        }
-    });*/
     //tipear número DNI
     $('#dni').change(function(){
         let doc_type    = $('#id_td').val();
@@ -186,7 +170,7 @@ $(document).ready(function(){
                 width: '8%' ,
             },
             dni: {
-                key: true,
+                key: false,
                 title: 'DNI',
                 width: '6%' ,
             },

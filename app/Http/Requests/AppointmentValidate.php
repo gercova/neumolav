@@ -12,6 +12,7 @@ class AppointmentValidate extends FormRequest {
 
     public function rules(): array {
         return [
+            'id_historia'               => 'required',
             'dni'                       => 'required',
             'sintomas'                  => 'required|string',
             'diagnostico'               => 'nullable|string',
@@ -23,6 +24,7 @@ class AppointmentValidate extends FormRequest {
 
     public function messages(): array {
         return [
+            'id_historia.required'      => 'El campo Historia es requerido',
             'dni.required'              => 'El campo DNI es requerido',
             'sintomas.required'         => 'El campo Síntomas es requerido',
             'plan.required'             => 'El campo Plan es requerido',
@@ -32,6 +34,7 @@ class AppointmentValidate extends FormRequest {
 
     protected function prepareForValidation(): void {
         $this->merge([
+            'id_historia'               => trim(strip_tags($this->id_historia)),
             'dni'                       => trim(strip_tags($this->dni)),
             'sintomas'                  => trim(strip_tags($this->sintomas)),
             'diagnostico'               => trim(strip_tags($this->diagnostico)),

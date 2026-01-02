@@ -45,7 +45,7 @@ $(document).ready(function(){
                 width: '6%' ,
             },
             dni: {
-                key: true,
+                key: false,
                 title: 'DNI',
                 width: '6%' ,
 
@@ -79,12 +79,12 @@ $(document).ready(function(){
                     let buttons = '';
 
                     if (permissions.view_ctrl) {
-                        buttons += `<button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
+                        buttons += `<button type="button" class="btn btn-info view-row btn-xs" value="${data.record.id}">
                             <i class="bi bi-folder"></i> Ver
                         </button>&nbsp;`;
                     }
                     if (permissions.add_ctrl) {
-                        buttons += `<button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
+                        buttons += `<button type="button" class="btn btn-success add-new btn-xs" value="${data.record.id}">
                             <i class="bi bi-plus-square-fill"></i> Nuevo
                         </button>`;
                     }

@@ -87,18 +87,14 @@ $(document).ready(function(){
                     const permissions = data.record.Permissions || {}; // Obtenemos los permisos del registro
                     let buttons = '';
                     if (permissions.view_exm) {
-                        buttons += `
-                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
-                                <i class="bi bi-folder"></i> Ver
-                            </button>&nbsp;
-                        `;
+                        buttons += `<button type="button" class="btn btn-info view-row btn-xs" value="${data.record.id}">
+                            <i class="bi bi-folder"></i> Ver
+                        </button>&nbsp;`;
                     }
                     if (permissions.add_exm) {
-                        buttons += `
-                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
-                                <i class="bi bi-plus-square-fill"></i> Nuevo
-                            </button>&nbsp;
-                        `;
+                        buttons += `<button type="button" class="btn btn-success add-new btn-xs" value="${data.record.id}">
+                            <i class="bi bi-plus-square-fill"></i> Nuevo
+                        </button>&nbsp;`;
                     }
 
                     return buttons;
@@ -108,14 +104,14 @@ $(document).ready(function(){
         recordsLoaded: (event, data) => {
             $('.add-new').click(function(e){
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/exams/add/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/exams/add/${hc}`;
             });
 
             $('.view-row').click(function(e) {
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/exams/see/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/exams/see/${hc}`;
             });
         }
     });

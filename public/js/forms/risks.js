@@ -34,7 +34,7 @@ $(document).ready(function(){
                 width: '6%' ,
             },
             dni: {
-                key: true,
+                key: false,
                 title: 'DNI',
                 width: '6%' ,
             },
@@ -67,19 +67,19 @@ $(document).ready(function(){
 
                     if (permissions.view_rsk) {
                         buttons += `
-                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
+                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.id}">
                                 <i class="bi bi-folder"></i> Ver
                             </button>&nbsp;
                         `;
                     }
                     if (permissions.add_rsk) {
                         buttons += `
-                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
+                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.id}">
                                 <i class="bi bi-plus-square-fill"></i> Nuevo
                             </button>
                         `;
                     }
-                    
+
                     return buttons;
                 }
             },
@@ -87,14 +87,14 @@ $(document).ready(function(){
         recordsLoaded: (event, data) => {
             $('.add-new').click(function(e){
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/risks/add/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/risks/add/${hc}`;
             });
-            
+
             $('.view-row').click(function(e) {
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/risks/see/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/risks/see/${hc}`;
             });
         }
     });
@@ -119,7 +119,7 @@ $(document).ready(function(){
                 $('#riskForm').trigger('reset');
                 $('.text-danger').remove();
                 $('.form-group').removeClass('is-invalid is-valid');
-            
+
                 const result = await Swal.fire({
                     title: 'Guardando información',
                     allowEscapeKey: false,
@@ -139,7 +139,7 @@ $(document).ready(function(){
                     await Swal.fire({
                         icon: response.data.type || 'success',
                         title: response.data.messages || 'Información guardada correctamente',
-                        html: response.data.route_print ? 
+                        html: response.data.route_print ?
                             `<a class="btn btn-info" href="${response.data.route_print}" target="_blank">
                                 <i class="bi bi-file-earmark-pdf"></i> Imprimir informe
                             </a>` : '',

@@ -92,15 +92,11 @@ class History extends Model {
 
     public function getAllHistories($startIndex, $pageSize, $itemSearch) {
         // Construir la consulta base
-        $query = DB::table($this->tableVha)
-            ->where('dni', 'LIKE', "%{$itemSearch}%")
-            ->orWhere('nombres', 'LIKE', "%{$itemSearch}%");
+        $query = DB::table($this->tableVha)->where('dni', 'LIKE', "%{$itemSearch}%")->orWhere('nombres', 'LIKE', "%{$itemSearch}%");
         // Contar solo los registros que coinciden con el filtro
         $count = $query->count();
         // Obtener los resultados paginados
-        $results = $query->offset($startIndex)
-            ->limit($pageSize)
-            ->get();
+        $results = $query->offset($startIndex)->limit($pageSize)->get();
         return [$results, $count];
     }
 

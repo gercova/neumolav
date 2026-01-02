@@ -78,17 +78,18 @@ class AppointmentsController extends Controller {
         try {
             $appointment    = Appointment::updateOrCreate(['id' => $id], $validated);
             $id 	        = $appointment->id;
+            $historia       = $appointment->id_historia;
             $dni 	        = $appointment->dni;
             // Guardar diagnóstico, medicación y subir imagen si existen
-            if ($diagnostics) 	$this->saveDiagnostic($id, $dni, $diagnostics);
-            if ($drugs) 		$this->saveMedication($id, $dni, $drugs, $descriptions);
+            if ($diagnostics) 	$this->saveDiagnostic($id, $historia, $dni, $diagnostics);
+            if ($drugs) 		$this->saveMedication($id, $historia, $dni, $drugs, $descriptions);
 
             DB::commit();
             return response()->json([
                 'status' 	=> true,
                 'type'		=> 'success',
                 'messages' 	=> empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
-                'route' 	=> route('hcl.appointments.see', $dni),
+                'route' 	=> route('hcl.appointments.see', $appointment),
                 'print_a5' 	=> route('hcl.appointments.print', [$id, 'a5']),
 				'print_a4' 	=> route('hcl.appointments.print', [$id, 'a4']),
             ]);
@@ -102,10 +103,11 @@ class AppointmentsController extends Controller {
         }
     }
 
-    protected function saveDiagnostic($id, $dni, $diagnosticId) {
-        $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $dni) {
+    protected function saveDiagnostic($id, $historia, $dni, $diagnosticId) {
+        $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $historia, $dni) {
 			return [
 				'id_control'    	=> $id,
+                'id_historia'       => $historia,
 				'dni' 				=> $dni,
 				'id_diagnostico'	=> $diagnosticId,
 				'created_at' 		=> now(),
@@ -116,12 +118,13 @@ class AppointmentsController extends Controller {
 		return;
     }
 
-    protected function saveMedication($id, $dni, $drugId, $description) {
+    protected function saveMedication($id, $historia, $dni, $drugId, $description) {
         // Prepara los datos para la inserción
 		$data = [];
 		for ($i = 0; $i < count($drugId); $i++) {
 			$data[] = [
 				'id_control'    => $id,
+                'id_historia'   => $historia,
 				'dni'           => $dni,
 				'id_droga' 		=> $drugId[$i],
 				'descripcion'   => $description[$i],

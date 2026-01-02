@@ -42,7 +42,7 @@ $(document).ready(function(){
                 width: '6%' ,
             },
             dni: {
-                key: true,
+                key: false,
                 title: 'DNI',
                 width: '6%' ,
 
@@ -76,19 +76,19 @@ $(document).ready(function(){
                     let buttons = '';
                     if (permissions.view_rpt) {
                         buttons += `
-                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
+                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.id}">
                                 <i class="bi bi-folder"></i> Ver
                             </button>&nbsp;
                         `;
                     }
                     if (permissions.add_rpt) {
                         buttons += `
-                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
+                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.id}">
                                 <i class="bi bi-plus-square-fill"></i> Nuevo
                             </button>
                         `;
                     }
-                    
+
                     return buttons;
                 }
             },
@@ -96,14 +96,14 @@ $(document).ready(function(){
         recordsLoaded: (event, data) => {
             $('.add-new').click(function(e){
                 e.preventDefault();
-                let id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/reports/add/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/reports/add/${hc}`;
             });
-            
+
             $('.view-row').click(function(e) {
                 e.preventDefault();
-                let id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/reports/see/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/reports/see/${hc}`;
             });
         }
     });
@@ -149,7 +149,7 @@ $(document).ready(function(){
                     await Swal.fire({
                         icon: response.data.type || 'success',
                         title: response.data.messages || 'Información guardada correctamente',
-                        html: response.data.route_print ? 
+                        html: response.data.route_print ?
                             `<a class="btn btn-info" href="${response.data.route_print}" target="_blank">
                                 <i class="bi bi-file-earmark-pdf"></i> Imprimir prescripción
                             </a>` : '',
