@@ -1,8 +1,9 @@
 $(document).ready(function(){
     const dni               = $('#dni').val();
+    const hc                = $('#id_historia').val();
     const appointmentId     = $('#appointmentId').val();
     const tables = {
-        appointmentDNI: $('#appointment_data').DataTable({ajax: `${API_BASE_URL}/appointments/list/${dni}`, order: [], processing: true }),
+        appointmentDNI: $('#appointment_data').DataTable({ajax: `${API_BASE_URL}/appointments/list/${hc}`, order: [], processing: true }),
         appointmentTableByDNI: $('#appointmentsByDNI').DataTable({ajax: `${API_BASE_URL}/appointments/listAppointments/${dni}`, order: [], processing: true }),
         diagnosticId: $('#diagnostic_data').DataTable({ajax: `${API_BASE_URL}/appointments/listDiagnostic/${appointmentId}`, order: [[0, 'asc']], searching: false, bLengthChange: false, processing: true }),
         medicationId: $('#medication_data').DataTable({ajax: `${API_BASE_URL}/appointments/listMedication/${appointmentId}`, order: [[0, 'asc']], searching: false, bLengthChange: false, processing: true }),
@@ -225,7 +226,7 @@ $(document).ready(function(){
 });
 //view table
 function fetchTableData(table, dni) {
-    axios.post('/appointments/view-table', {
+    axios.post(`${API_BASE_URL}/appointments/view-table`, {
         table: table,
         dni: dni
     }).then(response => {

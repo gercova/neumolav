@@ -1,3 +1,4 @@
+<input type="hidden" id="appointmentId" name="appointmentId" value="{{ $ap->id ?? '' }}">
 <div class="card-body">
     <div class="row">
         <div class="col-4">
@@ -15,6 +16,7 @@
             <div class="form-group">
                 <label>DNI :: NOMBRES</label>
                 <input type="text" class="form-control" value="{{ $hc->dni.' :: '.$hc->nombres }}" readonly>
+                <input type="hidden" name="id_historia" id="id_historia" value="{{ $hc->id }}">
                 <input type="hidden" name="dni" id="dni" value="{{ $hc->dni }}">
             </div>
         </div>
@@ -35,7 +37,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="sintomas">Síntomas:</label>
                                             <div class="col-sm-10">
-                                                <textarea class="form-control form-control-sm" id="sintomas" name="sintomas" rows="2">{{ old('sintomas', $ap->id ?? '') }}</textarea>
+                                                <textarea class="form-control form-control-sm" id="sintomas" name="sintomas" rows="2">{{ old('sintomas', $ap->sintomas ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -51,7 +53,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="tratamiento">Tratamiento:</label>
                                             <div class="col-sm-10">
-                                                <textarea class="form-control form-control-sm" id="tratamiento" name="tratamiento" rows="2">{{ old('tratamiento') }}</textarea>
+                                                <textarea class="form-control form-control-sm" id="tratamiento" name="tratamiento" rows="2">{{ old('tratamiento', $ap->tratamiento ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -66,7 +68,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-12">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label" for="diagnostics">Buscar:</label>
                                             <div class="col-sm-9">
@@ -85,6 +87,19 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
+                                    @if(isset($ap) && $ap->diagnosticAppointment->count() > 0)
+                                        <div class="col-12">
+                                            <table id="diagnostic_data" class="table table-hover">
+                                                <thead>
+                                                    <tr><th style="width:10%;">#</th>
+                                                        <th style="width:70%;">Diagnóstico</th>
+                                                        <th style="width:20%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -96,17 +111,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-12">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label" for="drugs">Buscar:</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control form-control-sm" id="drugs" placeholder="Buscar por descripción">
+                                                <select type="text" class="form-control form-control-sm searchDrugs" id="drugs" placeholder="Buscar por descripción"></select>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group row">
-                                            <button id="btn-add-drug" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar fármaco</button>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -121,11 +131,26 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
+                                    @if(isset($ap) && $ap->medicationAppointment->count() > 0)
+                                        <div class="col-12">
+                                            <table id="medication_data" class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:5%;">#</th>
+                                                        <th style="width:30%;">Fármaco</th>
+                                                        <th style="width:40%;">Receta</th>
+                                                        <th style="width:15%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    @endif
                                     <div class="col-12">
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="recomendaciones">Recomendaciones:</label>
                                             <div class="col-sm-10">
-                                                <textarea class="form-control form-control-sm" id="recomendaciones" name="recomendaciones" rows="2">{{ old('recomendaciones') }}</textarea>
+                                                <textarea class="form-control form-control-sm" id="recomendaciones" name="recomendaciones" rows="2">{{ old('recomendaciones', $ap->recomendaciones ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +162,7 @@
             @endrole
             @role('asistente')
                 <p class="alert alert-danger">
-                    No tienes permisos para crear controles, consulte con el administrador del sistema.
+                    No tienes permisos para editar este registro, consulte con el administrador del sistema.
                 </p>
             @endrole
         </div>

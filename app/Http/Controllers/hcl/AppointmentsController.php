@@ -39,7 +39,7 @@ class AppointmentsController extends Controller {
     }
 
     public function edit(Appointment $ap): View {
-        $hc	= History::where('id', $ap->id_historia)->get();
+        $hc	= History::where('id', $ap->id_historia)->first();
 		return view('hcl.appointments.edit', compact('hc', 'ap'));
     }
 
@@ -88,7 +88,7 @@ class AppointmentsController extends Controller {
                 'status' 	=> true,
                 'type'		=> 'success',
                 'messages' 	=> empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
-                'route' 	=> route('hcl.appointments.see', $appointment),
+                'route' 	=> route('hcl.appointments.see', $appointment->id_historia),
                 'print_a5' 	=> route('hcl.appointments.print', [$id, 'a5']),
 				'print_a4' 	=> route('hcl.appointments.print', [$id, 'a4']),
             ]);
@@ -135,9 +135,9 @@ class AppointmentsController extends Controller {
 		return;
     }
 
-    public function listAppointments(Appointment $ap): JsonResponse {
-		$results 	= DB::select('CALL PA_getAppointmentsByMedicalHistory(?)', [$ap->id_historia]);
-		$data 		= collect($results)->map(function ($item, $index) {
+    public function listAppointments(History $hc): JsonResponse {
+		$results 	    = DB::select('CALL PA_getAppointmentsByMedicalHistory(?)', [$hc->id]);
+		$data 		    = collect($results)->map(function ($item, $index) {
 			$user   	= auth()->user();
 			$buttons 	= '';
 
@@ -290,15 +290,15 @@ class AppointmentsController extends Controller {
         ], 200);
     }
 
-	public function printPrescriptionId(Appointment $ap, string $format = 'a5') {
+	public function printPrescription(Appointment $ap, string $format = 'a5') {
         // Validar formato
         if (!in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
         // Obtener datos
-        $hc = DB::select('CALL getMedicalHistoryByAppointment(?)', [$ap->id]);
-        $dx = DB::select('CALL getDiagnosticbyAppointment(?)', [$ap->id]);
-        $mx = DB::select('CALL getMedicationByAppointment(?)', [$ap->id]);
+        $hc = DB::select('CALL PA_getMedicalHistoryByAppointment(?)', [$ap->id]);
+        $dx = DB::select('CALL PA_getDiagnosticbyAppointment(?)', [$ap->id]);
+        $mx = DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
         $us = Auth::user();
         $en = Enterprise::findOrFail(1);
         // Configurar PDF según formato

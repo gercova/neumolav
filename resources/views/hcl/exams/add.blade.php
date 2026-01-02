@@ -431,11 +431,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--<div class="col-4">
-                                                    <div class="form-group row">
-                                                        <button id="btn-add-diagnostic" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar diagnóstico</button>
-                                                    </div>
-                                                </div>-->
                                                 <div class="col-12">
                                                     <table id="tableDiagnostics" class="table table-hover">
                                                         <thead>

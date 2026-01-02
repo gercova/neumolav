@@ -32,10 +32,11 @@
                                     <div class="alert alert-info">
                                         <p>Menu de registros de citas y controles {{ $hc->id_sexo == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc->nombres }}</b> identificado con DNI: <b>{{ $hc->dni }}</b></p>
                                     </div>
+                                    <input type="hidden" id="id_historia" name="id_historia" value="{{ $hc->id }}">
                                     <input type="hidden" id="dni" name="dni" value="{{ $hc->dni }}">
                                     @can('control_crear')
                                         <hr>
-                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.appointments.add', $hc->dni) }}">Agregar nuevo control</a>
+                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.appointments.add', $hc->id) }}">Agregar nuevo control</a>
                                     @endcan
                                     <hr>
                                 </div>

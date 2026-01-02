@@ -153,12 +153,12 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::get('/appointments/edit/{ap}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
             Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'see'])->name('hcl.appointments.see');
             Route::get('/appointments/viewDetail/{ap}',         [AppointmentsController::class, 'viewDetail']);
-            Route::get('/appointments/list/{ap}',               [AppointmentsController::class, 'listAppointments']);
+            Route::get('/appointments/list/{hc}',               [AppointmentsController::class, 'listAppointments']);
             Route::get('/appointments/listAppointments/{ap}',   [AppointmentsController::class, 'listAppointmentsByHC']);
             Route::get('/appointments/listDiagnostic/{ap}',     [AppointmentsController::class, 'listOfDiagnosticsByApp']);
             Route::get('/appointments/listMedication/{ap}',     [AppointmentsController::class, 'listOfMedicationByApp']);
             Route::post('/appointments/view-table',             [AppointmentsController::class, 'viewTable']);
-            Route::get('/appointments/print/{ap}/{format}',     [AppointmentsController::class, 'printPrescriptionId'])->name('hcl.appointments.print');
+            Route::get('/appointments/print/{ap}/{format}',     [AppointmentsController::class, 'printPrescription'])->name('hcl.appointments.print');
             Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
             Route::delete('/appointments/delete/{ap}',          [AppointmentsController::class, 'destroy']);
             Route::delete('/ap-dx/delete/{dx}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
