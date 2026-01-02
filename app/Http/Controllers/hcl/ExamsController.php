@@ -46,7 +46,7 @@ class ExamsController extends Controller {
 		return view('hcl.exams.edit', compact('te', 'hc', 'ex'));
     }
 
-	public function seeExams(History $hc): View {
+	public function see(History $hc): View {
 		return view('hcl.exams.see', compact('hc'));
 	}
 

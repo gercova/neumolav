@@ -35,7 +35,7 @@
                                     <input type="hidden" id="dni" name="dni" value="{{ $hc->dni }}">
                                     @can('control_crear')
                                         <hr>
-                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.appointments.add', ['hc' => $hc->dni]) }}">Agregar nuevo control</a>
+                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.appointments.add', $hc->dni) }}">Agregar nuevo control</a>
                                     @endcan
                                     <hr>
                                 </div>

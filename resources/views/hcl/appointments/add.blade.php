@@ -25,7 +25,10 @@
                     NUEVO CONTROL DE {{ $hc->dni.' :: '.$hc->nombres }}
                 </div>
                 <form id="appointmentForm" method="post">
-                    <div class="card-body">
+                    @method('POST')
+                    @csrf
+                    @include('hcl.appointments.partials.form')
+                    <!--<div class="card-body">
                         <div class="row">
                             <div class="col-4">
                                 <div class="form-group row">
@@ -51,7 +54,6 @@
                             <div class="col-7">
                                 @role('administrador|especialista')
                                     <div class="row">
-
                                         <div class="col-12">
                                             <div class="card card-info">
                                                 <div class="card-header">
@@ -199,7 +201,7 @@
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
-                    </div>
+                    </div>-->
                 </form>
             </div>
         </div>

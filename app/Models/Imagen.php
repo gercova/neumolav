@@ -12,7 +12,14 @@ class Imagen extends Model
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'imagenes';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_examen', 'dni', 'fecha_examen', 'imagen', 'estado'];
+    protected $fillable     = [
+        'id_examen',
+        'id_historia',
+        'dni',
+        'fecha_examen',
+        'imagen',
+        'estado'
+    ];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_examen'     => 'integer',

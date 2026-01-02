@@ -13,7 +13,7 @@ class MedicationExam extends Model
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'examen_medicacion';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_examen', 'dni', 'id_droga', 'descripcion', 'estado'];
+    protected $fillable     = ['id_examen', 'id_historia', 'dni', 'id_droga', 'descripcion', 'estado'];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_examen'     => 'integer',
@@ -27,11 +27,11 @@ class MedicationExam extends Model
     ];
 
     public function history(): BelongsTo {
-        return $this->belongsTo(History::class, 'dni', 'dni');
+        return $this->belongsTo(History::class);
     }
 
     public function exam(): BelongsTo {
-        return $this->belongsTo(Exam::class, 'id_examen', 'id');
+        return $this->belongsTo(Exam::class);
     }
 
     public function drug(): BelongsTo {

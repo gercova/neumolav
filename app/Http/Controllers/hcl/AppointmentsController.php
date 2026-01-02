@@ -43,7 +43,7 @@ class AppointmentsController extends Controller {
 		return view('hcl.appointments.edit', compact('hc', 'ap'));
     }
 
-	public function seeAppointments(History $hc): View {
+	public function see(History $hc): View {
 		return view('hcl.appointments.see', compact('hc'));
 	}
 
@@ -60,11 +60,11 @@ class AppointmentsController extends Controller {
     }
 
     public function viewDetail(int $id): JsonResponse {
-		$data['ap'] 		= Appointment::findOrFail($id);
-		$data['hc']			= Appointment::seePatientByAppointment($id);
-		$data['diagnostic'] = DB::select('CALL getDiagnosticByAppointment(?)', [$id]);
-		$data['medication'] = DB::select('CALL getMedicationByAppointment(?)', [$id]);
-		return response()->json($data, 200);
+		$ap 		= Appointment::findOrFail($id);
+		$hc			= Appointment::seePatientByAppointment($id);
+		$diagnostic = DB::select('CALL getDiagnosticByAppointment(?)', [$id]);
+		$medication = DB::select('CALL getMedicationByAppointment(?)', [$id]);
+		return response()->json(compact('ap', 'hc', 'diagnostic', 'medication'), 200);
 	}
 
     public function store(AppointmentValidate $request): JsonResponse {

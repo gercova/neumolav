@@ -18,6 +18,7 @@
             </div>
         </div>
     </div>
+    {{ dd($hc) }}
     <section class="content">
         <div class="container-fluid">
             <div class="card card-primary">

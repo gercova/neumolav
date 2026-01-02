@@ -14,15 +14,20 @@ class Appointment extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'controles';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['dni', 'sintomas', 'diagnostico', 'plan', 'tratamiento', 'recomendaciones', 'estado'];
+    protected $fillable     = [
+        'id_historia',
+        'dni',
+        'sintomas',
+        'diagnostico',
+        'plan',
+        'tratamiento',
+        'recomendaciones',
+        'estado',
+    ];
+
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $casts        = [
-        'dni'               => 'string',
-        'sintomas'          => 'string',
-        'diagnostico'       => 'string',
-        'plan'              => 'string',
-        'tratamiento'       => 'string',
-        'recomendaciones'   => 'string',
         'estado'            => 'boolean',
         'created_at'        => 'datetime',
         'updated_at'        => 'datetime',

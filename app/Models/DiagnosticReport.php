@@ -12,7 +12,12 @@ class DiagnosticReport extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'informe_diagnostico';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_diagnostico', 'dni', 'id_informe', 'estado'];
+    protected $fillable     = [
+        'id_diagnostico',
+        'dni',
+        'id_informe',
+        'estado',
+    ];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_diagnostico'    => 'integer',

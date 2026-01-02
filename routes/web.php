@@ -130,7 +130,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::get('/exams/home',                   [ExamsController::class, 'index'])->name('hcl.exams.home');
             Route::get('/exams/add/{hc}',               [ExamsController::class, 'add'])->name('hcl.exams.add');
             Route::get('/exams/edit/{ex}',              [ExamsController::class, 'edit'])->name('hcl.exams.edit');
-            Route::get('/exams/see/{hc}',               [ExamsController::class, 'seeExams'])->name('hcl.exams.see');
+            Route::get('/exams/see/{hc}',               [ExamsController::class, 'see'])->name('hcl.exams.see');
             Route::post('/exams/store',                 [ExamsController::class, 'store']);
             Route::get('/exams/viewDetail/{ex}',        [ExamsController::class, 'viewDetail']);
             Route::get('/exams/viewImg/{image}',        [ExamsController::class, 'viewExamImage']);
@@ -148,7 +148,10 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
          * CONTROLES
          */
         Route::middleware(['permission:controles'])->group(function(){
-            Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'seeAppointments'])->name('hcl.appointments.see');
+            Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
+            Route::get('/appointments/add/{hc}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
+            Route::get('/appointments/edit/{ap}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
+            Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'see'])->name('hcl.appointments.see');
             Route::get('/appointments/viewDetail/{id}',         [AppointmentsController::class, 'viewDetail']);
             Route::get('/appointments/list/{id}',               [AppointmentsController::class, 'listAppointments']);
             Route::get('/appointments/listAppointments/{id}',   [AppointmentsController::class, 'listAppointmentsByDNI']);
@@ -157,9 +160,6 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/appointments/view-table',             [AppointmentsController::class, 'viewTable']);
             Route::get('/appointments/print/{id}/{format}',     [AppointmentsController::class, 'printPrescriptionId'])->name('hcl.appointments.print');
             Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
-            Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
-            Route::get('/appointments/add/{hc}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
-            Route::get('/appointments/edit/{ap}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
             Route::delete('/appointments/delete/{id}',          [AppointmentsController::class, 'destroy']);
             Route::delete('/ap-dx/delete/{id}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
             Route::delete('/ap-mx/delete/{id}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
@@ -212,9 +212,9 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::middleware(['permission:presentaciones'])->group(function(){
             Route::get('/presentations',                        [DPController::class, 'index'])->name('maintenance.presentations');
             Route::get('/presentations/list',                   [DPController::class, 'list']);
-            Route::get('/presentations/{id}',                   [DPController::class, 'show']);
+            Route::get('/presentations/{pre}',                  [DPController::class, 'show']);
             Route::post('/presentations/store',                 [DPController::class, 'store']);
-            Route::delete('/presentations/delete/{id}',         [DPController::class, 'destroy']);
+            Route::delete('/presentations/delete/{pre}',        [DPController::class, 'destroy']);
         });
         /**
          * DROGA

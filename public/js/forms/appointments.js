@@ -79,18 +79,14 @@ $(document).ready(function(){
                     let buttons = '';
 
                     if (permissions.view_ctrl) {
-                        buttons += `
-                            <button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
-                                <i class="bi bi-folder"></i> Ver
-                            </button>&nbsp;
-                        `;
+                        buttons += `<button type="button" class="btn btn-info view-row btn-xs" value="${data.record.dni}">
+                            <i class="bi bi-folder"></i> Ver
+                        </button>&nbsp;`;
                     }
                     if (permissions.add_ctrl) {
-                        buttons += `
-                            <button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
-                                <i class="bi bi-plus-square-fill"></i> Nuevo
-                            </button>
-                        `;
+                        buttons += `<button type="button" class="btn btn-success add-new btn-xs" value="${data.record.dni}">
+                            <i class="bi bi-plus-square-fill"></i> Nuevo
+                        </button>`;
                     }
 
                     return buttons;
@@ -100,14 +96,14 @@ $(document).ready(function(){
         recordsLoaded: (event, data) => {
             $('.add-new').click(function(e){
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/appointments/add/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/appointments/add/${hc}`;
             });
-            
+
             $('.view-row').click(function(e) {
                 e.preventDefault();
-                const id = $(this).attr('value');
-                window.location.href = `${API_BASE_URL}/appointments/see/${id}`;
+                const hc = $(this).attr('value');
+                window.location.href = `${API_BASE_URL}/appointments/see/${hc}`;
             });
         }
     });

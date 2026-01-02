@@ -12,7 +12,7 @@ class DiagnosticExam extends Model
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'examen_diagnostico';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_examen', 'dni', 'id_diagnostico', 'estado'];
+    protected $fillable     = ['id_examen', 'id_historia', 'dni', 'id_diagnostico', 'estado'];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
         'id_examen'         => 'integer',
@@ -33,6 +33,6 @@ class DiagnosticExam extends Model
     }
 
     public function history() {
-        return $this->belongsTo(History::class, 'dni', 'dni');
+        return $this->belongsTo(History::class);
     }
 }

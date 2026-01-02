@@ -4,6 +4,7 @@ namespace App\Http\Controllers\maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PresentationValidate;
+use App\Http\Resources\PresentationResource;
 use App\Models\Presentation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -50,7 +51,7 @@ class PresentationsController extends Controller {
                 $buttons ?: 'No hay acciones disponibles',
             ];
         });
-		
+
       	return response()->json([
  			"sEcho"					    => 1,
  			"iTotalRecords"			    => $data->count(),
@@ -69,17 +70,16 @@ class PresentationsController extends Controller {
         ], 200);
     }
 
-    public function show(string $id): JsonResponse {
-        return response()->json(Presentation::findOrFail($id), 200);
+    public function show(Presentation $pre): JsonResponse {
+        return response()->json(PresentationResource::make($pre), 200);
     }
 
-    public function destroy($id): JsonResponse {
-        $result = Presentation::findOrFail($id);
-        $result->delete();
+    public function destroy(Presentation $pre): JsonResponse {
+        $pre->delete();
         return response()->json([
-            'status'    => (bool) $result, 
-            'type'      => $result ? 'success' : 'error', 
-            'messages'  => $result ? 'Eliminado exitosamente' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $pre,
+            'type'      => $pre ? 'success' : 'error',
+            'messages'  => $pre ? 'Eliminado exitosamente' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 }

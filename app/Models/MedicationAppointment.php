@@ -12,7 +12,15 @@ class MedicationAppointment extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
     protected $table        = 'control_medicacion';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['id_control', 'dni', 'id_drug', 'descipcion', 'estado'];
+    protected $fillable     = [
+        'id_control',
+        'id_historia',
+        'dni',
+        'id_drug',
+        'descipcion',
+        'estado'
+    ];
+
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
@@ -27,11 +35,11 @@ class MedicationAppointment extends Model {
     ];
 
     public function history(){
-        return $this->hasMany(History::class, 'dni', 'dni');
+        return $this->hasMany(History::class);
     }
 
     public function appointment(){
-        return $this->belongsTo(Appointment::class, 'id_control', 'id');
+        return $this->belongsTo(Appointment::class);
     }
 
     public function drug(){
