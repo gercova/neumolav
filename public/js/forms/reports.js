@@ -1,11 +1,11 @@
 $(document).ready(function(){
-    const dni       = $('#dni').val();
+    const hc        = $('#id_historia').val();
     const reportId  = $('#reportId').val();
 
     const tables = {
-       reportDNI: $("#report_data").DataTable({ ajax: `${API_BASE_URL}/reports/list/${dni}`, order: [], processing: true }),
+       reportDNI: $("#report_data").DataTable({ ajax: `${API_BASE_URL}/reports/list/${hc}`, order: [], processing: true }),
        diagnosticId: $("#diagnostic_data").DataTable({ ajax: `${API_BASE_URL}/reports/listDiagnostic/${reportId}`, order: [], searching: false, bLengthChange: false, processing: true }),
-       reportTableByDNI: $("#reportsByDNI").DataTable({ ajax: `${API_BASE_URL}/reports/listReports/${dni}`, order: [], processing: true }),
+       reportTableByDNI: $("#reportsByDNI").DataTable({ ajax: `${API_BASE_URL}/reports/listReports/${hc}`, order: [], processing: true }),
     };
     //Eliminar un registro
     DeleteHandler.initButtons([
@@ -206,12 +206,12 @@ $(document).ready(function(){
                             <table class="table table-hover table-condensed">
                                 <thead>
                                     <tr>
-                                        <th width="70%">DNI: ${hc[0].dni}</th>
+                                        <th width="70%">DNI: ${hc.dni}</th>
                                         <th>Fecha: ${fechaFormateada}</th>
                                     </tr>
                                 </thead>
                             </table>
-                            <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc[0].nombres}</p>
+                            <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc.nombres}</p>
                             <hr>
                             <p>
                                 <strong>Antecedentes:</strong><br>

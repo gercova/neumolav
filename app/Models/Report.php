@@ -36,17 +36,11 @@ class Report extends Model {
         'deleted_at'            => 'datetime',
     ];
 
-    public static function seePatientByReport($id) {
-        return Report::selectRaw('h.id as history, historia_informe.id as reporte, h.nombres, h.dni')
-            ->join('historias as h', 'historia_informe.dni', '=', 'h.dni')
-            ->where('historia_informe.id', $id)->get();
-    }
-
     public function history(): BelongsTo {
         return $this->belongsTo(History::class, 'dni');
     }
 
-    public function diagnosticReport(): HasMany {
+    public function diagnostics(): HasMany {
         return $this->hasMany(DiagnosticReport::class, 'id_informe', 'dni');
     }
 }

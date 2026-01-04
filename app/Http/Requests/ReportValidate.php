@@ -5,13 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReportValidate extends FormRequest {
-    
+
     public function authorize(): bool {
         return true;
     }
 
     public function rules(): array {
         return [
+            'id_historia'           => 'required',
             'dni'                   => 'required|digits:8',
             'antecedentes'          => 'required|string',
             'historial_enfermedad'  => 'required|string',
@@ -24,6 +25,7 @@ class ReportValidate extends FormRequest {
 
     public function messages(): array {
         return [
+            'id_historia.required'              => 'El campo Historia es requerido',
             'dni.required'                      => 'El campo DNI es requerido',
             'dni.digits'                        => 'El campo DNI debe tener 8 dígitos',
             'antecedentes.required'             => 'El campo Antecedentes es requerido',
@@ -34,16 +36,4 @@ class ReportValidate extends FormRequest {
             'tratamiento.required'              => 'El campo Tratamiento es requerido',
         ];
     }
-
-    /*protected function prepareForValidation(): void {
-        $this->merge([
-            'dni'                   => trim(strip_tags($this->dni)),
-            'antecedentes'          => trim(strip_tags($this->antecedentes)),
-            'historial_enfermedad'  => trim(strip_tags($this->historial_enfermedad)),
-            'examen_fisico'         => trim(strip_tags($this->examen_fisico)),
-            'examen_complementario' => trim(strip_tags($this->examen_complementario)),
-            'sugerencia'            => trim(strip_tags($this->sugerencia)),
-            'tratamiento'           => trim(strip_tags($this->tratamiento)),
-        ]);
-    }*/
 }

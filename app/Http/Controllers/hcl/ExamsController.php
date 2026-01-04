@@ -50,7 +50,7 @@ class ExamsController extends Controller {
 	}
 
 	public function viewDetail(Exam $ex): JsonResponse {
-		$hc			= History::where('dni', $ex->dni)->get();
+		$hc			= History::where('id', $ex->id_historia)->get();
 		$diagnostic = DB::select('CALL PA_getDiagnosticByExam(?)', [$ex->id]);
 		$medication = DB::select('CALL PA_getMedicationByExam(?)', [$ex->id]);
 		return response()->json(compact('ex', 'hc', 'diagnostic', 'medication'), 200);
@@ -282,17 +282,17 @@ class ExamsController extends Controller {
 		], 200);
 	}
 
-	public function seeExamsByMedicalHistory(string $dni): JsonResponse {
-		$results['exams'] = DB::select('CALL PA_getExamsByMedicalHistory(?)', [$dni]);
-		return response()->json($results, 200);
-	}
+	// public function seeExamsByMedicalHistory(History $hc): JsonResponse {
+	// 	$results['exams'] = DB::select('CALL PA_getExamsByMedicalHistory(?)', [$hc->id]);
+	// 	return response()->json($results, 200);
+	// }
 
-	public function seeRecipeByExam(int $id): JsonResponse {
-		$exam 		= Exam::findOrFail($id);
-		$medicacion = MedicationExam::where('id_examen', $id)->get();
-		$diagnostic = DiagnosticExam::where('id_examen', $id)->get();
-		return response()->json(compact('exam', 'medicacion', 'diagnostic'), 200);
-	}
+	// public function seeRecipeByExam(Exam $ex): JsonResponse {
+	// 	$exam 		= Exam::findOrFail($ex->id);
+	// 	$medicacion = MedicationExam::where('id_examen', $ex->id)->get();
+	// 	$diagnostic = DiagnosticExam::where('id_examen', $ex->id)->get();
+	// 	return response()->json(compact('exam', 'medicacion', 'diagnostic'), 200);
+	// }
 
     public function destroy(Exam $ex): JsonResponse {
 		$ex->delete();

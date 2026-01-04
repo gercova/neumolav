@@ -29,26 +29,22 @@ class ReportsController extends Controller {
         return view('hcl.reports.index');
     }
 
-    public function add($dni): View {
-        $hc = History::where('dni', $dni)->get();
+    public function add(History $hc): View {
         return view('hcl.reports.add', compact('hc'));
     }
 
-    public function edit($id): View {
-        $hc	= Report::seePatientByReport($id);
-		$rp = Report::findOrFail($id);
+    public function edit(Report $rp): View {
+        $hc	= History::where('id', $rp->id_historia)->first();
         return view('hcl.reports.edit', compact('hc', 'rp'));
     }
 
-    public function seeReports($dni): View {
-		$hc = History::where('dni', $dni)->get();
+    public function see(History $hc): View {
 		return view('hcl.reports.see', compact('hc'));
 	}
 
-    public function viewReportDetail($id): JsonResponse {
-		$rp = Report::findOrFail($id);
-		$hc	= Report::seePatientByReport($id);
-		$dx = DB::select('CALL getDiagnosticByReport(?)', [$id]);
+    public function viewReportDetail(Report $rp): JsonResponse {
+		$hc	= History::where('id', $rp->id_historia)->first();
+		$dx = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
 		return response()->json(compact('rp', 'hc', 'dx'), 200);
 	}
 
@@ -59,19 +55,20 @@ class ReportsController extends Controller {
         // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
-            $report = Report::updateOrCreate(['id' => $id], $validated);
-            $id 	= $report->id;
-            $dni    = $report->dni;
+            $report     = Report::updateOrCreate(['id' => $id], $validated);
+            $id 	    = $report->id;
+            $historia   = $report->id_historia;
+            $dni        = $report->dni;
             // Guardar diagnóstico, medicación y subir imagen si existen
-            if ($diagnostics) $this->saveDiagnosis($id, $dni, $diagnostics);
+            if ($diagnostics) $this->saveDiagnosis($id, $historia, $dni, $diagnostics);
 
             DB::commit();
             return response()->json([
                 'status' 		=> true,
                 'type'			=> 'success',
                 'messages' 		=> empty($id) ? 'Se ha añadido un nuevo reporte' : 'Actualizado exitosamente',
-                'route' 		=> route('hcl.reports.see', $dni),
-                'route_print' 	=> route('hcl.reports.print', $id)
+                'route' 		=> route('hcl.reports.see', $historia),
+                'route_print' 	=> route('hcl.reports.print', $report->id)
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -83,10 +80,11 @@ class ReportsController extends Controller {
         }
     }
 
-    private function saveDiagnosis($id, $dni, $diagnosticId) {
-        $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $dni) {
+    private function saveDiagnosis($id, $historia, $dni, $diagnosticId) {
+        $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $historia, $dni) {
 			return [
 				'id_informe'        => $id,
+                'id_historia'       => $historia,
 				'dni' 			    => $dni,
 				'id_diagnostico'	=> $diagnosticId,
                 'created_at'        => now()
@@ -97,8 +95,8 @@ class ReportsController extends Controller {
 		return;
     }
 
-    public function listReports($dni): JsonResponse {
-		$results 	    = DB::select('CALL getReportsByMedicalHistory(?)', [$dni]);
+    public function listReports(History $hc): JsonResponse {
+		$results 	    = DB::select('CALL PA_getReportsByMedicalHistory(?)', [$hc->id]);
 		$data 		    = collect($results)->map(function ($item, $index) {
             $user   	= auth()->user();
             $buttons 	= '';
@@ -111,7 +109,7 @@ class ReportsController extends Controller {
             if($user->can('informe_actualizar')){
                 $buttons .= sprintf(
                     '<a class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>&nbsp;',
-                    route('hcl.reports.edit', ['id' => $item->id]),
+                    route('hcl.reports.edit', ['rp' => $item->id]),
                 );
             }
             if($user->can('informe_borrar')){
@@ -137,8 +135,8 @@ class ReportsController extends Controller {
   		], 200);
 	}
 
-    public function listReportsByDNI($dni): JsonResponse {
-        $results    = DB::select('CALL getReportsByDNI(?)', [$dni]);
+    public function listReportsByDNI(History $hc): JsonResponse {
+        $results    = DB::select('CALL PA_getReportsByDNI(?)', [$hc->id]);
         $data       = collect($results)->map(function ($item, $index) {
             return [
                 $index + 1,
@@ -158,8 +156,8 @@ class ReportsController extends Controller {
         return response()->json($results, 200);
     }
 
-    public function listOfDiagnosticsByReportId(int $id): JsonResponse {
-		$results = DB::select('CALL getDiagnosticByReport(?)', [$id]);
+    public function listOfDiagnosticsByReportId(Report $rp): JsonResponse {
+		$results = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
 		$data = collect($results)->map(function ($item, $index) {
 			return [
 				$index + 1,
@@ -180,40 +178,36 @@ class ReportsController extends Controller {
 		return response()->json($results, 200);
 	}
 
-    public function destroy($id): JsonResponse {
-        $result = Report::findOrFail($id);
-        $dni = $result->dni;
-        $result->delete();
+    public function destroy(Report $rp): JsonResponse {
+        $rp->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'Se ha eliminado el informe' : 'Algo salió mal, recargue la página he intente de nuevo',
-            'route' => route('hcl.reports.see', $dni),
+            'status'    => (bool) $rp,
+            'type'      => $rp ? 'success' : 'error',
+            'messages'  => $rp ? 'Se ha eliminado el informe' : 'Algo salió mal, recargue la página he intente de nuevo',
+            'route'     => route('hcl.reports.see', $rp->id_historia),
         ], 200);
     }
 
-    public function destroyDiagnosticReport(int $id): JsonResponse {
-        $result = DiagnosticReport::findOrFail($id);
-        $result->delete();
+    public function destroyDiagnosticReport(DiagnosticReport $dx): JsonResponse {
+        $dx->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $dx,
+            'type'      => $dx ? 'success' : 'error',
+            'messages'  => $dx ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function printReportId(int $id) {
-		$hc = DB::select('CALL getMedicalHistoryByReport(?)', [$id]);
-        $dx = DB::select('CALL getDiagnosticByReport(?)', [$id]);
-		$rk	= Report::findOrFail($id);
-		$us = Auth::user();
-		$en = Enterprise::findOrFail(1);
-		$pdf = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rk', 'us', 'en'))
+    public function printReport(Report $rp) {
+		$hc     = DB::select('CALL PA_getMedicalHistoryByReport(?)', [$rp->id]);
+        $dx     = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
+		$us     = Auth::user();
+		$en     = Enterprise::findOrFail(1);
+		$pdf    = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rp', 'us', 'en'))
 			->setPaper('a4')
         	->setOptions([
-				'margin-top' 	        => 0.5, 
-				'margin-bottom'         => 0.5, 
-				'margin-left' 	        => 0.5, 
+				'margin-top' 	        => 0.5,
+				'margin-bottom'         => 0.5,
+				'margin-left' 	        => 0.5,
 				'margin-right' 	        => 0.5,
                 'fontDefault'           => 'sans-serif',
                 'isHtml5ParserEnabled'  => true,
@@ -221,6 +215,6 @@ class ReportsController extends Controller {
                 'isPhpEnabled'          => false,
                 'chroot'                => realpath(base_path()),
 			]);
-        return $pdf->stream("informe-neumológico-{$id}.pdf");
+        return $pdf->stream("informe-neumológico-{$rp->id}.pdf");
 	}
 }

@@ -169,17 +169,17 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
          */
         Route::middleware(['permission:informes'])->group(function(){
             Route::get('/reports/home',                         [ReportsController::class, 'index'])->name('hcl.reports.home');
-            Route::get('/reports/add/{id}',                     [ReportsController::class, 'add'])->name('hcl.reports.add');
-            Route::get('/reports/edit/{id}',                    [ReportsController::class, 'edit'])->name('hcl.reports.edit');
-            Route::get('/reports/see/{id}',                     [ReportsController::class, 'seeReports'])->name('hcl.reports.see');
+            Route::get('/reports/add/{hc}',                     [ReportsController::class, 'add'])->name('hcl.reports.add');
+            Route::get('/reports/edit/{rp}',                    [ReportsController::class, 'edit'])->name('hcl.reports.edit');
+            Route::get('/reports/see/{hc}',                     [ReportsController::class, 'see'])->name('hcl.reports.see');
             Route::post('/reports/store',                       [ReportsController::class, 'store']);
-            Route::get('/reports/viewDetail/{id}',              [ReportsController::class, 'viewReportDetail']);
-            Route::get('/reports/list/{id}',                    [ReportsController::class, 'listReports']);
+            Route::get('/reports/viewDetail/{rp}',              [ReportsController::class, 'viewReportDetail']);
+            Route::get('/reports/list/{hc}',                    [ReportsController::class, 'listReports']);
             Route::get('/reports/listReports/{id}',             [ReportsController::class, 'listReportsByDNI']);
             Route::get('/reports/listDiagnostic/{id}',          [ReportsController::class, 'listOfDiagnosticsByReportId']);
-            Route::get('/reports/print/{id}',                   [ReportsController::class, 'printReportId'])->name('hcl.reports.print');
-            Route::delete('/reports/delete/{id}',               [ReportsController::class, 'destroy']);
-            Route::delete('/rp-dx/delete/{id}',                 [ReportsController::class, 'destroyDiagnosticReport']);
+            Route::get('/reports/print/{rp}',                   [ReportsController::class, 'printReport'])->name('hcl.reports.print');
+            Route::delete('/reports/delete/{rp}',               [ReportsController::class, 'destroy']);
+            Route::delete('/rp-dx/delete/{dx}',                 [ReportsController::class, 'destroyDiagnosticReport']);
         });
         /**
          * INFORMES DE RIESGO CLÍNICO

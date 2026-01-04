@@ -232,7 +232,7 @@
             </div>
             <div class="patient-info-section">
                 <h2 class="document-title">INFORME MÉDICO</h2>
-                <p><strong>Fecha:</strong> {{ date('d/m/Y', strtotime($rk->created_at)) }}</p>
+                <p><strong>Fecha:</strong> {{ date('d/m/Y', strtotime($rp->created_at)) }}</p>
             </div>
         </div>
     </div>
@@ -252,7 +252,7 @@
         <div class="content-section">
             <h3 class="section-title">ANTECEDENTES</h3>
             <div class="section-content">
-                <p>{!! $rk->antecedentes !!}</p>
+                <p>{!! $rp->antecedentes !!}</p>
             </div>
         </div>
 
@@ -260,7 +260,7 @@
         <div class="content-section">
             <h3 class="section-title">HISTORIAL DE ENFERMEDAD</h3>
             <div class="section-content">
-                <p>{!! $rk->historial_enfermedad !!}</p>
+                <p>{!! $rp->historial_enfermedad !!}</p>
             </div>
         </div>
 
@@ -268,7 +268,7 @@
         <div class="content-section">
             <h3 class="section-title">EXAMEN FÍSICO</h3>
             <div class="section-content">
-                <p>{!! $rk->examen_fisico !!}</p>
+                <p>{!! $rp->examen_fisico !!}</p>
             </div>
         </div>
 
@@ -276,7 +276,7 @@
         <div class="content-section">
             <h3 class="section-title">EXÁMENES COMPLEMENTARIOS</h3>
             <div class="section-content">
-                <p>{!! $rk->examen_complementario !!}</p>
+                <p>{!! $rp->examen_complementario !!}</p>
             </div>
         </div>
 
@@ -292,7 +292,7 @@
         <div class="content-section treatment-section no-break">
             <h3 class="section-title">TRATAMIENTO</h3>
             <div class="section-content">
-                <p>{!! $rk->tratamiento !!}</p>
+                <p>{!! $rp->tratamiento !!}</p>
             </div>
         </div>
     </div>
