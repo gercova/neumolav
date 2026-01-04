@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Imagen extends Model
@@ -20,23 +22,21 @@ class Imagen extends Model
         'imagen',
         'estado'
     ];
+
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $casts        = [
-        'id_examen'     => 'integer',
-        'dni'           => 'string',
-        'fecha_examen'  => 'date',
-        'imagen'        => 'string',
         'estado'        => 'boolean',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime',
     ];
 
-    public function exam(){
+    public function exam(): BelongsTo {
         return $this->belongsTo(Exam::class, 'id_examen', 'id');
     }
 
-    public function history(){
-        return $this->hasMany(History::class, 'dni', 'dni');
+    public function history(): HasMany {
+        return $this->hasMany(History::class, 'id_historia', 'dni');
     }
 }

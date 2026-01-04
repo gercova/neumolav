@@ -32,10 +32,11 @@
                                     <div class="alert alert-info">
                                         <p>Menu de registros de exámenes {{ $hc->id_sexo == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc->nombres }}</b> identificado con DNI: <b>{{ $hc->dni }}</b></p>
                                     </div>
+                                    <input type="hidden" id="id_historia" name="id_historia" value="{{ $hc->id }}">
                                     <input type="hidden" id="dni" name="dni" value="{{ $hc->dni }}">
                                     @can('examen_crear')
                                         <hr>
-                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.exams.add', ['hc' => $hc->dni]) }}">Agregar nuevo examen</a>
+                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.exams.add', ['hc' => $hc->id]) }}">Agregar nuevo examen</a>
                                     @endcan
                                     <hr>
                                 </div>

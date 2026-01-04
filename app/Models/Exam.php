@@ -85,19 +85,23 @@ class Exam extends Model {
         return $this->belongsTo(History::class);
     }
 
-    public function type(): BelongsTo {
-        return $this->belongsTo(ExamType::class);
+    public function exam(): BelongsTo {
+        return $this->belongsTo(Exam::class, 'id_examen', 'id');
     }
 
-    public function diagnosis(): BelongsTo {
-        return $this->belongsTo(DiagnosticExam::class);
+    public function type(): BelongsTo {
+        return $this->belongsTo(ExamType::class, );
+    }
+
+    public function diagnostics(): HasMany {
+        return $this->hasMany(DiagnosticExam::class, 'id_examen', 'id');
     }
 
     public function medication(): BelongsTo {
-        return $this->belongsTo(MedicationExam::class);
+        return $this->belongsTo(MedicationExam::class, 'id_examen', 'id');
     }
 
-    public function image(): HasMany {
-        return $this->hasMany(Imagen::class);
+    public function images(): HasMany {
+        return $this->hasMany(Imagen::class, 'id_examen', 'id');
     }
 }

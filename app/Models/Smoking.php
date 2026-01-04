@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Smoking extends Model
 {
@@ -11,7 +12,7 @@ class Smoking extends Model
     protected $table        = 'tabaquismo';
     protected $primaryKey   = 'id';
 
-    public function history() {
+    public function history(): HasMany {
         return $this->hasMany(History::class, 'id_ct', 'id');
     }
 }

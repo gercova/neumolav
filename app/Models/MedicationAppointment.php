@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MedicationAppointment extends Model {
@@ -34,15 +36,15 @@ class MedicationAppointment extends Model {
         'deleted_at'    => 'datetime',
     ];
 
-    public function history(){
+    public function history(): HasMany {
         return $this->hasMany(History::class);
     }
 
-    public function appointment(){
+    public function appointment(): BelongsTo {
         return $this->belongsTo(Appointment::class);
     }
 
-    public function drug(){
+    public function drug(): HasMany {
         return $this->hasMany(Drug::class, 'id', 'id_drug');
     }
 }

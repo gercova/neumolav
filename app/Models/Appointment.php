@@ -44,11 +44,11 @@ class Appointment extends Model {
         return $this->belongsTo(History::class);
     }
 
-    public function diagnosticAppointment(): HasMany {
+    public function diagnostics(): HasMany {
         return $this->hasMany(DiagnosticAppointment::class, 'id_control', 'id');
     }
 
-    public function medicationAppointment(): HasMany {
+    public function medication(): HasMany {
         return $this->hasMany(MedicationAppointment::class, 'id_control', 'id');
     }
 }

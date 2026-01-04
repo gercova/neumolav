@@ -199,24 +199,18 @@ $(document).ready(function(){
                 display: (data) => {
                     const permissions = data.record.Permissions || {}; // Obtenemos los permisos del registro
                     let buttons = '';
-                    buttons += `
-                        <button type="button" class="btn btn-info add-quote btn-xs" value="${data.record.id}">
-                            <i class="bi bi-file-earmark-plus"></i> Añadir
-                        </button>&nbsp;
-                    `;
+                    buttons += `<button type="button" class="btn btn-info add-quote btn-xs" value="${data.record.id}">
+                        <i class="bi bi-file-earmark-plus"></i> Añadir
+                    </button>&nbsp;`;
                     if (permissions.update) {
-                        buttons += `
-                            <button type="button" class="btn btn-warning edit-row btn-xs" value="${data.record.id}">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </button>&nbsp;
-                        `;
+                        buttons += `<button type="button" class="btn btn-warning edit-row btn-xs" value="${data.record.id}">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </button>&nbsp;`;
                     }
                     if (permissions.delete) {
-                        buttons += `
-                            <button type="button" class="btn btn-danger delete-row btn-xs" value="${data.record.id}">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        `;
+                        buttons += `<button type="button" class="btn btn-danger delete-row btn-xs" value="${data.record.id}">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>`;
                     }
                     return buttons;
                 }

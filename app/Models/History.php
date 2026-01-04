@@ -152,43 +152,43 @@ class History extends Model {
     }
 
     public function appointments(): HasMany {
-        return $this->hasMany(Appointment::class, 'dni', 'dni');
+        return $this->hasMany(Appointment::class, 'id_historia', 'id');
     }
 
     public function exams(): HasMany {
-        return $this->hasMany(Exam::class, 'dni', 'dni');
+        return $this->hasMany(Exam::class, 'id_historia', 'id');
     }
 
     public function reports(): HasMany {
-        return $this->hasMany(Report::class, 'dni', 'dni');
+        return $this->hasMany(Report::class, 'id_historia', 'id');
     }
 
     public function risks(): HasMany {
-        return $this->hasMany(Risk::class, 'dni', 'dni');
+        return $this->hasMany(Risk::class, 'id_historia', 'id');
     }
 
     public function history(): HasOne {
-        return $this->hasOne(History::class, 'dni', 'dni');
+        return $this->hasOne(History::class, 'id', 'id');
     }
 
     public function diagnosticAppointment(): HasMany {
-        return $this->hasMany(DiagnosticAppointment::class, 'dni', 'dni');
+        return $this->hasMany(DiagnosticAppointment::class, 'id_historia', 'id');
     }
 
     public function diagnosticExam(): HasMany {
-        return $this->hasMany(DiagnosticExam::class, 'dni', 'dni');
+        return $this->hasMany(DiagnosticExam::class, 'id_historia', 'id');
     }
 
     public function medicationExam(): HasMany {
-        return $this->hasMany(MedicationExam::class, 'dni', 'dni');
+        return $this->hasMany(MedicationExam::class, 'id_historia', 'id');
     }
 
     public function medication_appointment(): HasMany {
-        return $this->hasMany(MedicationAppointment::class, 'dni', 'dni');
+        return $this->hasMany(MedicationAppointment::class, 'id_historia', 'id');
     }
 
     public  function imagen(): HasMany {
-        return $this->hasMany(Imagen::class, 'dni', 'dni');
+        return $this->hasMany(Imagen::class, 'id_historia', 'id');
     }
 
     public function locationBirth(): HasOne {

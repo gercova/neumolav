@@ -24,8 +24,10 @@
                     NUEVO EXAMEN DE {{ $hc->dni.' :: '.$hc->nombres }}
                 </div>
                 <form id="examForm" method="post" enctype="multipart/form-data">
+                    @method('POST')
                     @csrf
-                    <div class="card-body">
+                    @include('hcl.exams.partials.form')
+                    {{-- <div class="card-body">
                         <div class="row">
                             <div class="col-4">
                                 <div class="form-group row">
@@ -525,7 +527,7 @@
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
         </div>

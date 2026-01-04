@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Report extends Model {
@@ -28,15 +30,6 @@ class Report extends Model {
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
-        'id'                    => 'integer',
-        'dni'                   => 'string',
-        'antecedentes'          => 'string',
-        'historial_enfermedad'  => 'string',
-        'examen_fisico'         => 'string',
-        'examen_complementario'  => 'string',
-        'diagnostico'           => 'string',
-        'tratamiento'           => 'string',
-        'sugerencia'            => 'string',
         'estado'                => 'boolean',
         'created_at'            => 'datetime',
         'updated_at'            => 'datetime',
@@ -49,11 +42,11 @@ class Report extends Model {
             ->where('historia_informe.id', $id)->get();
     }
 
-    public function history() {
+    public function history(): BelongsTo {
         return $this->belongsTo(History::class, 'dni');
     }
 
-    public function diagnosticReport() {
+    public function diagnosticReport(): HasMany {
         return $this->hasMany(DiagnosticReport::class, 'id_informe', 'dni');
     }
 }

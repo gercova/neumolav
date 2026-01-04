@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,17 +34,8 @@ class User extends Authenticatable {
         'email_verified_at'     => 'datetime',
         'password'              => 'hashed'
     ];
-    
-    protected $appends = ['formatted_name'];
 
-    /*public function getProfilePhotoUrlAttribute() {
-        if ($this->avatar) {
-            if (filter_var($this->avatar, FILTER_VALIDATE_URL)) return $this->avatar;
-            return Storage::exists($this->avatar) ? url($this->avatar) : asset('storage/img/usuarios/default/anonymous.png');
-        }
-        
-        return asset('storage/img/usuarios/default/anonymous.png');
-    }*/
+    protected $appends = ['formatted_name'];
 
     public function getProfilePhotoUrlAttribute() {
         // URL externa
@@ -64,7 +56,7 @@ class User extends Authenticatable {
         if (empty($this->name)) return '';
 
         $parts = array_filter(explode(' ', $this->name));
-        
+
         switch (count($parts)) {
             case 0:
                 return '';
@@ -85,15 +77,15 @@ class User extends Authenticatable {
         return DB::table('model_has_roles')->where('model_id', $userId)->get();
     }
 
-    public function profile() {
+    public function profile(): HasOne {
         return $this->hasOne(Profile::class, 'id_perfil', 'id');
     }
 
-    public function lastLogin() {
+    public function lastLogin(): HasOne {
         return $this->hasOne(UserLastLogin::class, 'id_user', 'id');
     }
 
-    public function specialty() {
+    public function specialty(): HasOne {
         return $this->hasOne(Specialty::class, 'id_especialidad', 'id');
     }
 }

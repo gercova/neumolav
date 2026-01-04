@@ -1,8 +1,9 @@
 $(document).ready(function(){
+    const hc       = $('#id_historia').val();
     const dni       = $('#dni').val();
     const examId    = $('#examId').val();
     const tables    = {
-        examDNI: $('#exam_data').DataTable({ ajax: `${API_BASE_URL}/exams/list/${dni}`, processing: true }),
+        examDNI: $('#exam_data').DataTable({ ajax: `${API_BASE_URL}/exams/list/${hc}`, processing: true }),
         //Listado de diagnosticos por examen
         diagnosticId: $('#diagnostic_data').DataTable({ ajax: `${API_BASE_URL}/exams/listDiagnostic/${examId}`, searching: false, bLengthChange: false, processing: true }),
         //Listado de examenes radiologicos por examen
@@ -158,8 +159,8 @@ $(document).ready(function(){
                     timerProgressBar: true,
                     didOpen: () => {
                         Swal.showLoading();
-                        const timer = Swal.getHtmlContainer().querySelector('b');
-                        timerInterval = setInterval(() => {
+                        const timer     = Swal.getHtmlContainer().querySelector('b');
+                        timerInterval   = setInterval(() => {
                             timer.textContent = Swal.getTimerLeft();
                         }, 100);
                     },

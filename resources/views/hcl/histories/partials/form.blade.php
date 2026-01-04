@@ -61,7 +61,7 @@
                 <select class="form-control" id="id_gs" name="id_gs" required>
                     <option value="">-- Seleccione --</option>
                     @foreach($bg as $b)
-                        <option value="{{ $b->id }}" {{ (old('id_gs', $history->id_gs) == $b->id) ? 'selected' : '' }}>{{ $b->descripcion }}</option>
+                        <option value="{{ $b->id }}" {{ (old('id_gs', $history->id_gs ?? '') == $b->id) ? 'selected' : '' }}>{{ $b->descripcion }}</option>
                     @endforeach
                 </select>
             </div>

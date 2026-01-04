@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -46,11 +47,11 @@ class Post extends Model {
         $this->attributes['created_at'] = Carbon::createFromFormat('F j, Y', $value);
     }*/
 
-    public function user(){
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class, 'autor_post', 'id');
     }
 
-    public function postType(){
+    public function postType(): BelongsTo {
         return $this->belongsTo(PostType::class, 'type_id', 'id');
     }
 }

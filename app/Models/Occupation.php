@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Occupation extends Model {
@@ -22,7 +23,7 @@ class Occupation extends Model {
         'deleted_at'    => 'datetime',
     ];
 
-    public function history(){
+    public function history(): HasMany {
         return $this->hasMany(History::class, 'dni', 'dni');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Module extends Model
@@ -19,7 +20,7 @@ class Module extends Model
         return Submodule::where('module_id', $id)->get();
     }
 
-    public function submodules() {
+    public function submodules(): HasMany {
         return $this->hasMany(Submodule::class, 'module_id', 'id');
     }
 }

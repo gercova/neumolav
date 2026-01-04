@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
@@ -23,7 +24,7 @@ class Category extends Model
         'deleted_at'    => 'datetime',
     ];
 
-    public function drugs(){
+    public function drugs(): HasMany {
         return $this->hasMany(Drug::class, 'id_categoria');
     }
 }

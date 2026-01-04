@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sex extends Model {
 
@@ -19,7 +20,7 @@ class Sex extends Model {
 
     public $timestamps = false;
 
-    public function history(){
+    public function history(): HasMany {
         return $this->hasMany(History::class, 'id_sexo', 'id');
     }
 }

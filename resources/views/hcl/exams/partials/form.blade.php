@@ -1,0 +1,560 @@
+<input type="hidden" id="examId" name="examId" value="{{ $ex->id ?? '' }}">
+<div class="card-body">
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Atendido por:</label>
+                <div class="col-sm-8">
+                    <input type="text" value="{{ Auth::user()->name }}" class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Fecha:</label>
+                <div class="col-sm-8">
+                    <input type="{{ isset($ex) ? 'datetime' : 'date' }}" class="form-control form-control-sm" value="{{ isset($ex) ? date_format($ex->created_at, 'Y-m-d H:i:s') : now()->format('Y-m-d') }}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label>DNI :: NOMBRES</label>
+                <input type="text" class="form-control" value="{{ $hc->dni.' :: '.$hc->nombres }}" readonly>
+                <input type="hidden" name="id_historia" id="id_historia" value="{{ $hc->id }}">
+                <input type="hidden" name="dni" id="dni" value="{{ $hc->dni }}">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label for="id_tipo">Tipo consulta</label>
+                <select class="form-control" name="id_tipo" id="id_tipo" required>
+                    <option value="">-- Seleccione --</option>
+                    @foreach($te as $t)
+                        <option value="{{ $t->id }}" {{ (old('id_tipo', $ex->id_tipo ?? '') == $t->id) ? 'selected' : '' }}>{{ $t->descripcion  }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+    @role('administrador|especialista')
+        <hr>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Examen físico</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="ta">TA</label>
+                                    <input type="text" class="form-control form-control-sm" id="ta" name="ta" value="{{ old('ta', $ex->ta ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="fc">FC</label>
+                                    <input type="text" class="form-control form-control-sm" id="fc" name="fc" value="{{ old('fc', $ex->fc ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="rf">RF</label>
+                                    <input type="text" class="form-control form-control-sm" id="rf" name="rf" value="{{ old('rf', $ex->rf ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="so2">SO2</label>
+                                    <input type="text" class="form-control form-control-sm" id="so2" name="so2" value="{{ old('so2', $ex->so2 ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <div class="form-group">
+                                    <label for="peso">Peso (kg)</label>
+                                    <input type="text" class="form-control form-control-sm" id="peso" name="peso" value="{{ old('peso', $ex->peso ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <div class="form-group">
+                                    <label for="talla">Talla (m)</label>
+                                    <input type="text" class="form-control form-control-sm" id="talla" name="talla" value="{{ old('talla', $ex->talla ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <div class="form-group">
+                                    <label for="imc">IMC: </label>
+                                    <input type="text" class="form-control form-control-sm" id="imc" name="imc" step="0.01" onkeypress="return imc(event);" value="{{ old('imc', $ex->imc ?? '') }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="pym">PYM: </label>
+                                    <input type="text" class="form-control form-control-sm" id="pym" name="pym" value="{{ old('pym', $ex->pym ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="typ">TYP: </label>
+                                    <input type="text" class="form-control form-control-sm" id="typ" name="typ" value="{{ old('typ', $ex->typ ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="cv">CV: </label>
+                                    <input type="text" class="form-control form-control-sm" id="cv" name="cv" value="{{ old('cv', $ex->cv ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="abdomen">Abdomen: </label>
+                                    <input type="text" class="form-control form-control-sm" id="abdomen" name="abdomen" value="{{ old('abdomen', $ex->abdomen ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="hemolinfopoyetico">Hemolinfopoyetico: </label>
+                                    <input type="text" class="form-control form-control-sm" id="hemolinfopoyetico" name="hemolinfopoyetico" value="{{ old('hemolinfopoyetico', $ex->hemolinfopoyetico ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="tcs">TCS: </label>
+                                    <input type="text" class="form-control form-control-sm" id="tcs" name="tcs" value="{{ old('tcs', $ex->tcs ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="neurologico">Neurológico: </label>
+                                    <input type="text" class="form-control form-control-sm" id="neurologico" name="neurologico" value="{{ old('neurologico', $ex->neurologico ?? '') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Examen auxiliar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="hemograma">Hemograma:</label>
+                                    <input type="text" class="form-control form-control-sm" id="hemograma" name="hemograma" value="{{ old('hemograma', $ex->hemograma ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="bioquimico">Bioquímico:</label>
+                                    <input type="text" class="form-control form-control-sm" id="bioquimico" name="bioquimico" value="{{ old('bioquimico', $ex->bioquimico ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="perfilhepatico">Perfil hepático:</label>
+                                    <input type="text" class="form-control form-control-sm" id="perfilhepatico" name="perfilhepatico" value="{{ old('perfilhepatico', $ex->perfilhepatico ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="perfilcoagulacion">Perfil coagulación</label>
+                                    <input type="text" class="form-control form-control-sm" id="perfilcoagulacion" name="perfilcoagulacion" value="{{ old('perfilcoagulacion', $ex->perfilcoagulacion ?? '') }}">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="perfilreumatologico">Perfil reumatológico</label>
+                                    <input type="text" class="form-control form-control-sm" id="perfilreumatologico" name="perfilreumatologico" value="{{ old('perfilreumatologico', $ex->perfilreumatologico ?? '') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Microbiología</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="orina">Orina:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="orina" name="orina" rows="1">{{ old('orina', $ex->orina ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="sangre">Sangre:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="sangre" name="sangre" rows="1">{{ old('sangre', $ex->sangre ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="esputo">Esputo:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="esputo" name="esputo" rows="1">{{ old('esputo', $ex->esputo ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="heces">Heces:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="heces" name="heces" rows="1">{{ old('heces', $ex->heces ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="lcr">LCR:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="lcr" name="lcr" rows="1">{{ old('lcr', $ex->lcr ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Líquido pleural</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="citoquimico">Citoquímico</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="citoquimico" name="citoquimico" rows="1">{{ old('citoquimico', $ex->citoquimico ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="adalp">ADA:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="adalp" name="adalp" rows="1">{{ old('adalp', $ex->adalp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="paplp">PAP:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="paplp" name="paplp" rows="1">{{ old('paplp', $ex->paplp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="bclp">Block Cell:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="bclp" name="bclp" rows="1">{{ old('bclp', $ex->bclp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="cgchlp">Cultivo GCH:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="cgchlp" name="cgchlp" rows="1">{{ old('cgchlp', $ex->cgchlp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="cbklp">Cultivo BK:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="cbklp" name="cbklp" rows="1">{{ old('cbklp', $ex->cbklp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Aspirado bronquial</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="bkdab">BK Directo</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="bkdab" name="bkdab" rows="1">{{ old('bkdab', $ex->bkdab ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="bkcab">BK Cultivo:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="bkcab" name="bkcab" rows="1">{{ old('bkcab', $ex->bkcab ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="cgchab">Cultivo GCH:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="cgchab" name="cgchab" rows="1">{{ old('cgchab', $ex->cgchab ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="papab">PAP:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="papab" name="papab" rows="1">{{ old('papab', $ex->papab ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="bcab">Block Cell:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="bcab" name="bcab" rows="1">{{ old('bcab', $ex->bcab ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Biopsia pleuro pulmonar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="pulmon">Pulmón:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="pulmon" name="pulmon" rows="1">{{ old('pulmon', $ex->pulmon ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="pleurabpp">Pleura:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="pleurabpp" name="pleurabpp" rows="1">{{ old('pleurabpp', $ex->pleurabpp ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="funcionpulmonar">Funcion pulmonar:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="funcionpulmonar" name="funcionpulmonar" rows="1">{{ old('funcionpulmonar', $ex->funcionpulmonar ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="medicinanuclear">Medicina nuclear:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="medicinanuclear" name="medicinanuclear" rows="1">{{ old('medicinanuclear', $ex->medicinanuclear ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="otros">Otros:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="otros" name="otros" rows="1">{{ old('otros', $ex->otros ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Diagnósticos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" for="diagnostics">Buscar:</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control form-control-sm searchDiagnostics" id="diagnostics" placeholder="Buscar por código o nombre"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <table id="tableDiagnostics" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:90%;">Diagnóstico</th>
+                                            <th style="width:10%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                @if(isset($ex) && $ex->diagnostics->count() > 0)
+                                    <hr>
+                                    <div class="table-responsive">
+                                        <table id="diagnostic_data" class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:5%;">#</th>
+                                                    <th style="width:85%;">Diagnóstico</th>
+                                                    <th style="width:10%;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Tratamiento</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" for="drugs">Buscar:</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control form-control-sm searchDrugs" id="drugs" placeholder="Buscar por descripción"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <table id="tableDrugs" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:30%;">Fármaco</th>
+                                            <th style="width:45%;">Receta</th>
+                                            <th style="width:25%">Cantidad</th>
+                                            <th style="width:10%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                @if(isset($ex) && $ex->medication)
+                                    <hr>
+                                    <div class="table-responsive">
+                                        <table id="medication_data" class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:5%;">#</th>
+                                                    <th style="width:30%;">Fármaco</th>
+                                                    <th style="width:45%;">Receta</th>
+                                                    <th style="width:10%;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                            <hr>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="recomendaciones">Recomendaciones:</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-sm" id="recomendaciones" name="recomendaciones" rows="2">{{ old('recomendaciones', $ex->recomendaciones ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h5 class="card-title">Exámenes auxiliares</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-4">
+                                <div class="form-group row">
+                                    <button id="btn-add-img" type="button" class="btn btn-primary btn-block"><i class="bi bi-plus-circle"></i> Agregar campo</button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <table id="tableImg" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Imagen</th>
+                                            <th>Fecha de la radiografía</th>
+                                            <th></th>
+                                        </tr>
+                                    <thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            @if(isset($ex) && $ex->images->count() > 0)
+                                <div class="col-12">
+                                    <table id="image_data" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:5%;">#</th>
+                                                <th style="width:28%;">Fecha del examen</th>
+                                                <th style="width:28%;">Fecha registrado</th>
+                                                <th style="width:15%;"></th>
+                                            </tr>
+                                        <thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endrole
+    @role('asistente')
+        <p class="alert alert-danger">
+            No tienes permisos para editar exámenes, consulte con el administrador del sistema.
+        </p>
+    @endrole
+</div>
+<div class="card-footer">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</div>

@@ -5,13 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ExamValidate extends FormRequest {
-    
+
     public function authorize(): bool {
         return true;
     }
 
     public function rules(): array {
         return [
+            'id_historia'           => 'required',
             'dni' 		            => 'required',
             'id_tipo' 	            => 'required|integer',
             'ta'                    => 'nullable|string',
@@ -61,6 +62,7 @@ class ExamValidate extends FormRequest {
 
     public function messages(): array {
         return [
+            'id_historia.required'      => 'El campo Historia es requerido',
             'dni.required'              => 'El campo DNI es requerido',
             'id_tipo.required'          => 'El campo tipo de examen es requerido',
             'id_tipo.integer'           => 'El campo tipo de examen debe ser un número',
@@ -73,6 +75,7 @@ class ExamValidate extends FormRequest {
 
     protected function prepareForValidation(): void {
         $this->merge([
+            'id_historia'           => trim(strip_tags($this->id_historia)),
             'dni' 		            => trim(strip_tags($this->dni)),
             'id_tipo' 	            => trim(strip_tags($this->id_tipo)),
             'ta'                    => trim(strip_tags($this->ta)),

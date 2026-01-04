@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Submodule extends Model
@@ -25,7 +26,7 @@ class Submodule extends Model
         'deleted_at'    => 'datetime',
     ];
 
-    public function modulo() {
+    public function modulo(): BelongsTo {
         return $this->belongsTo(Module::class, 'module_id', 'id');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Risk extends Model
@@ -35,7 +36,7 @@ class Risk extends Model
             ->where('historia_riesgo.id', $id)->get();
     }
 
-    public function history() {
+    public function history(): BelongsTo {
         return $this->belongsTo(History::class, 'dni', 'dni');
     }
 }

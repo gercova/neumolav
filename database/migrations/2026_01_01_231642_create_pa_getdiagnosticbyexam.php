@@ -16,12 +16,12 @@ return new class extends Migration
                 IN id_exam BIGINT(19)
             )
             BEGIN
-                SELECT d.descripcion diagnostic, cd.id
-                FROM control_diagnostico cd
-                INNER JOIN diagnosticos d ON cd.id_diagnostico = d.id
-                INNER JOIN controles c ON cd.id_control = c.id
-                INNER JOIN historias h ON cd.id_historia = h.id
-                WHERE cd.deleted_at IS NULL AND c.deleted_at IS NULL AND h.deleted_at IS NULL AND cd.id_control = id_control;
+                SELECT d.descripcion diagnostic, ed.id
+                FROM examen_diagnostico ed
+                INNER JOIN diagnosticos d ON ed.id_diagnostico = d.id
+                INNER JOIN examenes e ON ed.id_examen = e.id
+                INNER JOIN historias h ON ed.id_historia = h.id
+                WHERE ed.deleted_at IS NULL AND e.deleted_at IS NULL AND h.deleted_at IS NULL AND ed.id_examen = id_exam;
             END
         ');
     }

@@ -87,7 +87,7 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
-                                    @if(isset($ap) && $ap->diagnosticAppointment->count() > 0)
+                                    @if(isset($ap) && $ap->diagnostics->count() > 0)
                                         <div class="col-12">
                                             <table id="diagnostic_data" class="table table-hover">
                                                 <thead>
@@ -131,7 +131,7 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
-                                    @if(isset($ap) && $ap->medicationAppointment->count() > 0)
+                                    @if(isset($ap) && $ap->medication->count() > 0)
                                         <div class="col-12">
                                             <table id="medication_data" class="table table-hover">
                                                 <thead>

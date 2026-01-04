@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Diagnostic extends Model {
@@ -20,15 +21,15 @@ class Diagnostic extends Model {
         'deleted_at'  => 'datetime',
     ];
 
-    public function diagnosticAppointment() {
+    public function diagnosticAppointment(): HasMany {
         return $this->hasMany(DiagnosticAppointment::class, 'id_diagnostico', 'id');
     }
 
-    public function diagnosticExam() {
+    public function diagnosticExam(): HasMany {
         return $this->hasMany(DiagnosticExam::class, 'id_diagnostico', 'id');
     }
 
-    public function diagnosticReport() {
+    public function diagnosticReport(): HasMany {
         return $this->hasMany(DiagnosticReport::class, 'id_diagnostico', 'id');
     }
 }
