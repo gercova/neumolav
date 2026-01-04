@@ -5,13 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RiskValidate extends FormRequest {
-    
+
     public function authorize(): bool {
         return true;
     }
 
     public function rules(): array {
         return [
+            'id_historia'                       => 'required',
             'dni'                               => 'required',
             'motivo'                            => 'required|string',
             'antecedente'                       => 'required|string',
@@ -25,6 +26,7 @@ class RiskValidate extends FormRequest {
 
     public function messages(): array {
         return [
+            'id_historia.required'              => 'El campo Historia es requerido',
             'dni.required'                      => 'El campo DNI es requerido',
             'motivo.required'                   => 'El campo Motivo es requerido.',
             'motivo.string'                     => 'El campo Motivo debe ser una cadena de texto.',
@@ -39,16 +41,4 @@ class RiskValidate extends FormRequest {
             'riesgo_neumologico.required'       => 'El campo Riesgo Neumológ ico es requerido.',
         ];
     }
-
-    /*protected function prepareForValidation(): void {
-        $this->merge([
-            'dni'           => trim(strip_tags($this->dni)),
-            'motivo'        => trim(strip_tags($this->motivo)),
-            'antecedente'   => trim(strip_tags($this->antecedente)),
-            'sintomas'      => trim(strip_tags($this->sintomas)),
-            'examen_fisico' => trim(strip_tags($this->examen_fisico)),
-            'examen_complementario' => trim(strip_tags($this->examen_complementario)),
-            'riesgo_neumologico' => trim(strip_tags($this->riesgo_neumologico)),
-        ]);
-    }*/
 }

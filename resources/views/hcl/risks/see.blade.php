@@ -29,12 +29,13 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="alert alert-info">
-                                        <p>Menu de registros de reportes {{ $hc[0]['id_sexo'] == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc[0]['nombres'] }}</b> identificado con DNI: <b>{{ $hc[0]['dni'] }}</b></p>
+                                        <p>Menu de registros de reportes {{ $hc->id_sexo == 'M' ? 'del' : 'de la' }} paciente <b>{{ $hc->nombres }}</b> identificado con DNI: <b>{{ $hc->dni }}</b></p>
                                     </div>
-                                    <input type="hidden" id="dni" name="dni" value="{{ $hc[0]['dni'] }}">
+                                    <input type="hidden" id="id_historia" name="id_historia" value="{{ $hc->id }}">
+                                    <input type="hidden" id="dni" name="dni" value="{{ $hc->dni }}">
                                     @can('riesgo_crear')
                                         <hr>
-                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.risks.add', ['id' => $hc[0]['dni']]) }}">Agregar nuevo reporte</a>
+                                        <a class="btn btn-outline btn-primary" href="{{ route('hcl.risks.add', ['hc' => $hc->id]) }}">Agregar nuevo reporte</a>
                                     @endcan
                                     <hr>
                                 </div>
@@ -55,7 +56,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>    
+                            </div>
                         </div>
                     </div>
                 </div>

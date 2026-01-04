@@ -1,8 +1,8 @@
 $(document).ready(function(){
-    const dni   = $('#dni').val();
+    const hc = $('#id_historia').val();
     const tables = {
-       riskId:  $("#risk_data").DataTable({ ajax: `${API_BASE_URL}/risks/list/${dni}`, order: [], processing: true }),
-       riskTableByDNI: $("#risksByDNI").DataTable({ ajax: `${API_BASE_URL}/risks/listRisks/${dni}`, order: [], processing: true }),
+       riskId:  $("#risk_data").DataTable({ ajax: `${API_BASE_URL}/risks/list/${hc}`, order: [], processing: true }),
+       riskTableByDNI: $("#risksByDNI").DataTable({ ajax: `${API_BASE_URL}/risks/listRisks/${hc}`, order: [], processing: true }),
     };
     //Eliminar un registro
     DeleteHandler.initButtons([
@@ -178,6 +178,7 @@ $(document).ready(function(){
             const response = await axios.get(`${API_BASE_URL}/risks/viewDetail/${id}`)
             if(response.status == 200 && response.data.hc && response.data.rk){
                 const { hc, rk } = response.data;
+                console.log(response.data);
                 const fecha = new Date(rk.created_at);
                 const fechaFormateada = fecha.toLocaleString('es-ES', {
                     year: 'numeric',
@@ -194,11 +195,11 @@ $(document).ready(function(){
                             <table class="table table-hover table-condensed">
                                 <thead>
                                     <tr>
-                                        <th width="70%">DNI: ${hc[0].dni}</th><th>Fecha: ${fechaFormateada}</th>
+                                        <th width="70%">DNI: ${hc.dni}</th><th>Fecha: ${fechaFormateada}</th>
                                     </tr>
                                 </thead>
                             </table>
-                            <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc[0].nombres}</p>
+                            <p class="text-uppercase"><strong>Nombres y Apellidos:</strong> ${hc.nombres}</p>
                             <div class="card">
                                 <div class="card-body">
                                     <strong>Motivo:</strong><p>${rk.motivo}</p>

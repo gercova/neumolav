@@ -186,15 +186,15 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
          */
         Route::middleware(['permission:riesgos'])->group(function(){
             Route::get('/risks/home',                           [RisksController::class, 'index'])->name('hcl.risks.home');
-            Route::get('/risks/add/{id}',                       [RisksController::class, 'add'])->name('hcl.risks.add');
-            Route::get('/risks/edit/{id}',                      [RisksController::class, 'edit'])->name('hcl.risks.edit');
-            Route::get('/risks/see/{id}',                       [RisksController::class, 'seeRisks'])->name('hcl.risks.see');
-            Route::get('/risks/viewDetail/{id}',                [RisksController::class, 'viewRiskDetail']);
-            Route::get('/risks/list/{id}',                      [RisksController::class, 'listRisks']);
-            Route::get('/risks/listRisks/{id}',                 [RisksController::class, 'listRisksByDNI']);
-            Route::get('/risks/print/{id}',                     [RisksController::class, 'printRiskReportId'])->name('hcl.risks.print');
+            Route::get('/risks/add/{hc}',                       [RisksController::class, 'add'])->name('hcl.risks.add');
+            Route::get('/risks/edit/{rk}',                      [RisksController::class, 'edit'])->name('hcl.risks.edit');
+            Route::get('/risks/see/{hc}',                       [RisksController::class, 'see'])->name('hcl.risks.see');
+            Route::get('/risks/viewDetail/{rk}',                [RisksController::class, 'viewRiskDetail']);
+            Route::get('/risks/list/{hc}',                      [RisksController::class, 'listRisks']);
+            Route::get('/risks/listRisks/{hc}',                 [RisksController::class, 'listRisksByDNI']);
+            Route::get('/risks/print/{rk}',                     [RisksController::class, 'printRiskReport'])->name('hcl.risks.print');
             Route::post('/risks/store',                         [RisksController::class, 'store']);
-            Route::delete('/risks/delete/{id}',                 [RisksController::class, 'destroy']);
+            Route::delete('/risks/delete/{rk}',                 [RisksController::class, 'destroy']);
         });
         /**
          * CATEGORÍA DROGA

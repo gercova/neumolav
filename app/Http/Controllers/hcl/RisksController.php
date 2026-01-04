@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RisksController extends Controller {
-    
+
     public function __construct() {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:riesgo_acceder')->only('index');
@@ -28,25 +28,22 @@ class RisksController extends Controller {
         return view('hcl.risks.index');
     }
 
-    public function add($dni): View {
-        $hc = History::where('dni', $dni)->get();
+    public function add(History $hc): View {
         return view('hcl.risks.add', compact('hc'));
     }
 
-    public function edit(int $id): View {
-        $hc	= Risk::seePatientByRisk($id);
-		$rk = Risk::findOrFail($id);
+    public function edit(Risk $rk): View {
+        $hc	= History::where('id', $rk->id)->first();
         return view('hcl.risks.edit', compact('hc', 'rk'));
     }
 
-    public function seeRisks($dni): View {
-		$hc = History::where('dni', $dni)->get();
+    public function see(History $hc): View {
+		$hc = History::where('id', $hc->id)->first();
 		return view('hcl.risks.see', compact('hc'));
 	}
 
-    public function viewRiskDetail(int $id): JsonResponse {
-		$rk = Risk::findOrFail($id);
-		$hc = Risk::seePatientByRisk($id);
+    public function viewRiskDetail(Risk $rk): JsonResponse {
+		$hc = History::where('id', $rk->id_historia)->first();
 		return response()->json(compact('rk', 'hc'), 200);
 	}
 
@@ -58,13 +55,12 @@ class RisksController extends Controller {
         try {
             $report = Risk::updateOrCreate(['id' => $id], $validated);
             $id 	= $report->id;
-            $dni    = $report->dni;
             DB::commit();
             return response()->json([
                 'status' 		=> true,
                 'type'			=> 'success',
                 'messages' 		=> $report->wasChanged() ? 'Se ha añadido un nuevo reporte' : 'Reporte actualizado exitosamente',
-                'route' 		=> route('hcl.risks.see', $dni),
+                'route' 		=> route('hcl.risks.see', $report->id_historia),
                 'route_print' 	=> route('hcl.risks.print', $id)
             ], 200);
         } catch (\Exception $e) {
@@ -77,8 +73,8 @@ class RisksController extends Controller {
         }
     }
 
-    public function listRisks($dni): JsonResponse {
-		$results 	= DB::select('CALL getRisksByMedicalHistory(?)', [$dni]);
+    public function listRisks(History $hc): JsonResponse {
+		$results 	= DB::select('CALL PA_getRisksByMedicalHistory(?)', [$hc->id]);
 		$data       = collect($results)->map(function ($item, $index) {
             $user = auth()->user();
             $buttons = '';
@@ -92,10 +88,10 @@ class RisksController extends Controller {
             if($user->can('riesgo_actualizar')){
                 $buttons .= sprintf(
                     '<a class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>&nbsp;',
-                    route('hcl.risks.edit', ['id' => $item->id]),
+                    route('hcl.risks.edit', ['rk' => $item->id]),
                 );
             }
-            
+
             if($user->can('riesgo_borrar')){
                 $buttons .= sprintf(
                     '<button type="button" class="btn btn-danger delete-risk btn-xs" value="%s"><i class="bi bi-trash"></i> Eliminar</button>',
@@ -119,8 +115,8 @@ class RisksController extends Controller {
  		], 200);
 	}
 
-    public function listRisksByDNI($dni): JsonResponse {
-        $results    = DB::select('CALL getRisksByDNI(?)', [$dni]);
+    public function listRisksByDNI(History $hc): JsonResponse {
+        $results    = DB::select('CALL PA_getRisksByDNI(?)', [$hc->id]);
         $data       = collect($results)->map(function ($item, $index) {
             return [
                 $index + 1,
@@ -140,27 +136,25 @@ class RisksController extends Controller {
         ], 200);
     }
 
-    public function destroy(int $id): JsonResponse {
-        $result = Risk::findOrFail($id);
-        $result->delete();
+    public function destroy(Risk $rk): JsonResponse {
+        $rk->delete();
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'Se ha eliminado el informe' : 'Algo salió mal, recargue la página he intente de nuevo',
+            'status'    => (bool) $rk,
+            'type'      => $rk ? 'success' : 'error',
+            'messages'  => $rk ? 'Se ha eliminado el informe' : 'Algo salió mal, recargue la página he intente de nuevo',
         ], 200);
     }
 
-    public function printRiskReportId(int $id) {
-		$hc = DB::select('CALL getMedicalHistoryByRisk(?)', [$id]);
-		$rk	= Risk::findOrFail($id);
+    public function printRiskReport(Risk $rk) {
+		$hc = DB::select('CALL PA_getMedicalHistoryByRisk(?)', [$rk->id]);
 		$us = Auth::user();
         $en = Enterprise::findOrFail(1);
 		$pdf = PDF::loadView('hcl.risks.pdf', compact('hc', 'rk', 'us', 'en'))
 			->setPaper('a4')
         	->setOptions([
-                'margin-top' 	        => 0.5, 
-				'margin-bottom'         => 0.5, 
-				'margin-left' 	        => 0.5, 
+                'margin-top' 	        => 0.5,
+				'margin-bottom'         => 0.5,
+				'margin-left' 	        => 0.5,
 				'margin-right' 	        => 0.5,
                 'fontDefault'           => 'sans-serif',
                 'isHtml5ParserEnabled'  => true,
@@ -168,6 +162,6 @@ class RisksController extends Controller {
                 'isPhpEnabled'          => false,
                 'chroot'                => realpath(base_path()),
             ]);
-        return $pdf->stream("informe-de-riesgo-{$id}.pdf");
+        return $pdf->stream("informe-de-riesgo-{$rk->id}.pdf");
 	}
 }
