@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DiagnosticValidate;
 use App\Http\Resources\DiagnosticResource;
 use App\Models\Diagnostic;
-use App\Models\Drug;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

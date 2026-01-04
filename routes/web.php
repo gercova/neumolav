@@ -55,7 +55,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/home',                                     [HomeController::class, 'index'])->name('home');
         Route::get('/entreprise/dataEnterprise',                [EnterpriseController::class, 'getEnterprise']);
         Route::get('/enterprise/images',                        [EnterpriseController::class, 'getImages']);
-        Route::get('/histories/quotes/{id}',                    [HistoriesController::class, 'addQuotes']);
+        Route::get('/histories/quotes/{hc}',                    [HistoriesController::class, 'addQuotes']);
         Route::get('/qoutes',                                   [HistoriesController::class, 'getQuotes']);
         Route::get('/checkStatusPatient/{id}',                  [HistoriesController::class, 'checkStatusPatient']);
         Route::middleware(['role:administrador', 'permission:seguridad'])->group(function(){
