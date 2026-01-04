@@ -15,7 +15,7 @@ $(document).ready(function(){
                 animation: "slide-from-top"
             });
             if (result.isConfirmed) {
-                const response = await axios.post(`${API_BASE_URL}/logout`);
+                const response = await axios.post(`${API_URL}/logout`);
                 if(response.status == 200 && response.data.status == true){
                     window.location.href = response.data.redirect;
                 }
