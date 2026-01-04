@@ -133,6 +133,6 @@
 </div>
 <div class="card-footer">
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Guardar</button>
+        <button type="submit" class="btn btn-primary"> Guardar</button>
     </div>
 </div>

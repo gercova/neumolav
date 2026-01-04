@@ -25,6 +25,7 @@
                 <form id="reportForm" method="post">
                     @method('POST')
                     @csrf
+                    @include('hcl.reports.partials.form')
                 </form>
             </div>
         </div>

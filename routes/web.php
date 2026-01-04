@@ -175,8 +175,8 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/reports/store',                       [ReportsController::class, 'store']);
             Route::get('/reports/viewDetail/{rp}',              [ReportsController::class, 'viewReportDetail']);
             Route::get('/reports/list/{hc}',                    [ReportsController::class, 'listReports']);
-            Route::get('/reports/listReports/{id}',             [ReportsController::class, 'listReportsByDNI']);
-            Route::get('/reports/listDiagnostic/{id}',          [ReportsController::class, 'listOfDiagnosticsByReportId']);
+            Route::get('/reports/listReports/{hc}',             [ReportsController::class, 'listReportsByDNI']);
+            Route::get('/reports/listDiagnostic/{rp}',          [ReportsController::class, 'listOfDiagnosticsByReport']);
             Route::get('/reports/print/{rp}',                   [ReportsController::class, 'printReport'])->name('hcl.reports.print');
             Route::delete('/reports/delete/{rp}',               [ReportsController::class, 'destroy']);
             Route::delete('/rp-dx/delete/{dx}',                 [ReportsController::class, 'destroyDiagnosticReport']);

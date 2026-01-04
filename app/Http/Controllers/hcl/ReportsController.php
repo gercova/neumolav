@@ -156,7 +156,7 @@ class ReportsController extends Controller {
         return response()->json($results, 200);
     }
 
-    public function listOfDiagnosticsByReportId(Report $rp): JsonResponse {
+    public function listOfDiagnosticsByReport(Report $rp): JsonResponse {
 		$results = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
 		$data = collect($results)->map(function ($item, $index) {
 			return [
