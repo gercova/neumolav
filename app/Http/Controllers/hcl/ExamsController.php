@@ -75,7 +75,6 @@ class ExamsController extends Controller {
             $id 	    = $exam->id;
             $historia   = $exam->id_historia;
 			$dni 	    = $exam->dni;
-
             // Guardar diagnóstico, medicación y subir imagen si existen
             if ($diagnostics) 	$this->saveDiagnosis($id, $historia, $dni, $diagnostics);
             if ($drugs) 		$this->saveMedicacion($id, $historia, $dni, $drugs, $descriptions);
@@ -143,17 +142,17 @@ class ExamsController extends Controller {
 			# Storage::disk('public')->makeDirectory($directorio);
 			foreach ($images as $i => $image) {
 				if ($image->isValid()) {
-					//$extension 	= $image->extension();
 					$extension 	= $image->getClientOriginalExtension();
 					$fileName 	= mt_rand(1000, 9999).'.'.$extension;
 					$route 		= "{$directorio}/{$fileName}";
 
 					if ($image->storeAs($directorio, $fileName, 'public')) {
 						Imagen::create([
-							'id_examen'    => $id,
-							'dni'          => $dni,
-							'fecha_examen' => $fechaImg[$i],
-							'imagen'       => $route,
+							'id_examen'     => $id,
+                            'id_historia'   => $historia,
+							'dni'           => $dni,
+							'fecha_examen'  => $fechaImg[$i],
+							'imagen'        => $route,
 						]);
 					}
 				}

@@ -424,7 +424,7 @@
                                     </thead>
                                     <tbody></tbody>
                                 </table>
-                                @if(isset($ex) && $ex->diagnostics->count() > 0)
+                                @if(isset($ex) && $ex->diagnostics)
                                     <hr>
                                     <div class="table-responsive">
                                         <table id="diagnostic_data" class="table table-hover">

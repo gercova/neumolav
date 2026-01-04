@@ -27,11 +27,11 @@ class MedicationExam extends Model
     ];
 
     public function history(): BelongsTo {
-        return $this->belongsTo(History::class);
+        return $this->belongsTo(History::class, 'id_historia', 'id');
     }
 
     public function exam(): BelongsTo {
-        return $this->belongsTo(Exam::class);
+        return $this->belongsTo(Exam::class, 'id_examen', 'id');
     }
 
     public function drug(): BelongsTo {

@@ -236,7 +236,7 @@ $(document).ready(function(){
                 const html = `
                     <div class="row">
                         <div class="col-12">
-                            <img src="${API_BASE_URL}/storage/${response.data.imagen}" class="img-thumbnail mx-auto d-block" width="550">
+                            <img src="${response.data.imagen}" class="img-thumbnail mx-auto d-block" width="550">
                             <hr>
                             <p class="text-center"><strong>Fecha del examen:</strong> ${response.data.fecha_examen}</p>
                         </div>

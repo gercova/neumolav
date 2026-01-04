@@ -97,8 +97,8 @@ class Exam extends Model {
         return $this->hasMany(DiagnosticExam::class, 'id_examen', 'id');
     }
 
-    public function medication(): BelongsTo {
-        return $this->belongsTo(MedicationExam::class, 'id_examen', 'id');
+    public function medication(): HasMany {
+        return $this->hasMany(MedicationExam::class, 'id_examen', 'id');
     }
 
     public function images(): HasMany {
