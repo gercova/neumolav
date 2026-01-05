@@ -71,6 +71,7 @@ class History extends Model {
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
+        'fecha_nacimiento'  => 'date',
         'estado'            => 'boolean',
         'created_at'        => 'datetime',
         'updated_at'        => 'datetime',

@@ -222,7 +222,7 @@ class HistoriesController extends Controller {
 		]);
 	}
 
-	public function addQuotes(Request $request, History $hc): JsonResponse {
+	public function addQuotes(History $hc): JsonResponse {
 		$fecha = Carbon::now()->format('Y-m-d');
 		// Validar si ya existe cita hoy
 		$validate = DB::table('citas')->where('id_historia', $hc->id)->where('id_estado', 1)->whereDate('created_at', $fecha)->count();
