@@ -8,18 +8,18 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class createRolesAndPermissions extends Seeder {
+class RolesAndPermissionsSeeder extends Seeder {
     
     public function run(): void {
         // Roles
-        //$administrador    = Role::create(['name' => 'administrador']);
-        //$especialista     = Role::create(['name' => 'especialista']);
-        //$asistente        = Role::create(['name' => 'asistente']);
+        $administrador    = Role::create(['name' => 'administrador']);
+        $especialista     = Role::create(['name' => 'especialista']);
+        $asistente        = Role::create(['name' => 'asistente']);
 
         // Permisos
-        $crudPermissions = ['acceder', 'ver', 'crear', 'actualizar', 'borrar'];
-        $modulos = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'modulos', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
-        $modules = ['historia', 'examen', 'control', 'informe','riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'modulo', 'especialidad', 'usuario', 'rol', 'permiso'];
+        $crudPermissions    = ['acceder', 'ver', 'crear', 'actualizar', 'borrar'];
+        $modulos            = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'modulos', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
+        $modules            = ['historia', 'examen', 'control', 'informe','riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'modulo', 'especialidad', 'usuario', 'rol', 'permiso'];
 
         foreach($modulos as $m) {
             Permission::create(['name' => $m]);
@@ -43,13 +43,13 @@ class createRolesAndPermissions extends Seeder {
         $user = User::find(1);
         $user->assignRole('administrador');
 
+        $user = User::find(2);
+        $user->assignRole('especialista');
+
         $user = User::find(3);
         $user->assignRole('especialista');
 
         $user = User::find(4);
-        $user->assignRole('especialista');
-
-        $user = User::find(6);
         $user->assignRole('especialista');
     }
 }

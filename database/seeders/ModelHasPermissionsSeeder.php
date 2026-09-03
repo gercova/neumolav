@@ -1,0 +1,1189 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class ModelHasPermissionsSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $modelhaspermissions = [
+            [],
+            [
+                'permission_id' => 1,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 1,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 1,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 2,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 2,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 2,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 3,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 3,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 3,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 4,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 4,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 4,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 5,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 5,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 5,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 6,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 6,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 6,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 6,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 7,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 7,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 7,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 8,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 8,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 8,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 9,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 9,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 9,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 10,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 10,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 10,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 11,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 12,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 13,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 14,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 15,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 16,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 17,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 18,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 18,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 18,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 19,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 19,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 19,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 20,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 20,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 20,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 21,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 21,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 21,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 22,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 22,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 22,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 23,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 23,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 23,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 24,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 24,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 24,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 25,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 25,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 25,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 26,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 27,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 27,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 27,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 28,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 28,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 28,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 29,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 29,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 29,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 30,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 30,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 30,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 31,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 32,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 32,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 32,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 32,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 33,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 33,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 33,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 34,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 34,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 34,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 34,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 35,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 35,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 35,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 35,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 36,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 36,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 36,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 36,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 37,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 37,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 37,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 38,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 38,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 38,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 39,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 39,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 39,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 40,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 40,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 40,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 41,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 42,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 42,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 42,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 43,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 43,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 43,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 44,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 44,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 44,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 45,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 45,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 45,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 46,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 47,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 47,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 47,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 47,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 48,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 48,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 48,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 48,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 49,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 49,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 49,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 49,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 50,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 50,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 50,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 50,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 51,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 51,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 51,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 52,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 52,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 52,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 53,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 53,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 53,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 54,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 54,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 54,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 55,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 55,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 55,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 56,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 57,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 57,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 57,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 58,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 58,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 58,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 59,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 59,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 59,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 60,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 60,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 60,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 61,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 62,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 62,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 62,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 63,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 63,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 63,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 64,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 64,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 64,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 65,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 65,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 65,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 66,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 67,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 67,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 67,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 68,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 68,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 68,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 69,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 69,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 69,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 70,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 70,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 7
+            ],
+            [
+                'permission_id' => 70,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 8
+            ],
+            [
+                'permission_id' => 71,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 72,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 73,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 74,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 75,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 76,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 77,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 78,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 79,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 80,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 81,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 82,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 83,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 84,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 85,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 86,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 87,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 88,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 89,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 90,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 91,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 92,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 93,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 94,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 95,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 96,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 97,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 98,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 99,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 100,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 101,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 102,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 102,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 103,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 103,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 104,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 104,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 105,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 105,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 106,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ],
+            [
+                'permission_id' => 106,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 3
+            ],
+            [
+                'permission_id' => 107,
+                'model_type' => 'App\\Models\\User',
+                'model_id' => 1
+            ]
+        ];
+
+        foreach ($modelhaspermissions as $modelhaspermission) {
+            DB::table('model_has_permissions')->insert($modelhaspermission);
+        }
+    }
+}
