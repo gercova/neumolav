@@ -29,7 +29,7 @@ class UserValidate extends FormRequest {
             'biografia.max'                     => 'El campo Biografía no puede tener más de 255 caracteres.',
             'specialty.required'                => 'El campo Especialidad es requerido.',
             'role_id.required'                  => 'El campo Rol es requerido.',
-            'avatar.image'                      => 'El campo avatar solo acpeta estos formatos jpeg, png, jpg, gif',
+            'avatar.image'                      => 'El campo avatar solo acepta estos formatos jpeg, png, jpg, gif',
             'avatar.max'                        => 'Límite de la imagen excedida',
         ];
     }
