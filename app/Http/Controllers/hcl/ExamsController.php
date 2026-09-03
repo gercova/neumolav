@@ -282,18 +282,6 @@ class ExamsController extends Controller {
 		], 200);
 	}
 
-	// public function seeExamsByMedicalHistory(History $hc): JsonResponse {
-	// 	$results['exams'] = DB::select('CALL PA_getExamsByMedicalHistory(?)', [$hc->id]);
-	// 	return response()->json($results, 200);
-	// }
-
-	// public function seeRecipeByExam(Exam $ex): JsonResponse {
-	// 	$exam 		= Exam::findOrFail($ex->id);
-	// 	$medicacion = MedicationExam::where('id_examen', $ex->id)->get();
-	// 	$diagnostic = DiagnosticExam::where('id_examen', $ex->id)->get();
-	// 	return response()->json(compact('exam', 'medicacion', 'diagnostic'), 200);
-	// }
-
     public function destroy(Exam $ex): JsonResponse {
 		$ex->delete();
 		return response()->json([
