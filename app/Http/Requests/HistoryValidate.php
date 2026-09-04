@@ -7,7 +7,7 @@ use Illuminate\Validation\Rule;
 
 class HistoryValidate extends FormRequest
 {
-    public function authorize(){
+    public function authorize(): bool {
         return true;
     }
 
@@ -16,27 +16,26 @@ class HistoryValidate extends FormRequest
             'id_td'                         => 'required',
             'dni'                           => [
                 'required',
-                'unique:historias,dni,'.$this->id,
-                Rule::when($this->id_td === 1, [
-                    'digits:8',
-                    Rule::unique('historias', 'dni')->ignore($this->id),
-                ]),
-                Rule::when($this->id_td === 2, [
-                    'size:9',
-                    Rule::unique('historias', 'dni')->ignore($this->id),
-                ]),
+                'string',
+                Rule::unique('historias', 'dni')->ignore($this->id),
+                Rule::when($this->id_td == 1, ['digits:8']),
+                Rule::when($this->id_td == 3, ['min:8', 'max:12']),
+                Rule::when($this->id_td == 4, ['min:6', 'max:15']),
             ],
-            'nombres'                       => 'required|string|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/',
-            'fecha_nacimiento'              => 'required|date',
+            'nombres'                       => 'required|string|max:150|regex:/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s.,-]+$/u',
+            'fecha_nacimiento'              => 'required|date|before_or_equal:today|after:1900-01-01',
             'id_sexo'                       => 'required',
-            'telefono'                      => 'required|digits:9',
+            'telefono'                      => 'required|string|min:7|max:11',
             'id_gs'                         => 'required',
             'ubigeo_residencia'             => 'required',
+            'ubigeo_nacimiento'             => 'nullable|string',
+            'ubigeo_extranjero'             => 'nullable|string|max:255',
+            'extranjero'                    => 'nullable|string|max:255',
             'id_gi'                         => 'required',
             'id_ocupacion'                  => 'required',
             'id_estado'                     => 'required',
             'cirugias'                      => 'nullable|string',
-            'transfuciones'                 => 'nullable|string',
+            'transfusiones'                 => 'nullable|string',
             'traumatismos'                  => 'nullable|string',
             'hospitalizaciones'             => 'nullable|string',
             'drogas'                        => 'nullable|string',
@@ -55,10 +54,10 @@ class HistoryValidate extends FormRequest
             'efusionpleural'                => 'nullable|string',
             'neumonias'                     => 'nullable|string',
             'tabaquismo'                    => 'nullable|string',
-            'id_ct'                         => 'integer',
-            'cig'                           => 'numeric',
-            'aniosfum'                      => 'numeric',
-            'result'                        => 'numeric',
+            'id_ct'                         => 'nullable|integer',
+            'cig'                           => 'nullable|numeric',
+            'aniosfum'                      => 'nullable|numeric',
+            'result'                        => 'nullable|numeric',
             'contactotbc'                   => 'nullable|string',
             'exposicionbiomasa'             => 'nullable|string',
             'motivoconsulta'                => 'nullable|string',
@@ -70,73 +69,50 @@ class HistoryValidate extends FormRequest
         ];
     }
 
-    public function messages() {
+    public function messages(): array {
         return [
-            'id_td.required'                => 'El campo Tipo de documento es obligatorio',
-            'dni.required'                  => 'El campo DNI es obligadorio.',
-            'dni.digits'                    => 'El campo DNI solo debe tener 8 digitos.',
-            'dni.unique'                    => 'El campo DNI debe ser único.',
-            'dni.size'                      => 'El campo DNI solo debe tener 9 digitos.',
-            'nombres.required'              => 'El campo Nombres es obligadorio.',
-            'nombres.string'                => 'El campo Nombres de ser de tipo cadena.',
-            'fecha_nacimiento.required'     => 'El campo Fecha Nacimiento es obligatorio.',
-            'fecha_nacimiento.date'         => 'El campo Fecha Nacimiento debe de ser de tipo fecha.',
+            'id_td.required'                => 'El campo Tipo de documento es obligatorio.',
+            'dni.required'                  => 'El campo Documento/DNI es obligatorio.',
+            'dni.digits'                    => 'El DNI debe contener exactamente 8 dígitos.',
+            'dni.unique'                    => 'El número de documento ya se encuentra registrado en otra historia.',
+            'dni.min'                       => 'El número de documento no cumple con la longitud mínima.',
+            'dni.max'                       => 'El número de documento excede la longitud permitida.',
+            'nombres.required'              => 'El campo Nombres es obligatorio.',
+            'nombres.string'                => 'El campo Nombres debe ser una cadena de texto.',
+            'nombres.max'                   => 'El campo Nombres no debe exceder los 150 caracteres.',
+            'nombres.regex'                 => 'El formato del nombre contiene caracteres no válidos.',
+            'fecha_nacimiento.required'     => 'El campo Fecha de Nacimiento es obligatorio.',
+            'fecha_nacimiento.date'         => 'El campo Fecha de Nacimiento debe ser una fecha válida.',
+            'fecha_nacimiento.before_or_equal' => 'La Fecha de Nacimiento no puede ser una fecha futura.',
+            'fecha_nacimiento.after'        => 'La Fecha de Nacimiento debe ser posterior al 01/01/1900.',
             'id_sexo.required'              => 'El campo Sexo es obligatorio.',
-            'telefono.required'             => 'El campo Teléfono es obligatorio.',
-            'telefono.digits'               => 'El campo Teléfono debe tener 9 digitos.',
+            'telefono.required'             => 'El campo Celular/Teléfono es obligatorio.',
+            'telefono.min'                  => 'El Celular/Teléfono debe tener al menos 7 dígitos.',
+            'telefono.max'                  => 'El Celular/Teléfono no debe superar los 11 dígitos.',
             'id_gs.required'                => 'El campo Grupo Sanguíneo es obligatorio.',
-            'ubigeo_residencia.required'    => 'El campo Ubigeo de Residencia es obligatorio.',
-            'id_gi.required'                => 'El campo Grado Instrucción es obligatorio.',
+            'ubigeo_residencia.required'    => 'El campo Lugar de Residencia es obligatorio.',
+            'id_gi.required'                => 'El campo Grado de Instrucción es obligatorio.',
             'id_ocupacion.required'         => 'El campo Ocupación es obligatorio.',
             'id_estado.required'            => 'El campo Estado Civil es obligatorio.',
-            'id_estado.integer'             => 'El campo Estado Civil debe ser un número entero.',
-            'id_ct.integer'                 => 'El campo Consumo Tabaco debe ser entero',
-            'cig.numeric'                   => 'El campo Cigarros debe ser númerico',
-            'aniosfum.numeric'              => 'El campo Años debe ser númerico',
+            'id_ct.integer'                 => 'El consumo de tabaco debe ser un valor válido.',
+            'cig.numeric'                   => 'El campo Cigarros x día debe ser numérico.',
+            'aniosfum.numeric'              => 'El campo Años fumando debe ser numérico.',
+            'result.numeric'                => 'El campo Resultado debe ser numérico.',
         ];
     }
 
     protected function prepareForValidation(): void {
-        $this->merge([
-            'id_td'                         => trim(strip_tags($this->id_td)),
-            'dni'                           => trim(strip_tags($this->dni)),
-            'nombres'                       => trim(strip_tags($this->nombres)),
-            'fecha_nacimiento'              => trim(strip_tags($this->fecha_nacimiento)),
-            'id_sexo'                       => trim(strip_tags($this->id_sexo)),
-            'telefono'                      => trim(strip_tags($this->telefono)),
-            'id_gs'                         => trim(strip_tags($this->id_gs)),
-            'ubigeo_residencia'             => trim(strip_tags($this->ubigeo_residencia)),
-            'id_gi'                         => trim(strip_tags($this->id_gi)),
-            'id_ocupacion'                  => trim(strip_tags($this->id_ocupacion)),
-            'id_estado'                     => trim(strip_tags($this->id_estado)),
-            'cirugias'                      => trim(strip_tags($this->cirugias)),
-            'transfuciones'                 => trim(strip_tags($this->transfuciones)),
-            'traumatismos'                  => trim(strip_tags($this->traumatismos)),
-            'hospitalizaciones'             => trim(strip_tags($this->hospitalizaciones)),
-            'drogas'                        => trim(strip_tags($this->drogas)),
-            'antecedentes'                  => trim(strip_tags($this->antecedentes)),
-            'estadobasal'                   => trim(strip_tags($this->estadobasal)),
-            'medicacion'                    => trim(strip_tags($this->medicacion)),
-            'animales'                      => trim(strip_tags($this->animales)),
-            'consumoagua'                   => trim(strip_tags($this->consumoagua)),
-            'alimentacion'                  => trim(strip_tags($this->alimentacion)),
-            'otros'                         => trim(strip_tags($this->otros)),
-            'asmabronquial'                 => trim(strip_tags($this->asmabronquial)),
-            'epoc'                          => trim(strip_tags($this->epoc)),
-            'epid'                          => trim(strip_tags($this->epid)),
-            'tuberculosis'                  => trim(strip_tags($this->tuberculosis)),
-            'cancerpulmon'                  => trim(strip_tags($this->cancerpulmon)),
-            'efusionpleural'                => trim(strip_tags($this->efusionpleural)),
-            'neumonias'                     => trim(strip_tags($this->neumonias)),
-            'tabaquismo'                    => trim(strip_tags($this->tabaquismo)),
-            'contactotbc'                   => trim(strip_tags($this->contactotbc)),
-            'exposicionbiomasa'             => trim(strip_tags($this->exposicionbiomasa)),
-            'motivoconsulta'                => trim(strip_tags($this->motivoconsulta)),
-            'sintomascardinales'            => trim(strip_tags($this->sintomascardinales)),
-            'te'                            => trim(strip_tags($this->te)),
-            'fi'                            => trim(strip_tags($this->fi)),
-            'c'                             => trim(strip_tags($this->c)),
-            'relatocronologico'             => trim(strip_tags($this->relatocronologico)),
-        ]);
+        $inputs = $this->all();
+        $cleaned = [];
+
+        foreach ($inputs as $key => $value) {
+            if (is_string($value)) {
+                $cleaned[$key] = trim(strip_tags($value));
+            } else {
+                $cleaned[$key] = $value;
+            }
+        }
+
+        $this->merge($cleaned);
     }
 }
