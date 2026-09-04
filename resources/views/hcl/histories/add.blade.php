@@ -1,12 +1,13 @@
 @extends('layouts.app')
 @section('title', config('global.site_name').' - Nueva historia') <!-- Título dinámico -->
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/vanilla-datepicker.css') }}">
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Nueva historia</h1>
+                    <h1 class="m-0">Nueva historia clínica</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -20,16 +21,16 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="card card-default">
+            <div class="card card-primary card-outline shadow-sm">
                 <div class="card-header">
-                    <h3 class="card-title">Filiación</h3>
+                    <h3 class="card-title"><i class="fas fa-user-plus mr-1"></i> Filiación y Datos Generales</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button>
                     </div>
                 </div>
-                <form method="post" id="formHC">
+                <form method="post" id="formHC" novalidate>
                     @method('POST')
                     @csrf
                     @include('hcl.histories.partials.form')
@@ -38,5 +39,6 @@
         </div>
     </section>
 </div>
+<script src="{{ asset('js/vanilla-datepicker.js') }}"></script>
 <script src="{{ asset('js/forms/histories.js') }}"></script>
 @endsection
