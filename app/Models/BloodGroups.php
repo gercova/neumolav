@@ -11,6 +11,7 @@ class BloodGroups extends Model
     use HasFactory;
     protected $table        = 'grupo_sanguineo';
     protected $primaryKey   = 'id';
+    public $timestamps      = false;
 
     public function history(): HasMany {
         return $this->hasMany(History::class, 'id_gs', 'id');
