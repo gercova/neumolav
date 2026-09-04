@@ -11,6 +11,7 @@ class MaritalStatus extends Model
     use HasFactory;
     protected $table        = 'estado_civil';
     protected $primaryKey   = 'id';
+    public $timestamps      = false;
 
     public function history(): HasMany {
         return $this->hasMany(History::class, 'id_estado', 'id');
