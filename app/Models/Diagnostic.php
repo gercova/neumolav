@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Diagnostic extends Model {
     use HasFactory, SoftDeletes, AuditLogTrait;
+    
     protected $table        = 'diagnosticos';
     protected $primaryKey   = 'id';
     protected $fillable     = ['descripcion'];
