@@ -1,7 +1,7 @@
 /**
  * Histories Form & JTable Logic
  */
-$(document).ready(function() {
+$(document).ready(function () {
 
     // 1. DATE PICKER INITIALIZATION & AGE CALC
     let vdp = null;
@@ -11,7 +11,7 @@ $(document).ready(function() {
             minDate: '1900-01-01',
             triggerButton: '#btnDatepickerToggle',
             autoClose: true,
-            onSelect: function(date, dateString) {
+            onSelect: function (date, dateString) {
                 // dateString is dd-mm-yyyy from the picker
                 syncISOField(dateString);
                 getAge(dateString);
@@ -41,7 +41,7 @@ $(document).ready(function() {
     }
 
     // 1b. INPUT MASK: dd-mm-yyyy (pure Vanilla JS)
-    $('#fecha_nacimiento').on('keydown', function(e) {
+    $('#fecha_nacimiento').on('keydown', function (e) {
         const allowed = [
             'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
             'Tab', 'Home', 'End'
@@ -54,7 +54,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#fecha_nacimiento').on('input', function() {
+    $('#fecha_nacimiento').on('input', function () {
         let raw = this.value.replace(/\D/g, '').slice(0, 8); // keep only up to 8 digits
         let masked = '';
 
@@ -76,7 +76,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#fecha_nacimiento').on('paste', function(e) {
+    $('#fecha_nacimiento').on('paste', function (e) {
         e.preventDefault();
         let pasted = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
         let digits = pasted.replace(/\D/g, '').slice(0, 8);
@@ -123,14 +123,14 @@ $(document).ready(function() {
         }
     }
 
-    $('#id_td').on('change', function() {
+    $('#id_td').on('change', function () {
         updateDocTypeRules();
         $(this).removeClass('is-invalid');
         $(this).closest('.form-group').find('.invalid-feedback').text('').hide();
     });
 
     // Only allow numbers for DNI or cellphone
-    $('#dni').on('input', function(e) {
+    $('#dni').on('input', function (e) {
         const docType = $('#id_td').val();
         if (docType === '1') {
             this.value = this.value.replace(/\D/g, '').slice(0, 8);
@@ -140,11 +140,11 @@ $(document).ready(function() {
         }
     });
 
-    $('#telefono').on('input', function() {
+    $('#telefono').on('input', function () {
         this.value = this.value.replace(/\D/g, '').slice(0, 11);
     });
 
-    $('#dni').on('keypress', function(e) {
+    $('#dni').on('keypress', function (e) {
         if (e.which === 13) {
             e.preventDefault();
             const dniVal = $(this).val().trim();
@@ -154,7 +154,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#btnSearchDni').on('click', function(e) {
+    $('#btnSearchDni').on('click', function (e) {
         e.preventDefault();
         const docType = $('#id_td').val();
         const dniVal = $('#dni').val().trim();
@@ -180,7 +180,7 @@ $(document).ready(function() {
     });
 
     // 3. FOREIGN VS NATIONAL TOGGLE
-    $('.extra').on('click', function(e) {
+    $('.extra').on('click', function (e) {
         e.preventDefault();
         $('.extra').addClass('d-none');
         $('.nacional').addClass('d-none');
@@ -190,7 +190,7 @@ $(document).ready(function() {
         $('#extranjero').focus();
     });
 
-    $('.pe').on('click', function(e) {
+    $('.pe').on('click', function (e) {
         e.preventDefault();
         $('.pe').addClass('d-none');
         $('.foreign').addClass('d-none');
@@ -215,19 +215,19 @@ $(document).ready(function() {
                 url: `${API_BASE_URL}/histories/location`,
                 dataType: 'json',
                 delay: 250,
-                data: function(params) {
+                data: function (params) {
                     return { q: params.term, _token: token };
                 },
-                processResults: function(data) {
+                processResults: function (data) {
                     return {
-                        results: $.map(data, function(item) {
+                        results: $.map(data, function (item) {
                             return { id: item.ubigeo, text: item.ubigeo };
                         })
                     };
                 },
                 cache: true
             }
-        }).on('change', function() {
+        }).on('change', function () {
             $(this).removeClass('is-invalid');
             $(this).closest('.form-group').find('.invalid-feedback').text('').hide();
         });
@@ -246,19 +246,19 @@ $(document).ready(function() {
                 url: `${API_BASE_URL}/histories/location`,
                 dataType: 'json',
                 delay: 250,
-                data: function(params) {
+                data: function (params) {
                     return { q: params.term, _token: token };
                 },
-                processResults: function(data) {
+                processResults: function (data) {
                     return {
-                        results: $.map(data, function(item) {
+                        results: $.map(data, function (item) {
                             return { id: item.ubigeo, text: item.ubigeo };
                         })
                     };
                 },
                 cache: true
             }
-        }).on('change', function() {
+        }).on('change', function () {
             $(this).removeClass('is-invalid');
             $(this).closest('.form-group').find('.invalid-feedback').text('').hide();
         });
@@ -277,26 +277,26 @@ $(document).ready(function() {
                 url: `${API_BASE_URL}/histories/occupation`,
                 dataType: 'json',
                 delay: 250,
-                data: function(params) {
+                data: function (params) {
                     return { q: params.term, _token: token };
                 },
-                processResults: function(data) {
+                processResults: function (data) {
                     return {
-                        results: $.map(data, function(item) {
+                        results: $.map(data, function (item) {
                             return { id: item.ocupacion, text: item.ocupacion };
                         })
                     };
                 },
                 cache: true
             }
-        }).on('change', function() {
+        }).on('change', function () {
             $(this).removeClass('is-invalid');
             $(this).closest('.form-group').find('.invalid-feedback').text('').hide();
         });
     }
 
     // 4b. NEW OCCUPATION MODAL HANDLER
-    $('#btnOpenOccupationModal').on('click', function(e) {
+    $('#btnOpenOccupationModal').on('click', function (e) {
         e.preventDefault();
         $('#new_occupation_desc').removeClass('is-invalid is-valid').val('');
         $('#newOccupationFeedback').text('').hide();
@@ -307,14 +307,14 @@ $(document).ready(function() {
         $('#new_occupation_desc').trigger('focus');
     });
 
-    $('#new_occupation_desc').on('input', function() {
+    $('#new_occupation_desc').on('input', function () {
         if ($(this).hasClass('is-invalid')) {
             $(this).removeClass('is-invalid');
             $('#newOccupationFeedback').text('').hide();
         }
     });
 
-    $('#formNewOccupation').on('submit', async function(e) {
+    $('#formNewOccupation').on('submit', async function (e) {
         e.preventDefault();
 
         const inputDesc = $('#new_occupation_desc');
@@ -356,7 +356,7 @@ $(document).ready(function() {
 
                 // Display toast notification as requested
                 if (typeof alertNotify === 'function') {
-                    alertNotify('success', 'New item created');
+                    alertNotify('success', 'Nuevo item creado');
                 } else if (typeof Swal !== 'undefined') {
                     const Toast = Swal.mixin({
                         toast: true,
@@ -410,7 +410,7 @@ $(document).ready(function() {
     $('#cig, #af').on('input change', calculateIPA);
 
     // 6. REAL-TIME VALIDATION HELPERS
-    $(document).on('input change', 'input, select, textarea', function() {
+    $(document).on('input change', 'input, select, textarea', function () {
         if ($(this).hasClass('is-invalid')) {
             $(this).removeClass('is-invalid');
             $(this).closest('.form-group').find('.invalid-feedback').text('').hide();
@@ -518,7 +518,7 @@ $(document).ready(function() {
     }
 
     // 7. FORM SUBMIT HANDLER (AJAX)
-    $('#formHC').on('submit', async function(e) {
+    $('#formHC').on('submit', async function (e) {
         e.preventDefault();
 
         if (!validateClientSide()) {
@@ -561,7 +561,7 @@ $(document).ready(function() {
 
             if (error.response && error.response.status === 422 && error.response.data.errors) {
                 let firstErrorEl = null;
-                $.each(error.response.data.errors, function(field, messages) {
+                $.each(error.response.data.errors, function (field, messages) {
                     const fieldEl = $(`[name="${field}"]`);
                     if (fieldEl.length) {
                         fieldEl.addClass('is-invalid');
@@ -652,7 +652,7 @@ $(document).ready(function() {
                 }
             },
             recordsLoaded: (event, data) => {
-                $('.add-quote').off('click').on('click', async function(e) {
+                $('.add-quote').off('click').on('click', async function (e) {
                     e.preventDefault();
                     const id = $(this).attr('value');
                     try {
@@ -679,13 +679,13 @@ $(document).ready(function() {
                     }
                 });
 
-                $('.edit-row').off('click').on('click', function(e) {
+                $('.edit-row').off('click').on('click', function (e) {
                     e.preventDefault();
                     let id = $(this).attr('value');
                     window.location.href = `${API_BASE_URL}/histories/edit/${id}`;
                 });
 
-                $('.delete-row').off('click').on('click', async function(e) {
+                $('.delete-row').off('click').on('click', async function (e) {
                     e.preventDefault();
                     const id = $(this).attr('value');
                     try {
@@ -719,7 +719,7 @@ $(document).ready(function() {
 
         const LoadRecordsButton = $('#LoadRecordsButton');
         if (LoadRecordsButton.length) {
-            LoadRecordsButton.click(function(e) {
+            LoadRecordsButton.click(function (e) {
                 e.preventDefault();
                 $('#histories').jtable('load', {
                     search: $('#search').val()
@@ -747,9 +747,9 @@ function syncISOField(displayValue) {
         $('#fecha_nacimiento_iso').val('');
         return '';
     }
-    const day   = parseInt(parts[0], 10);
+    const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10);
-    const year  = parseInt(parts[2], 10);
+    const year = parseInt(parts[2], 10);
 
     // Basic sanity checks
     if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
@@ -782,14 +782,14 @@ function getAge(dateString) {
     let year, month, day;
     if (parts[0].length === 4) {
         // yyyy-mm-dd
-        year  = parseInt(parts[0], 10);
+        year = parseInt(parts[0], 10);
         month = parseInt(parts[1], 10) - 1;
-        day   = parseInt(parts[2], 10);
+        day = parseInt(parts[2], 10);
     } else {
         // dd-mm-yyyy
-        year  = parseInt(parts[2], 10);
+        year = parseInt(parts[2], 10);
         month = parseInt(parts[1], 10) - 1;
-        day   = parseInt(parts[0], 10);
+        day = parseInt(parts[0], 10);
     }
 
     const birthDate = new Date(year, month, day);
@@ -831,10 +831,10 @@ async function consultaDatosSUNAT(dni) {
 
     try {
         const response = await axios.post(`${API_BASE_URL}/histories/dni`, formData);
-        
+
         let data = response.data;
         if (typeof data === 'string') {
-            try { data = JSON.parse(data); } catch(e) {}
+            try { data = JSON.parse(data); } catch (e) { }
         }
 
         if (data && (data.first_name || data.nombres)) {
