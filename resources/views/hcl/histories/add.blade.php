@@ -39,6 +39,7 @@
         </div>
     </section>
 </div>
+@include('hcl.histories.partials.modal_occupation')
 <script src="{{ asset('js/vanilla-datepicker.js') }}"></script>
 <script src="{{ asset('js/forms/histories.js') }}"></script>
 @endsection
