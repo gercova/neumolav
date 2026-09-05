@@ -3,9 +3,7 @@
  */
 $(document).ready(function() {
 
-    // ==========================================
     // 1. DATE PICKER INITIALIZATION & AGE CALC
-    // ==========================================
     let vdp = null;
     if ($('#fecha_nacimiento').length && window.VanillaDatePicker) {
         vdp = new VanillaDatePicker('#fecha_nacimiento', {
@@ -42,9 +40,7 @@ $(document).ready(function() {
         }
     }
 
-    // ==========================================
     // 1b. INPUT MASK: dd-mm-yyyy (pure Vanilla JS)
-    // ==========================================
     $('#fecha_nacimiento').on('keydown', function(e) {
         const allowed = [
             'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
@@ -91,9 +87,7 @@ $(document).ready(function() {
         $(this).val(masked).trigger('input');
     });
 
-    // ==========================================
     // 2. DOCUMENT TYPE & DNI BEHAVIOR
-    // ==========================================
     function updateDocTypeRules() {
         const docType = $('#id_td').val();
         const dniInput = $('#dni');
@@ -185,9 +179,7 @@ $(document).ready(function() {
         }
     });
 
-    // ==========================================
     // 3. FOREIGN VS NATIONAL TOGGLE
-    // ==========================================
     $('.extra').on('click', function(e) {
         e.preventDefault();
         $('.extra').addClass('d-none');
@@ -207,9 +199,7 @@ $(document).ready(function() {
         $('#extranjero').val('');
     });
 
-    // ==========================================
     // 4. SELECT2 AJAX SEARCHES
-    // ==========================================
     if ($.fn.select2) {
         // Ubigeo Nacimiento
         $('.buscarUbigeo').select2({
@@ -305,9 +295,107 @@ $(document).ready(function() {
         });
     }
 
-    // ==========================================
+    // 4b. NEW OCCUPATION MODAL HANDLER
+    $('#btnOpenOccupationModal').on('click', function(e) {
+        e.preventDefault();
+        $('#new_occupation_desc').removeClass('is-invalid is-valid').val('');
+        $('#newOccupationFeedback').text('').hide();
+        $('#modalAddOccupation').modal('show');
+    });
+
+    $('#modalAddOccupation').on('shown.bs.modal', function () {
+        $('#new_occupation_desc').trigger('focus');
+    });
+
+    $('#new_occupation_desc').on('input', function() {
+        if ($(this).hasClass('is-invalid')) {
+            $(this).removeClass('is-invalid');
+            $('#newOccupationFeedback').text('').hide();
+        }
+    });
+
+    $('#formNewOccupation').on('submit', async function(e) {
+        e.preventDefault();
+
+        const inputDesc = $('#new_occupation_desc');
+        const descVal = inputDesc.val().trim();
+        const submitBtn = $('#btnSaveNewOccupation');
+        const originalBtnHtml = submitBtn.html();
+
+        if (!descVal) {
+            inputDesc.addClass('is-invalid');
+            $('#newOccupationFeedback').text('El campo descripción es requerido.').show();
+            inputDesc.focus();
+            return;
+        }
+
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...');
+
+        try {
+            const payload = {
+                descripcion: descVal.toUpperCase(),
+                id: null
+            };
+
+            const response = await axios.post(`${API_BASE_URL}/occupations/store`, payload);
+
+            if (response.data && response.data.status) {
+                const itemData = response.data.item;
+                const optText = itemData ? itemData.ocupacion : descVal.toUpperCase();
+                const optVal = itemData ? itemData.ocupacion : descVal.toUpperCase();
+
+                // Append new option to Select2 and automatically select it
+                const newOption = new Option(optText, optVal, true, true);
+                $('#id_ocupacion').append(newOption).trigger('change');
+
+                // Close modal and reset form
+                $('#modalAddOccupation').modal('hide');
+                $('#new_occupation_desc').val('');
+                $('#new_occupation_desc').removeClass('is-invalid is-valid');
+                $('#newOccupationFeedback').text('').hide();
+
+                // Display toast notification as requested
+                if (typeof alertNotify === 'function') {
+                    alertNotify('success', 'New item created');
+                } else if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'New item created'
+                    });
+                }
+            } else {
+                inputDesc.addClass('is-invalid');
+                const errMsg = response.data.messages || 'No se pudo registrar la ocupación.';
+                $('#newOccupationFeedback').text(errMsg).show();
+            }
+        } catch (error) {
+            console.error('Error al guardar ocupación:', error);
+            if (error.response && error.response.status === 422 && error.response.data.errors) {
+                const descError = error.response.data.errors.descripcion
+                    ? error.response.data.errors.descripcion[0]
+                    : 'Error de validación.';
+                inputDesc.addClass('is-invalid');
+                $('#newOccupationFeedback').text(descError).show();
+            } else {
+                const errMsg = (error.response && error.response.data && error.response.data.messages)
+                    ? error.response.data.messages
+                    : 'Error al conectar con el servidor.';
+                inputDesc.addClass('is-invalid');
+                $('#newOccupationFeedback').text(errMsg).show();
+            }
+        } finally {
+            submitBtn.prop('disabled', false).html(originalBtnHtml);
+        }
+    });
+
     // 5. TABAQUISMO (IPA) CALCULATION
-    // ==========================================
     function calculateIPA() {
         const cig = parseFloat($('#cig').val()) || 0;
         const af = parseFloat($('#af').val()) || 0;
@@ -321,9 +409,7 @@ $(document).ready(function() {
 
     $('#cig, #af').on('input change', calculateIPA);
 
-    // ==========================================
     // 6. REAL-TIME VALIDATION HELPERS
-    // ==========================================
     $(document).on('input change', 'input, select, textarea', function() {
         if ($(this).hasClass('is-invalid')) {
             $(this).removeClass('is-invalid');
@@ -431,9 +517,7 @@ $(document).ready(function() {
         return isValid;
     }
 
-    // ==========================================
     // 7. FORM SUBMIT HANDLER (AJAX)
-    // ==========================================
     $('#formHC').on('submit', async function(e) {
         e.preventDefault();
 
@@ -519,9 +603,7 @@ $(document).ready(function() {
         }
     });
 
-    // ==========================================
     // 8. JTABLE (FOR INDEX VIEW ONLY)
-    // ==========================================
     if ($('#histories').length && $.fn.jtable) {
         $('#histories').jtable({
             title: "HISTORIAS CLÍNICAS",
@@ -648,9 +730,7 @@ $(document).ready(function() {
     }
 });
 
-// ==========================================
 // 9. GLOBAL HELPER FUNCTIONS
-// ==========================================
 
 /**
  * Syncs the hidden ISO (yyyy-mm-dd) field from a dd-mm-yyyy display string.
