@@ -16,7 +16,7 @@ class OccupationsController extends Controller {
         $this->middleware('auth');
         $this->middleware('permission:ocupacion_acceder')->only('index');
         $this->middleware('permission:ocupacion_ver')->only('list', 'show');
-        $this->middleware('permission:ocupacion_crear')->only('store');
+        $this->middleware('permission:ocupacion_crear|historia_crear|historia_actualizar')->only('store');
         $this->middleware('permission:ocupacion_borrar')->only('destroy');
     }
 
@@ -69,6 +69,11 @@ class OccupationsController extends Controller {
             'status'    => (bool) $result,
             'type'      => $result ? 'success' : 'error',
             'messages'  => $result ? ($result->wasChanged() ? 'La ocupación ha sido actualizada' : 'Se ha añadido una nueva ocupación') : 'Recargue la página he intente de nuevo',
+            'item'      => $result ? [
+                'id'          => $result->id,
+                'descripcion' => $result->descripcion,
+                'ocupacion'   => $result->id . ' | ' . $result->descripcion,
+            ] : null,
         ], 200);
     }
 
