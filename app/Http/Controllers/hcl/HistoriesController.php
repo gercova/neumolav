@@ -103,6 +103,7 @@ class HistoriesController extends Controller {
 			'id_ocupacion' 		=> $this->getStringId($validated['id_ocupacion']),
 			'ubigeo_extranjero' => $request->input('extranjero') ?: ($request->input('ubigeo_extranjero') ?: null),
 			'transfusiones'     => $request->input('transfusiones'),
+			'id_ct' 			=> !empty($request->input('id_ct')) ? $request->input('id_ct') : 4,
 		];
 
 		$data = array_merge($validated, $processedFields);
@@ -110,9 +111,9 @@ class HistoriesController extends Controller {
 
 		DB::beginTransaction();
         try {
-			$historyId = $request->input('id');
-			$result = History::updateOrCreate(['id' => $historyId], $data);
-			$isNew = $result->wasRecentlyCreated;
+			$historyId 	= $request->input('id');
+			$result 	= History::updateOrCreate(['id' => $historyId], $data);
+			$isNew 		= $result->wasRecentlyCreated;
 
 			if ($isNew) {
 				DB::table('citas')->insert([
