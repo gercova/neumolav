@@ -242,11 +242,11 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         /**
          * OCUPACIONES
          */
+        Route::post('/occupations/store',                   [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
         Route::middleware(['permission:ocupaciones'])->group(function(){
             Route::get('/occupations',                          [OccupationsController::class, 'index'])->name('maintenance.occupations');
             Route::get('/occupations/list',                     [OccupationsController::class, 'list']);
             Route::get('/occupations/{oc}',                     [OccupationsController::class, 'show']);
-            Route::post('/occupations/store',                   [OccupationsController::class, 'store']);
             Route::post('/occupations/search',                  [OccupationsController::class, 'search']);
             Route::delete('/occupations/delete/{oc}',           [OccupationsController::class, 'destroy']);
         });
