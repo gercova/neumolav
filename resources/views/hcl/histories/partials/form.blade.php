@@ -1,3 +1,15 @@
+<style>
+    .input-group > .select2-container--default {
+        flex: 1 1 auto;
+        width: 1% !important;
+        min-width: 0;
+    }
+    .input-group > .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+</style>
 @method('POST')
 @csrf
 <input type="hidden" name="id" id="id" value="{{ $history->id ?? '' }}">
@@ -172,12 +184,19 @@
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="id_ocupacion">Ocupación <span class="text-danger">*</span></label>
-                <select class="form-control buscarOcupacion" id="id_ocupacion" name="id_ocupacion" style="width: 100%;" required>
-                    @if (isset($history) && !empty($occupation[0]['occupation']))
-                        <option value="{{ $occupation[0]['occupation'] }}" selected>{{ $occupation[0]['occupation'] }}</option>
-                    @endif
-                </select>
-                <div class="invalid-feedback"></div>
+                <div class="input-group">
+                    <select class="form-control buscarOcupacion" id="id_ocupacion" name="id_ocupacion" style="width: 100%;" required>
+                        @if (isset($history) && !empty($occupation[0]['occupation']))
+                            <option value="{{ $occupation[0]['occupation'] }}" selected>{{ $occupation[0]['occupation'] }}</option>
+                        @endif
+                    </select>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" id="btnOpenOccupationModal" title="Registrar nueva ocupación">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="invalid-feedback" id="ocupacionFeedback"></div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
