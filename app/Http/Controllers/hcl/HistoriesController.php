@@ -98,24 +98,34 @@ class HistoriesController extends Controller {
 
 		$processedFields = [
 			'nombres' 			=> strtoupper($validated['nombres']),
-			'ubigeo_nacimiento' => isset($request->ubigeo_nacimiento) ? ($this->getStringId($request->input('ubigeo_nacimiento'))) : '220901',
+			'ubigeo_nacimiento' => !empty($request->input('ubigeo_nacimiento')) ? ($this->getStringId($request->input('ubigeo_nacimiento'))) : '220901',
 			'ubigeo_residencia' => $this->getStringId($validated['ubigeo_residencia']),
 			'id_ocupacion' 		=> $this->getStringId($validated['id_ocupacion']),
+			'ubigeo_extranjero' => $request->input('extranjero') ?: ($request->input('ubigeo_extranjero') ?: null),
+			'transfusiones'     => $request->input('transfusiones'),
 		];
 
 		$data = array_merge($validated, $processedFields);
+		unset($data['extranjero']);
 
 		DB::beginTransaction();
         try {
-			$result = History::updateOrCreate(['id' => $request->input('id')], $data);
-			if(!$result->wasChanged()){
-				DB::table('citas')->insert(['id_historia' => $result->id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+			$historyId = $request->input('id');
+			$result = History::updateOrCreate(['id' => $historyId], $data);
+			$isNew = $result->wasRecentlyCreated;
+
+			if ($isNew) {
+				DB::table('citas')->insert([
+					'id_historia' => $result->id,
+					'created_at'  => Carbon::now(),
+					'updated_at'  => Carbon::now()
+				]);
 			}
 			DB::commit();
 			return response()->json([
 				'status'    => (bool) $result,
 				'type'      => $result ? 'success' : 'error',
-				'messages'  => $result ? ($result->wasChanged() ? 'Historia clínica actualizada' : 'Nueva historia clínica registrada') : 'Error al guardar, recargue la página he intente de nuevo',
+				'messages'  => $result ? ($isNew ? 'Nueva historia clínica registrada' : 'Historia clínica actualizada') : 'Error al guardar, recargue la página e intente de nuevo',
 				'route'  	=> route('hcl.histories.home')
 			]);
 		} catch (\Exception $e) {
@@ -148,6 +158,7 @@ class HistoriesController extends Controller {
 	}
 
 	public function getStringId($obj){
+		if (empty($obj)) return '';
 		$value = explode(" | ", $obj);
 		return $value[0];
 	}
@@ -173,15 +184,13 @@ class HistoriesController extends Controller {
 				'citas.created_at',
 				'citas.id',
 				'historias.id as hid'
-				// Agregar más campos si es necesario
 			])
 			->whereDate('citas.created_at', Carbon::today())
 			->where('citas.id_estado', 1)
-			->orderBy('citas.created_at', 'desc') // Ordenar por fecha de creación
+			->orderBy('citas.created_at', 'desc')
 			->get();
 
 		$data = $results->map(function ($item, $index) {
-			$buttons = '';
 			$buttons = sprintf(
 				'<div class="btn-group">
 					<button type="button" class="btn btn-sm btn-warning changeStatus btn-md" value="%s">
@@ -198,18 +207,18 @@ class HistoriesController extends Controller {
 						</div>
 					</div>
 				</div>',
-				htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8'),  // Para el botón update
-            	htmlspecialchars(route('hcl.exams.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para examen
-            	htmlspecialchars(route('hcl.reports.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para informe
-            	htmlspecialchars(route('hcl.risks.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'), // Para riesgo
-				htmlspecialchars(route('hcl.histories.edit', 	['history' => $item->hid]), ENT_QUOTES, 'UTF-8') // Para editar historia
+				htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8'),
+            	htmlspecialchars(route('hcl.exams.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'),
+            	htmlspecialchars(route('hcl.reports.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'),
+            	htmlspecialchars(route('hcl.risks.add', 		['hc' => $item->dni]), ENT_QUOTES, 'UTF-8'),
+				htmlspecialchars(route('hcl.histories.edit', 	['history' => $item->hid]), ENT_QUOTES, 'UTF-8')
 			);
 
 			return [
 				$index + 1,
 				$item->dni,
 				$item->nombres,
-				Carbon::parse($item->created_at)->format('Y-m-d H:i:s'), // Solución aplicada
+				Carbon::parse($item->created_at)->format('Y-m-d H:i:s'),
 				$buttons
 			];
 		});
@@ -273,7 +282,7 @@ class HistoriesController extends Controller {
 		return response()->json([
 			'status' 	=> (bool) $hc,
 			'type'		=> $hc ? 'success' : 'error',
-			'messages'	=> $hc ? 'Se ha eliminado la historia clínica' : 'Algo salió mal, recargue la página he intente de nuevo',
+			'messages'	=> $hc ? 'Se ha eliminado la historia clínica' : 'Algo salió mal, recargue la página e intente de nuevo',
 		], 200);
 	}
 }
