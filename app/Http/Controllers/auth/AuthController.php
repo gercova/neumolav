@@ -32,11 +32,11 @@ class AuthController extends Controller {
             RateLimiter::hit($this->throttleKey($request));
             return response()->json([
                 'status'    => false,
-                'message'   => 'Credenciales inválidas.' // Mensaje genérico por seguridad
+                'message'   => 'Credenciales inválidas.'
             ], 401);
         }
 
-        // Verificar si el usuario está activo/baneado (si tu app tiene este campo)
+        // Verificar si el usuario está activo/baneado
         if (isset($user->is_active) && !$user->is_active) {
             return response()->json([
                 'status'    => false,
