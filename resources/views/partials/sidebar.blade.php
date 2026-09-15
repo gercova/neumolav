@@ -26,6 +26,12 @@
                         <p>Inicio</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
+                        <i class="nav-icon fa bi bi-calendar2-check"></i>
+                        <p>Citas / Turnos</p>
+                    </a>
+                </li>
                 @can('dashboard')
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard')? 'active' : '' }}">
