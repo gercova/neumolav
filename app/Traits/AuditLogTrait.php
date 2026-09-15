@@ -28,13 +28,15 @@ trait AuditLogTrait {
         $oldData = $action === 'update' ? json_encode($model->getOriginal()) : null;
         $newData = $action === 'delete' ? json_encode($model->getAttributes()) : null;
 
+        $userId = Auth::id() ?: 1;
+
         AuditLog::create([
             'action'    => $action,
             'module'    => $module,
             'record_id' => $recordId,
             'old_data'  => $oldData,
             'new_data'  => $newData,
-            'user_id'   => Auth::id(),
+            'user_id'   => $userId,
             'ip_address' => Request::ip(),
             'user_agent' => Request::userAgent(),
         ]);
