@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$en->logo) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $en->logo) }}">
     <title>Informe Neumológico - {{ $en->nombre_comercial }}</title>
     <style>
         /* Estilos generales compatibles con DOMPDF */
@@ -143,7 +144,7 @@
         }
 
         /* Eliminar espacios entre secciones */
-        .content-section + .content-section {
+        .content-section+.content-section {
             margin-top: -5px;
         }
 
@@ -219,6 +220,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Encabezado -->
     <div class="header">
@@ -284,7 +286,7 @@
         <div class="content-section diagnosis-section no-break">
             <h3 class="section-title">DIAGNÓSTICO</h3>
             <div class="section-content">
-                <p><strong>{{ implode(' / ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}</strong></p>
+                <p><strong>{{ implode(' / ',array_map(function ($d) {return $d->diagnostic;}, $dx)) }}</strong></p>
             </div>
         </div>
 
@@ -293,6 +295,14 @@
             <h3 class="section-title">TRATAMIENTO</h3>
             <div class="section-content">
                 <p>{!! $rp->tratamiento !!}</p>
+            </div>
+        </div>
+
+        <!-- Sugerencia -->
+        <div class="content-section treatment-section no-break">
+            <h3 class="section-title">SUGERENCIAS</h3>
+            <div class="section-content">
+                <p>{!! $rp->sugerencia !!}</p>
             </div>
         </div>
     </div>
@@ -305,4 +315,5 @@
         </div>
     </div>
 </body>
+
 </html>
