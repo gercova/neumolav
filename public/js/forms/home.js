@@ -1,8 +1,8 @@
-$(document).ready(function(){
+$(document).ready(function () {
 
-    $("#quotes_data").DataTable({ ajax: `${API_BASE_URL}/qoutes`, processing: true, order: []})
+    $("#quotes_data").DataTable({ ajax: `${API_BASE_URL}/qoutes`, processing: true, order: [] })
 
-    $(document).on('click', '.changeStatus', async function(e) {
+    $(document).on('click', '.changeStatus', async function (e) {
         e.preventDefault();
         let id = $(this).attr('value');
         const result = await Swal.fire({
@@ -19,11 +19,11 @@ $(document).ready(function(){
             const response = await axios.get(`${API_BASE_URL}/checkStatusPatient/${id}`);
             console.log(response);
             //return;
-            if(response.status === 200){
+            if (response.status === 200) {
                 // Swal.fire('¡Hecho!', res.messages, 'success');
                 alertNotify(response.data.type, response.data.messages);
                 $('#quotes_data').DataTable().ajax.reload();
-            }else{
+            } else {
                 Swal.fire('¡Upsss!', response.messages, 'error')
             }
         }
