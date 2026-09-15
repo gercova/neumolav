@@ -156,6 +156,10 @@ class History extends Model {
         return $this->hasMany(Appointment::class, 'id_historia', 'id');
     }
 
+    public function citas(): HasMany {
+        return $this->hasMany(Cita::class, 'id_historia', 'id');
+    }
+
     public function exams(): HasMany {
         return $this->hasMany(Exam::class, 'id_historia', 'id');
     }
