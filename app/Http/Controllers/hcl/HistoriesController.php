@@ -116,10 +116,14 @@ class HistoriesController extends Controller {
 			$isNew 		= $result->wasRecentlyCreated;
 
 			if ($isNew) {
+				$maxTurno = DB::table('citas')->whereDate('fecha_cita', Carbon::today())->max('numero_turno');
 				DB::table('citas')->insert([
-					'id_historia' => $result->id,
-					'created_at'  => Carbon::now(),
-					'updated_at'  => Carbon::now()
+					'id_historia'   => $result->id,
+					'fecha_cita'    => Carbon::today()->format('Y-m-d'),
+					'numero_turno'  => ($maxTurno ?? 0) + 1,
+					'motivo'        => 'Nueva historia clínica registrada',
+					'created_at'    => Carbon::now(),
+					'updated_at'    => Carbon::now()
 				]);
 			}
 			DB::commit();
@@ -186,7 +190,7 @@ class HistoriesController extends Controller {
 				'citas.id',
 				'historias.id as hid'
 			])
-			->whereDate('citas.created_at', Carbon::today())
+			->whereDate(DB::raw('COALESCE(citas.fecha_cita, citas.created_at)'), Carbon::today())
 			->where('citas.id_estado', 1)
 			->orderBy('citas.created_at', 'desc')
 			->get();
@@ -235,7 +239,11 @@ class HistoriesController extends Controller {
 	public function addQuotes(History $hc): JsonResponse {
 		$fecha = Carbon::now()->format('Y-m-d');
 		// Validar si ya existe cita hoy
-		$validate = DB::table('citas')->where('id_historia', $hc->id)->where('id_estado', 1)->whereDate('created_at', $fecha)->count();
+		$validate = DB::table('citas')
+			->where('id_historia', $hc->id)
+			->whereNotIn('id_estado', [3])
+			->whereDate(DB::raw('COALESCE(citas.fecha_cita, citas.created_at)'), $fecha)
+			->count();
 
 		if ($validate > 0) {
 			$response = [
@@ -245,8 +253,12 @@ class HistoriesController extends Controller {
 			];
 		} else {
 			try {
+				$maxTurno = DB::table('citas')->whereDate('fecha_cita', $fecha)->max('numero_turno');
 				DB::table('citas')->insert([
 					'id_historia' 	=> $hc->id,
+					'fecha_cita'    => $fecha,
+					'numero_turno'  => ($maxTurno ?? 0) + 1,
+					'motivo'        => 'Añadido desde historias',
 					'created_at' 	=> Carbon::now(),
 					'updated_at' 	=> Carbon::now()
 				]);
