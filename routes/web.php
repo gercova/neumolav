@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\CitasController;
 use App\Http\Controllers\hcl\AppointmentsController;
 use App\Http\Controllers\business\EnterpriseController;
 use App\Http\Controllers\business\PostsController;
@@ -58,6 +59,18 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/histories/quotes/{hc}',                    [HistoriesController::class, 'addQuotes']);
         Route::get('/qoutes',                                   [HistoriesController::class, 'getQuotes']);
         Route::get('/checkStatusPatient/{id}',                  [HistoriesController::class, 'checkStatusPatient']);
+        /**
+         * MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
+         */
+        Route::get('/citas',                                    [CitasController::class, 'index'])->name('citas.index');
+        Route::get('/citas/list',                               [CitasController::class, 'list'])->name('citas.list');
+        Route::get('/citas/stats',                              [CitasController::class, 'stats'])->name('citas.stats');
+        Route::get('/citas/search-patients',                    [CitasController::class, 'searchPatients'])->name('citas.searchPatients');
+        Route::post('/citas/store',                             [CitasController::class, 'store'])->name('citas.store');
+        Route::post('/citas/quick-patient',                     [CitasController::class, 'quickPatient'])->name('citas.quickPatient');
+        Route::post('/citas/{id}/reschedule',                   [CitasController::class, 'reschedule'])->name('citas.reschedule');
+        Route::post('/citas/{id}/status',                       [CitasController::class, 'updateStatus'])->name('citas.updateStatus');
+        Route::delete('/citas/{id}',                            [CitasController::class, 'destroy'])->name('citas.destroy');
         Route::middleware(['role:administrador', 'permission:seguridad'])->group(function(){
             /**
              * MÓDULOS DEL SISTEMA
