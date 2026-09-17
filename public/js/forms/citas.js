@@ -227,20 +227,17 @@ $(document).ready(function () {
 
         // Build menu HTML
         let menuHtml = `
-            <h6 class="dropdown-header">CAMBIAR ESTADO</h6>
             ${statusId !== 7 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="7"><i class="bi bi-clock text-info"></i> Pasar a 'En Espera'</a>` : ''}
             ${statusId !== 6 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="6"><i class="bi bi-check2-circle text-success"></i> Marcar 'Atendido'</a>` : ''}
             ${statusId !== 1 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="1"><i class="bi bi-hourglass-split text-warning"></i> Marcar 'Pendiente'</a>` : ''}
             ${statusId !== 3 ? `<a class="dropdown-item btn-quick-status text-danger" href="javascript:void(0)" data-id="${id}" data-status="3"><i class="bi bi-x-circle"></i> Cancelar Cita</a>` : ''}
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">GESTIÓN DE CITA</h6>
             <a class="dropdown-item btn-open-reschedule" href="javascript:void(0)"
                 data-id="${id}" data-patient="${patient}" data-date="${dateFmt}"
                 data-rawdate="${rawdate}" data-time="${time}">
                 <i class="bi bi-arrow-repeat text-warning"></i> Reagendar Fecha
             </a>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">ATENCIÓN MÉDICA</h6>
             ${routes.control_add  ? `<a class="dropdown-item" href="${routes.control_add}"><i class="bi bi-journal-plus text-primary"></i> Nuevo Control</a>` : ''}
             ${routes.exam_add     ? `<a class="dropdown-item" href="${routes.exam_add}"><i class="bi bi-file-earmark-medical text-primary"></i> Nuevo Examen</a>` : ''}
             ${routes.report_add   ? `<a class="dropdown-item" href="${routes.report_add}"><i class="bi bi-file-earmark-text text-primary"></i> Nuevo Informe</a>` : ''}
