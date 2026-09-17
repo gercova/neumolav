@@ -20,7 +20,7 @@ class User extends Authenticatable {
 
     protected $table        = 'users';
     protected $primaryKey   = 'id';
-    protected $fillable     = ['name', 'email', 'biografia', 'specialty', 'username', 'avatar', 'id_perfil'];
+    protected $fillable     = ['name', 'email', 'biografia', 'specialty', 'cmp', 'rne', 'firma_digital', 'username', 'avatar', 'id_perfil'];
     protected $hidden       = ['password', 'remember_token'];
     protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
     protected $casts        = [
@@ -28,6 +28,9 @@ class User extends Authenticatable {
         'email'                 => 'string',
         'biografia'             => 'string',
         'specialty'             => 'string',
+        'cmp'                   => 'string',
+        'rne'                   => 'string',
+        'firma_digital'         => 'string',
         'username'              => 'string',
         'avatar'                => 'string',
         'id_perfil'             => 'integer',
@@ -35,7 +38,22 @@ class User extends Authenticatable {
         'password'              => 'hashed'
     ];
 
-    protected $appends = ['formatted_name'];
+    protected $appends = ['formatted_name', 'digital_signature_url'];
+
+    public function getDigitalSignatureUrlAttribute() {
+        if ($this->firma_digital && Storage::disk('public')->exists($this->firma_digital)) {
+            return Storage::url($this->firma_digital);
+        }
+        return null;
+    }
+
+    public function getSpecialtyNameAttribute() {
+        if (is_numeric($this->specialty)) {
+            $spec = Specialty::find($this->specialty);
+            return $spec ? $spec->descripcion : 'Médico Neumólogo';
+        }
+        return $this->specialty ?: 'Médico Neumólogo';
+    }
 
     public function getProfilePhotoUrlAttribute() {
         // URL externa
