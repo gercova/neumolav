@@ -17,6 +17,7 @@ class Cita extends Model
 
     protected $fillable = [
         'id_historia',
+        'id_tipo_atencion',
         'fecha_cita',
         'hora_cita',
         'numero_turno',
@@ -34,12 +35,13 @@ class Cita extends Model
     ];
 
     protected $casts = [
-        'fecha_cita'   => 'date:Y-m-d',
-        'numero_turno' => 'integer',
-        'id_estado'    => 'integer',
-        'created_at'   => 'datetime',
-        'updated_at'   => 'datetime',
-        'deleted_at'   => 'datetime',
+        'id_tipo_atencion' => 'integer',
+        'fecha_cita'       => 'date:Y-m-d',
+        'numero_turno'     => 'integer',
+        'id_estado'        => 'integer',
+        'created_at'       => 'datetime',
+        'updated_at'       => 'datetime',
+        'deleted_at'       => 'datetime',
     ];
 
     /**
@@ -56,6 +58,14 @@ class Cita extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(AppointmentStatus::class, 'id_estado', 'id');
+    }
+
+    /**
+     * Relationship with TipoAtencion
+     */
+    public function tipoAtencion(): BelongsTo
+    {
+        return $this->belongsTo(TipoAtencion::class, 'id_tipo_atencion', 'id');
     }
 
     /**
