@@ -4,7 +4,6 @@ $(document).ready(function () {
 
     // Cargar datos iniciales
     initializeDateDisplay(currentDate);
-    loadAppointments(currentDate);
     loadStats(currentDate);
 
     /* 1. NAVEGACIÓN Y SELECCIÓN DE FECHAS */
@@ -72,6 +71,7 @@ $(document).ready(function () {
     });
 
     /* 2. CARGA DE CITAS (ORDEN FIFO) Y ESTADÍSTICAS */
+
     async function loadAppointments(date, status = '') {
         const tbody = $('#table_appointments_body');
         tbody.html(`
@@ -137,16 +137,25 @@ $(document).ready(function () {
         let html = '';
         items.forEach((item) => {
             const statusBadge = getStatusBadge(item.status_id, item.status_desc);
+            // Serialise routes so the floating menu can read them from the button
+            const routesJson = escapeHtml(JSON.stringify(item.routes || {}));
 
             html += `
-                <tr data-id="${item.id}" data-patient="${escapeHtml(item.nombres)}" data-date="${item.fecha_cita}" data-time="${item.hora_raw}">
+                <tr data-id="${item.id}"
+                    data-history-id="${item.history_id || ''}"
+                    data-dni="${escapeHtml(item.dni || '')}"
+                    data-patient="${escapeHtml(item.nombres)}"
+                    data-date="${item.fecha_cita}"
+                    data-time="${item.hora_raw}"
+                    title="Clic para ver historia clínica y controles previos">
                     <td class="text-center align-middle">
                         <span class="badge badge-turno shadow-xs">#${item.turn_number}</span>
                     </td>
                     <td class="align-middle">
-                        <a href="${item.routes.history_edit}" class="font-weight-bold text-primary text-decoration-none" title="Ver Historia">
+                        <a href="javascript:void(0)" class="font-weight-bold text-primary text-decoration-none btn-quick-view-patient" data-history-id="${item.history_id || ''}" title="Ver Historia y Controles">
                             ${escapeHtml(item.nombres)}
                         </a>
+                        ${item.tipo_atencion_badge || ''}
                     </td>
                     <td class="align-middle">
                         <span class="badge badge-light border font-weight-normal">${escapeHtml(item.dni)}</span>
@@ -167,36 +176,18 @@ $(document).ready(function () {
                         ${statusBadge}
                     </td>
                     <td class="text-center align-middle">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Acciones
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right shadow-sm">
-                                <h6 class="dropdown-header text-uppercase font-weight-bold small text-muted">Cambiar Estado</h6>
-                                ${item.status_id !== 7 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${item.id}" data-status="7"><i class="bi bi-clock text-info mr-2"></i> Pasar a 'En Espera'</a>` : ''}
-                                ${item.status_id !== 6 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${item.id}" data-status="6"><i class="bi bi-check2-circle text-success mr-2"></i> Marcar 'Atendido'</a>` : ''}
-                                ${item.status_id !== 1 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${item.id}" data-status="1"><i class="bi bi-hourglass-split text-warning mr-2"></i> Marcar 'Pendiente'</a>` : ''}
-                                ${item.status_id !== 3 ? `<a class="dropdown-item btn-quick-status text-danger" href="javascript:void(0)" data-id="${item.id}" data-status="3"><i class="bi bi-x-circle text-danger mr-2"></i> Cancelar Cita</a>` : ''}
-                                
-                                <div class="dropdown-divider"></div>
-                                <h6 class="dropdown-header text-uppercase font-weight-bold small text-muted">Gestión de Cita</h6>
-                                <a class="dropdown-item btn-open-reschedule" href="javascript:void(0)" data-id="${item.id}" data-patient="${escapeHtml(item.nombres)}" data-date="${item.fecha_formato}" data-rawdate="${item.fecha_cita}" data-time="${item.hora_raw}">
-                                    <i class="bi bi-arrow-repeat text-warning mr-2"></i> Reagendar Fecha
-                                </a>
-
-                                <div class="dropdown-divider"></div>
-                                <h6 class="dropdown-header text-uppercase font-weight-bold small text-muted">Atención Médica</h6>
-                                <a class="dropdown-item" href="${item.routes.control_add}"><i class="bi bi-journal-plus text-primary mr-2"></i> Nuevo Control</a>
-                                <a class="dropdown-item" href="${item.routes.exam_add}"><i class="bi bi-file-earmark-medical text-primary mr-2"></i> Nuevo Examen</a>
-                                <a class="dropdown-item" href="${item.routes.report_add}"><i class="bi bi-file-earmark-text text-primary mr-2"></i> Nuevo Informe</a>
-                                <a class="dropdown-item" href="${item.routes.history_edit}"><i class="bi bi-person-lines-fill text-primary mr-2"></i> Editar Historia</a>
-
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger btn-delete-cita" href="javascript:void(0)" data-id="${item.id}">
-                                    <i class="bi bi-trash text-danger mr-2"></i> Eliminar Registro
-                                </a>
-                            </div>
-                        </div>
+                        <button type="button"
+                            class="btn btn-sm btn-outline-secondary btn-cita-actions"
+                            data-id="${item.id}"
+                            data-status="${item.status_id}"
+                            data-patient="${escapeHtml(item.nombres)}"
+                            data-date="${item.fecha_formato}"
+                            data-rawdate="${item.fecha_cita}"
+                            data-time="${item.hora_raw}"
+                            data-routes="${routesJson}"
+                            title="Abrir acciones">
+                            <i class="bi bi-three-dots-vertical"></i> Acciones
+                        </button>
                     </td>
                 </tr>
             `;
@@ -204,6 +195,83 @@ $(document).ready(function () {
 
         tbody.html(html);
     }
+
+    /* ── FLOATING ACTIONS MENU ─────────────────────────────────────────────────── */
+    // One reusable floating panel injected into <body> once
+    const $fcm = $('<div id="floating-cita-menu"></div>').appendTo('body');
+
+    function closeFCM() {
+        $fcm.hide().empty();
+    }
+
+    // Close on outside click / scroll
+    $(document).on('click.fcm', function (e) {
+        if (!$(e.target).closest('#floating-cita-menu, .btn-cita-actions').length) {
+            closeFCM();
+        }
+    });
+    $(window).on('scroll.fcm resize.fcm', function () { closeFCM(); });
+    $('#table_appointments').closest('.table-responsive').on('scroll.fcm', function () { closeFCM(); });
+
+    $(document).on('click', '.btn-cita-actions', function (e) {
+        e.stopPropagation();
+        const $btn    = $(this);
+        const id      = $btn.data('id');
+        const statusId= parseInt($btn.data('status'));
+        const patient = $btn.data('patient');
+        const dateFmt = $btn.data('date');
+        const rawdate = $btn.data('rawdate');
+        const time    = $btn.data('time');
+        let   routes  = {};
+        try { routes = JSON.parse($btn.attr('data-routes') || '{}'); } catch(e) {}
+
+        // Build menu HTML
+        let menuHtml = `
+            <h6 class="dropdown-header">CAMBIAR ESTADO</h6>
+            ${statusId !== 7 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="7"><i class="bi bi-clock text-info"></i> Pasar a 'En Espera'</a>` : ''}
+            ${statusId !== 6 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="6"><i class="bi bi-check2-circle text-success"></i> Marcar 'Atendido'</a>` : ''}
+            ${statusId !== 1 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="1"><i class="bi bi-hourglass-split text-warning"></i> Marcar 'Pendiente'</a>` : ''}
+            ${statusId !== 3 ? `<a class="dropdown-item btn-quick-status text-danger" href="javascript:void(0)" data-id="${id}" data-status="3"><i class="bi bi-x-circle"></i> Cancelar Cita</a>` : ''}
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">GESTIÓN DE CITA</h6>
+            <a class="dropdown-item btn-open-reschedule" href="javascript:void(0)"
+                data-id="${id}" data-patient="${patient}" data-date="${dateFmt}"
+                data-rawdate="${rawdate}" data-time="${time}">
+                <i class="bi bi-arrow-repeat text-warning"></i> Reagendar Fecha
+            </a>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">ATENCIÓN MÉDICA</h6>
+            ${routes.control_add  ? `<a class="dropdown-item" href="${routes.control_add}"><i class="bi bi-journal-plus text-primary"></i> Nuevo Control</a>` : ''}
+            ${routes.exam_add     ? `<a class="dropdown-item" href="${routes.exam_add}"><i class="bi bi-file-earmark-medical text-primary"></i> Nuevo Examen</a>` : ''}
+            ${routes.report_add   ? `<a class="dropdown-item" href="${routes.report_add}"><i class="bi bi-file-earmark-text text-primary"></i> Nuevo Informe</a>` : ''}
+            ${routes.history_edit ? `<a class="dropdown-item" href="${routes.history_edit}"><i class="bi bi-person-lines-fill text-primary"></i> Editar Historia</a>` : ''}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger btn-delete-cita" href="javascript:void(0)" data-id="${id}">
+                <i class="bi bi-trash"></i> Eliminar Registro
+            </a>
+        `;
+
+        $fcm.html(menuHtml);
+
+        // Position relative to button using viewport coordinates (fixed positioning)
+        const rect = this.getBoundingClientRect();
+        const menuH = 380; // estimated max height
+        const viewH = window.innerHeight;
+
+        let top = rect.bottom + 4;
+        // Flip upward if not enough space below
+        if (top + menuH > viewH - 16) {
+            top = rect.top - menuH - 4;
+            if (top < 8) top = 8;
+        }
+
+        const menuW = 224;
+        let left = rect.right - menuW;
+        if (left < 8) left = rect.left;
+        if (left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+
+        $fcm.css({ top: top + 'px', left: left + 'px' }).show();
+    });
 
     function getStatusBadge(statusId, statusDesc) {
         // Colores planos y sólidos - SIN DEGRADADOS
@@ -328,6 +396,11 @@ $(document).ready(function () {
         $('#disp_patient_phone').text(patient.phone);
         $('#disp_patient_age').text(patient.age);
 
+        // Preseleccionar chip de Control (2) por defecto para paciente existente
+        $('#existing_id_tipo_atencion').val('2');
+        $('#form_schedule_existing .chip-tipo-btn').removeClass('active');
+        $('#form_schedule_existing .chip-tipo-btn[data-tipo="2"]').addClass('active');
+
         $('#selected_patient_display').show();
         $('#patient_search_results').hide().empty();
         $('#search_patient_input').val('').prop('disabled', true);
@@ -353,6 +426,18 @@ $(document).ready(function () {
         $('#btn_submit_existing').prop('disabled', true);
     }
 
+    // Manejador de botones Chip para Selección de Tipo de Atención en 1 clic
+    $(document).on('click', '.chip-tipo-btn', function (e) {
+        e.preventDefault();
+        const group = $(this).closest('.chip-tipo-group');
+        group.find('.chip-tipo-btn').removeClass('active');
+        $(this).addClass('active');
+        const tipoVal = $(this).data('tipo');
+        const targetInput = $(this).closest('.form-group').find('input[name="id_tipo_atencion"]');
+        targetInput.val(tipoVal);
+        $(this).find('input[type="radio"]').prop('checked', true);
+    });
+
     /* 4. ENVÍO: AGENDAR PACIENTE EXISTENTE */
     $('#form_schedule_existing').on('submit', async function (e) {
         e.preventDefault();
@@ -371,7 +456,7 @@ $(document).ready(function () {
             fecha_cita: $('#existing_fecha_cita').val(),
             hora_cita: $('#existing_hora_cita').val() || null,
             motivo: $('#existing_motivo').val() || null,
-            observaciones: $('#existing_observaciones').val() || null,
+            id_tipo_atencion: $('#existing_id_tipo_atencion').val() || 2,
             _token: token,
         };
 
@@ -492,6 +577,7 @@ $(document).ready(function () {
             fecha_cita: $('#quick_fecha_cita').val(),
             hora_cita: $('#quick_hora_cita').val() || null,
             motivo: $('#quick_motivo').val() || 'Primera consulta / Registro rápido',
+            id_tipo_atencion: $('#quick_id_tipo_atencion').val() || 1,
             _token: token,
         };
 
@@ -698,5 +784,230 @@ $(document).ready(function () {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    /* ── DIRECT-CLICK ROW -> PATIENT CLINICAL HISTORY & PREVIOUS CHECK-UPS ─── */
+    // Click on row (excluding action button and floating menu)
+    $(document).on('click', '#table_appointments_body tr', function (e) {
+        if ($(e.target).closest('.btn-cita-actions, #floating-cita-menu, .dropdown-menu').length) {
+            return;
+        }
+
+        const historyId = $(this).data('history-id');
+        const patientName = $(this).data('patient');
+
+        if (!historyId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Historia clínica no encontrada',
+                text: `El paciente ${patientName || ''} no tiene una historia clínica vinculada.`,
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+
+        openPatientQuickView(historyId);
+    });
+
+    // Also support clicking on the patient name link
+    $(document).on('click', '.btn-quick-view-patient', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const historyId = $(this).data('history-id') || $(this).closest('tr').data('history-id');
+        if (historyId) {
+            openPatientQuickView(historyId);
+        }
+    });
+
+    // Clic en "Ver Receta" dentro de la tabla de controles del modal
+    $(document).on('click', '.qv-view-appointment', function (e) {
+        e.preventDefault();
+        const appointmentId = $(this).attr('value');
+        if (window.ModalDetails && typeof window.ModalDetails.showDetails === 'function') {
+            window.ModalDetails.showDetails({
+                id: appointmentId,
+                type: 'appointments',
+                titlePrefix: 'Detalles de la Cita'
+            });
+        }
+    });
+
+    // Mantener clase modal-open en body cuando se cierra un modal anidado (#modal-default)
+    $(document).on('hidden.bs.modal', '#modal-default', function () {
+        if ($('#modal_patient_quickview').hasClass('show')) {
+            $('body').addClass('modal-open');
+        }
+    });
+
+    async function openPatientQuickView(historyId) {
+        const $modal = $('#modal_patient_quickview');
+        const $loading = $('#qv_loading_state');
+        const $content = $('#qv_content_state');
+
+        // Reset and show loading state
+        $loading.show();
+        $content.hide();
+        $('#qv_patient_name').text('Cargando datos del paciente...');
+        $('#qv_patient_dni').html('<i class="bi bi-card-text mr-1"></i>DNI: --');
+        $('#qv_patient_tipo_badge').empty();
+        $('#qv_patient_deleted_badge').hide();
+        $('#qv_appointments_tbody').empty();
+        $('#qv_appointments_empty').hide();
+        $('#table_qv_appointments').show();
+        $('#tab-controles-link').tab('show');
+
+        // Show modal
+        $modal.modal('show');
+
+        try {
+            const response = await axios.get(`${API_BASE_URL}/histories/quick-view/${historyId}`);
+            if (!response.data || !response.data.status) {
+                throw new Error(response.data?.message || 'Error al obtener datos');
+            }
+
+            const { history, appointments, routes } = response.data;
+
+            // Fill header
+            $('#qv_patient_name').text(history.nombres || '--');
+            $('#qv_patient_dni').html(`<i class="bi bi-card-text mr-1"></i>${history.tipo_documento || 'DNI'}: <b>${escapeHtml(history.dni || '--')}</b>`);
+            
+            if (history.tipo_atencion_desc) {
+                $('#qv_patient_tipo_badge').html(`
+                    <span class="badge ${history.tipo_atencion_color || 'badge-secondary'} ml-1 font-weight-normal py-1 px-2">
+                        <i class="bi bi-tag-fill mr-1"></i>${escapeHtml(history.tipo_atencion_desc)}
+                    </span>
+                `);
+            } else {
+                $('#qv_patient_tipo_badge').empty();
+            }
+
+            if (history.is_deleted) {
+                $('#qv_patient_deleted_badge').show();
+            } else {
+                $('#qv_patient_deleted_badge').hide();
+            }
+
+            // Fill Quick Summary Strip
+            $('#qv_patient_edad').text(history.edad !== null ? history.edad : '--');
+            $('#qv_patient_fn').text(history.fecha_nacimiento || '--');
+            $('#qv_patient_sexo').text(history.sexo || '--');
+            $('#qv_patient_telefono').html(history.telefono && history.telefono !== '--' 
+                ? `<a href="tel:${escapeHtml(history.telefono)}" class="text-dark font-weight-bold text-decoration-none">${escapeHtml(history.telefono)}</a>`
+                : '<span class="text-muted">--</span>');
+            $('#qv_patient_gs').text(history.grupo_sanguineo || '--');
+            $('#qv_patient_ocupacion').text(history.ocupacion || '--');
+
+            // Fill Action Buttons in Footer and Header
+            $('#qv_btn_edit_history').attr('href', routes?.history_edit || '#');
+            $('#qv_btn_add_control').attr('href', routes?.control_add || '#');
+            $('#qv_btn_add_first_control').attr('href', routes?.control_add || '#');
+            $('#qv_btn_new_exam').attr('href', routes?.exam_add || '#');
+            $('#qv_btn_new_report').attr('href', routes?.report_add || '#');
+
+            // Fill Appointments (Check-ups) Table
+            const count = appointments ? appointments.length : 0;
+            $('#qv_appointments_count').text(count);
+
+            if (count === 0) {
+                $('#table_qv_appointments').hide();
+                $('#qv_appointments_empty').show();
+            } else {
+                $('#table_qv_appointments').show();
+                $('#qv_appointments_empty').hide();
+
+                let appointmentsHtml = '';
+                appointments.forEach((ap) => {
+                    const deletedBadge = ap.is_deleted ? '<span class="badge badge-danger ml-1">Eliminado</span>' : '';
+                    const timeBadge = ap.antiguedad ? `<span class="badge badge-light border text-muted font-weight-normal d-block mt-1">${escapeHtml(ap.antiguedad)}</span>` : '';
+
+                    appointmentsHtml += `
+                        <tr class="${ap.is_deleted ? 'table-danger' : ''}">
+                            <td class="text-center align-middle font-weight-bold text-muted">${ap.index}</td>
+                            <td class="align-middle">
+                                <div class="font-weight-bold text-dark"><i class="bi bi-calendar3 text-primary mr-1"></i>${escapeHtml(ap.fecha_formato)}</div>
+                                ${timeBadge}
+                                ${deletedBadge}
+                            </td>
+                            <td class="align-middle">
+                                <div class="font-weight-bold text-dark">${escapeHtml(ap.diagnostico || '--')}</div>
+                            </td>
+                            <td class="align-middle text-muted">
+                                <span class="d-inline-block text-truncate" style="max-width: 250px;" title="${escapeHtml(ap.sintomas || '')}">
+                                    ${escapeHtml(ap.sintomas || '--')}
+                                </span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="d-inline-block text-truncate" style="max-width: 250px;" title="${escapeHtml(ap.tratamiento || ap.plan || '')}">
+                                    ${escapeHtml(ap.tratamiento || ap.plan || '--')}
+                                </span>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btn-xs qv-view-appointment mr-1" value="${ap.id}" title="Ver receta e indicaciones">
+                                        <i class="bi bi-eye"></i> Receta
+                                    </button>
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="bi bi-printer"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="${ap.print_a4}" target="_blank"><i class="bi bi-file-earmark-pdf text-danger mr-1"></i> Imprimir A4</a>
+                                            <a class="dropdown-item" href="${ap.print_a5}" target="_blank"><i class="bi bi-file-earmark-pdf text-info mr-1"></i> Imprimir A5</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                $('#qv_appointments_tbody').html(appointmentsHtml);
+            }
+
+            // Fill Antecedents Tab
+            const ant = history.antecedentes || {};
+            $('#qv_ant_asma').html(renderBadgeYesNo(ant.asma));
+            $('#qv_ant_epoc').html(renderBadgeYesNo(ant.epoc));
+            $('#qv_ant_tbc').html(renderBadgeYesNo(ant.tuberculosis));
+            $('#qv_ant_cancer').html(renderBadgeYesNo(ant.cancerpulmon));
+            $('#qv_ant_neumonias').html(renderBadgeYesNo(ant.neumonias));
+            $('#qv_ant_efusion').html(renderBadgeYesNo(ant.efusionpleural));
+
+            $('#qv_ant_tabaco').text(ant.tabaquismo || 'No');
+            $('#qv_ant_ipa').html(ant.ipa ? `<span class="badge badge-warning text-dark font-weight-bold">${ant.ipa} paquetes/año</span>` : '<span class="text-muted">No registrado</span>');
+            $('#qv_ant_contactotbc').html(renderBadgeYesNo(ant.contactotbc));
+            $('#qv_ant_biomasa').html(renderBadgeYesNo(ant.biomasa));
+            $('#qv_ant_drogas').text(ant.alergias_drogas || 'No refiere alergias');
+
+            $('#qv_ant_cirugias').text(ant.cirugias || 'No refiere cirugías');
+            $('#qv_ant_hospitalizaciones').text(ant.hospitalizaciones || 'No refiere hospitalizaciones previas');
+            $('#qv_ant_medicacion').text(ant.medicacion_habitual || 'Ninguna medicación continua registrada');
+            $('#qv_ant_otros').text(ant.otros || ant.transfusiones ? `Transfusiones: ${ant.transfusiones || 'No'} | ${ant.otros || ''}` : 'Sin antecedentes adicionales');
+
+            $('#qv_ant_motivo').text(ant.motivoconsulta || 'No especificado en filiación inicial');
+            $('#qv_ant_relato').text(ant.relatocronologico || 'Sin relato cronológico registrado');
+
+            // Switch to content
+            $loading.hide();
+            $content.show();
+
+        } catch (error) {
+            console.error('Error al cargar vista rápida de historia clínica:', error);
+            $loading.html(`
+                <div class="text-danger py-4">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem;"></i>
+                    <h5 class="font-weight-bold mt-2">No se pudo cargar la historia clínica</h5>
+                    <p class="small text-muted mb-3">${escapeHtml(error.message || 'Ocurrió un error inesperado al conectar con el servidor.')}</p>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                </div>
+            `);
+        }
+    }
+
+    function renderBadgeYesNo(val) {
+        if (!val || val.trim().toLowerCase() === 'no' || val.trim().toLowerCase() === 'negativo' || val.trim().toLowerCase() === 'no refiere' || val.trim().toLowerCase() === '0') {
+            return '<span class="badge badge-light border text-muted">No refiere</span>';
+        }
+        return `<span class="badge badge-danger font-weight-bold"><i class="bi bi-check-circle mr-1"></i>${escapeHtml(val)}</span>`;
     }
 });

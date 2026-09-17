@@ -199,6 +199,12 @@ $(document).ready(function () {
         $('#extranjero').val('');
     });
 
+    // 3b. TIPO DE ATENCIÓN CHIP BUTTONS IN FORM
+    $(document).on('click', '#formHC .chip-tipo-btn', function () {
+        const tipoId = $(this).data('tipo');
+        $('#id_tipo_atencion').val(tipoId);
+    });
+
     // 4. SELECT2 AJAX SEARCHES
     if ($.fn.select2) {
         // Ubigeo Nacimiento
@@ -658,16 +664,57 @@ $(document).ready(function () {
                     try {
                         const result = await Swal.fire({
                             title: '¿Añadir paciente a la cola de citas?',
-                            text: 'Desea añadir este paciente a la agenda de hoy',
+                            html: `
+                                <p class="text-muted mb-3">Seleccione el tipo de atención para la cita de hoy:</p>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <div class="btn-group" id="swalTipoGroup">
+                                        <button type="button" class="btn btn-outline-success swal-chip-btn mx-1" data-val="1">
+                                            <i class="fas fa-user-plus mr-1"></i> Nuevo
+                                        </button>
+                                        <button type="button" class="btn btn-primary active swal-chip-btn mx-1" data-val="2">
+                                            <i class="fas fa-stethoscope mr-1"></i> Control
+                                        </button>
+                                        <button type="button" class="btn btn-outline-warning text-dark swal-chip-btn mx-1" data-val="3">
+                                            <i class="fas fa-user-clock mr-1"></i> Continuador
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="swal_selected_tipo" value="2">
+                            `,
                             icon: 'question',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Sí, añadir',
-                            cancelButtonText: 'Cancelar'
+                            confirmButtonText: '<i class="fas fa-calendar-plus mr-1"></i> Sí, añadir',
+                            cancelButtonText: 'Cancelar',
+                            didOpen: () => {
+                                $('.swal-chip-btn').on('click', function () {
+                                    $('.swal-chip-btn').removeClass('active btn-success btn-primary btn-warning text-white');
+                                    $('.swal-chip-btn[data-val="1"]').addClass('btn-outline-success');
+                                    $('.swal-chip-btn[data-val="2"]').addClass('btn-outline-primary');
+                                    $('.swal-chip-btn[data-val="3"]').addClass('btn-outline-warning text-dark');
+
+                                    const val = $(this).data('val');
+                                    $('#swal_selected_tipo').val(val);
+
+                                    if (val == 1) {
+                                        $(this).removeClass('btn-outline-success').addClass('active btn-success text-white');
+                                    } else if (val == 2) {
+                                        $(this).removeClass('btn-outline-primary').addClass('active btn-primary text-white');
+                                    } else if (val == 3) {
+                                        $(this).removeClass('btn-outline-warning text-dark').addClass('active btn-warning text-dark');
+                                    }
+                                });
+                            },
+                            preConfirm: () => {
+                                return $('#swal_selected_tipo').val() || 2;
+                            }
                         });
                         if (result.isConfirmed) {
-                            const response = await axios.get(`${API_BASE_URL}/histories/quotes/${id}`);
+                            const tipoId = result.value;
+                            const response = await axios.get(`${API_BASE_URL}/histories/quotes/${id}`, {
+                                params: { id_tipo_atencion: tipoId }
+                            });
                             if (response.status === 200 && response.data.status === true) {
                                 Swal.fire('Operación exitosa', response.data.messages, 'success');
                             } else {
