@@ -902,9 +902,10 @@ $(document).ready(function () {
             $('#qv_btn_edit_history').attr('href', routes?.history_edit || '#');
             $('#qv_btn_add_control').attr('href', routes?.control_add || '#');
             $('#qv_btn_add_first_control').attr('href', routes?.control_add || '#');
-            $('#qv_btn_new_exam').attr('href', routes?.exam_add || '#');
+            $('#qv_btn_add_new_exam').attr('href', routes?.exam_add || '#');
             $('#qv_btn_add_first_exam').attr('href', routes?.exam_add || '#');
             $('#qv_btn_new_report').attr('href', routes?.report_add || '#');
+            $('#qv_btn_new_exam').attr('href', routes?.exam_add || '#');
 
             // Fill Appointments (Check-ups) Table
             const count = appointments ? appointments.length : 0;
