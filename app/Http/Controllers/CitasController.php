@@ -415,7 +415,6 @@ class CitasController extends Controller
 
         try {
             DB::beginTransaction();
-
             // 1. Create Patient with safe defaults for required database fields
             $patient = History::create([
                 'id_td'              => $request->id_td,
