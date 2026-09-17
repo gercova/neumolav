@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,12 +66,14 @@ class History extends Model {
         'fi',
         'c',
         'relatocronologico',
+        'id_tipo_atencion',
         'estado'
     ];
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
+        'id_tipo_atencion'  => 'integer',
         'fecha_nacimiento'  => 'date',
         'estado'            => 'boolean',
         'created_at'        => 'datetime',
@@ -148,8 +151,8 @@ class History extends Model {
 			->toArray();
 	}
 
-    public function documentType(): HasOne {
-        return $this->hasOne(DocumentType::class, 'id_td', 'id');
+    public function documentType(): BelongsTo {
+        return $this->belongsTo(DocumentType::class, 'id_td', 'id');
     }
 
     public function appointments(): HasMany {
@@ -196,35 +199,46 @@ class History extends Model {
         return $this->hasMany(Imagen::class, 'id_historia', 'id');
     }
 
-    public function locationBirth(): HasOne {
-        return $this->hasOne(UbigeoDistrict::class, 'ubigeo_nacimiento', 'id');
+    public function locationBirth(): BelongsTo {
+        return $this->belongsTo(UbigeoDistrict::class, 'ubigeo_nacimiento', 'id');
     }
 
-    public function locationResidence(): HasOne {
-        return $this->hasOne(UbigeoDistrict::class, 'ubigeo_residencia', 'id');
+    public function locationResidence(): BelongsTo {
+        return $this->belongsTo(UbigeoDistrict::class, 'ubigeo_residencia', 'id');
     }
 
-    public function occupation(): HasOne {
-        return $this->hasOne(Occupation::class, 'id_occupation', 'id');
+    public function occupation(): BelongsTo {
+        return $this->belongsTo(Occupation::class, 'id_ocupacion', 'id');
     }
 
-    public function sex(): HasOne {
-        return $this->hasOne(Sex::class, 'id_sexo', 'id');
+    public function sex(): BelongsTo {
+        return $this->belongsTo(Sex::class, 'id_sexo', 'id');
     }
 
-    public function maritalStatus(): HasOne {
-        return $this->hasOne(MaritalStatus::class, 'id_estado', 'id');
+    public function maritalStatus(): BelongsTo {
+        return $this->belongsTo(MaritalStatus::class, 'id_estado', 'id');
     }
 
-    public function degreesInstruction(): HasOne {
-        return $this->hasOne(DegreesInstruction::class, 'id_gi', 'id');
+    public function degreesInstruction(): BelongsTo {
+        return $this->belongsTo(DegreesInstruction::class, 'id_gi', 'id');
     }
 
-    public function bloodGroup(): HasOne {
-        return $this->hasOne(BloodGroups::class, 'id_gs', 'id');
+    public function bloodGroup(): BelongsTo {
+        return $this->belongsTo(BloodGroups::class, 'id_gs', 'id');
     }
 
-    public function smoking(): HasOne {
-        return $this->hasOne(Smoking::class, 'id_ct', 'id');
+    public function smoking(): BelongsTo {
+        return $this->belongsTo(Smoking::class, 'id_ct', 'id');
+    }
+
+    public function tipoAtencion(): BelongsTo {
+        return $this->belongsTo(TipoAtencion::class, 'id_tipo_atencion', 'id');
+    }
+
+    public function getCalculatedAgeAttribute(): ?int {
+        if (!$this->fecha_nacimiento) {
+            return null;
+        }
+        return \Carbon\Carbon::parse($this->fecha_nacimiento)->age;
     }
 }
