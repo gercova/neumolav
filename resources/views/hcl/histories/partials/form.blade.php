@@ -9,6 +9,29 @@
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
+
+    /* Chips de Tipo de Atención */
+    .chip-tipo-group {
+        display: flex;
+        gap: 8px;
+    }
+    .chip-tipo-group .btn {
+        border-radius: 20px !important;
+        padding: 6px 14px;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .chip-tipo-group .btn:hover {
+        transform: translateY(-1px);
+    }
+    .chip-tipo-group .btn.active {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        font-weight: 700;
+    }
 </style>
 @method('POST')
 @csrf
@@ -115,6 +138,31 @@
                         <option value="{{ $b->id }}" {{ (old('id_gs', $history->id_gs ?? '') == $b->id) ? 'selected' : '' }}>{{ $b->descripcion }}</option>
                     @endforeach
                 </select>
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                <label class="d-block font-weight-bold">Tipo de Atención <span class="text-danger">*</span></label>
+                @php $currentTipo = old('id_tipo_atencion', $history->id_tipo_atencion ?? 1); @endphp
+                <div class="btn-group btn-group-toggle w-100 chip-tipo-group" data-toggle="buttons">
+                    <label class="btn btn-outline-success chip-tipo-btn flex-fill {{ $currentTipo == 1 ? 'active' : '' }}" data-tipo="1">
+                        <input type="radio" name="tipo_atencion_radio" value="1" autocomplete="off" {{ $currentTipo == 1 ? 'checked' : '' }}>
+                        <i class="bi bi-person-plus-fill mr-1"></i> <b>Nuevo</b>
+                    </label>
+                    <label class="btn btn-outline-primary chip-tipo-btn flex-fill {{ $currentTipo == 2 ? 'active' : '' }}" data-tipo="2">
+                        <input type="radio" name="tipo_atencion_radio" value="2" autocomplete="off" {{ $currentTipo == 2 ? 'checked' : '' }}>
+                        <i class="bi bi-arrow-repeat mr-1"></i> <b>Control</b>
+                    </label>
+                    <label class="btn btn-outline-warning text-dark chip-tipo-btn flex-fill {{ $currentTipo == 3 ? 'active' : '' }}" data-tipo="3">
+                        <input type="radio" name="tipo_atencion_radio" value="3" autocomplete="off" {{ $currentTipo == 3 ? 'checked' : '' }}>
+                        <i class="bi bi-person-check-fill mr-1"></i> <b>Continuador</b>
+                    </label>
+                </div>
+                <input type="hidden" name="id_tipo_atencion" id="id_tipo_atencion" value="{{ $currentTipo }}">
+                <small class="form-text text-muted">Seleccione con un clic para clasificar la atención del paciente.</small>
                 <div class="invalid-feedback"></div>
             </div>
         </div>
