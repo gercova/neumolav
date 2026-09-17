@@ -144,21 +144,27 @@ class AppointmentsController extends Controller {
 
 			if($user->can('control_ver')){
                 $buttons .= sprintf(
-                    '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s"><i class="bi bi-eye"></i> Ver receta</button>&nbsp;',
+                    '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s">
+                        <i class="bi bi-eye"></i> Ver receta
+                    </button>&nbsp;',
                     htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
 
 			if($user->can('control_actualizar')){
                 $buttons .= sprintf(
-                    '<a type="button" class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>&nbsp;',
+                    '<a type="button" class="btn btn-warning btn-xs" href="%s">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </a>&nbsp;',
                     route('hcl.appointments.edit', ['ap' => $item->id]),
                 );
             }
 
 			if($user->can('control_borrar')){
                 $buttons .= sprintf(
-                    '<button type="button" class="btn btn-danger delete-appointment btn-xs" value="%s"><i class="bi bi-trash"></i> Eliminar</button>',
+                    '<button type="button" class="btn btn-danger delete-appointment btn-xs" value="%s">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>',
                     htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
@@ -206,13 +212,17 @@ class AppointmentsController extends Controller {
         $data = $appointments->map(function ($item, $index) {
             $user = auth()->user();
             $buttons = sprintf(
-                '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s"><i class="bi bi-eye"></i> Ver receta</button>',
+                '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s">
+                    <i class="bi bi-eye"></i> Ver receta
+                </button>',
                 $item->id
             );
 
             if ($user && $user->can('control_actualizar')) {
                 $buttons .= sprintf(
-                    '&nbsp;<a type="button" class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>',
+                    '&nbsp;<a type="button" class="btn btn-warning btn-xs" href="%s">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </a>',
                     route('hcl.appointments.edit', ['ap' => $item->id])
                 );
             }
@@ -240,7 +250,9 @@ class AppointmentsController extends Controller {
 			$buttons 	= '';
 			if($user->can('control_borrar')){
 				$buttons .= sprintf(
-					'<button type="button" class="btn btn-danger delete-diagnostic btn-xs" value="%s"><i class="bi bi-trash"></i> Eliminar</button>',
+					'<button type="button" class="btn btn-danger delete-diagnostic btn-xs" value="%s">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>',
 					$item->id,
 				);
 			}
@@ -266,7 +278,9 @@ class AppointmentsController extends Controller {
 			$buttons 	= '';
 			if($user->can('control_borrar')){
 				$buttons .= sprintf(
-					'<button type="button" class="btn btn-danger delete-medication btn-xs" value="%s"><i class="bi bi-trash"></i> Eliminar</button>',
+					'<button type="button" class="btn btn-danger delete-medication btn-xs" value="%s">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>',
 					$item->id
 				);
 			}
