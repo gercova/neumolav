@@ -66,6 +66,7 @@ class HistoryValidate extends FormRequest
             'fi'                            => 'nullable|string',
             'c'                             => 'nullable|string',
             'relatocronologico'             => 'nullable|string',
+            'id_tipo_atencion'              => 'nullable|integer|exists:tipos_atencion,id',
         ];
     }
 
