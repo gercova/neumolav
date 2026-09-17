@@ -49,7 +49,7 @@ class Cita extends Model
      */
     public function history(): BelongsTo
     {
-        return $this->belongsTo(History::class, 'id_historia', 'id');
+        return $this->belongsTo(History::class, 'id_historia', 'id')->withTrashed();
     }
 
     /**
