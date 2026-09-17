@@ -11,8 +11,10 @@ use App\Models\Report;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ReportsController extends Controller {
 
@@ -197,12 +199,20 @@ class ReportsController extends Controller {
         ], 200);
     }
 
-    public function printReport(Report $rp) {
-		$hc     = DB::select('CALL PA_getMedicalHistoryByReport(?)', [$rp->id]);
-        $dx     = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
-		$us     = Auth::user();
-		$en     = Enterprise::findOrFail(1);
-		$pdf    = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rp', 'us', 'en'))
+    public function printReport(Request $request, Report $rp) {
+		$hc             = DB::select('CALL PA_getMedicalHistoryByReport(?)', [$rp->id]);
+        $dx             = DB::select('CALL PA_getDiagnosticByReport(?)', [$rp->id]);
+		$us             = Auth::user() ?? (!empty($rp->id_user) ? User::find($rp->id_user) : null);
+		$en             = Enterprise::findOrFail(1);
+        $withSignature  = $request->boolean('signature', false);
+        $signatureBase64 = null;
+        if ($withSignature && $us && $us->firma_digital && Storage::disk('public')->exists($us->firma_digital)) {
+            $mime = Storage::disk('public')->mimeType($us->firma_digital) ?: 'image/png';
+            $data = Storage::disk('public')->get($us->firma_digital);
+            $signatureBase64 = 'data:' . $mime . ';base64,' . base64_encode($data);
+        }
+
+		$pdf    = PDF::loadView('hcl.reports.pdf', compact('hc', 'dx', 'rp', 'us', 'en', 'withSignature', 'signatureBase64'))
 			->setPaper('a4')
         	->setOptions([
 				'margin-top' 	        => 0.5,
