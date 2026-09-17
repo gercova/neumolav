@@ -176,7 +176,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
             Route::delete('/appointments/delete/{ap}',          [AppointmentsController::class, 'destroy']);
             Route::delete('/ap-dx/delete/{dx}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
-            Route::delete('/ap-mx/delete/{ap}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
+            Route::delete('/ap-mx/delete/{mx}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
         });
         /**
          * INFORMES CLÍNICOS
