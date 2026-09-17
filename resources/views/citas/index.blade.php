@@ -1,202 +1,9 @@
 @extends('layouts.app')
 @section('title', config('global.site_name', 'NeumoTar') . ' - Citas y Turnos')
-
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
+@endsection
 @section('content')
-    <style>
-        /* Estilos limpios y planos - Sin colores degradados */
-        .citas-stat-card {
-            border-radius: 8px;
-            padding: 18px 20px;
-            color: #ffffff;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.15s ease;
-        }
-
-        .citas-stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-bg-total {
-            background-color: #2563eb;
-        }
-
-        /* Azul sólido */
-        .stat-bg-espera {
-            background-color: #0284c7;
-        }
-
-        /* Celeste sólido */
-        .stat-bg-atendidos {
-            background-color: #16a34a;
-        }
-
-        /* Verde sólido */
-        .stat-bg-pendientes {
-            background-color: #d97706;
-        }
-
-        /* Ámbar sólido */
-
-        .citas-stat-card .stat-value {
-            font-size: 2.1rem;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-
-        .citas-stat-card .stat-label {
-            font-size: 0.95rem;
-            font-weight: 500;
-            opacity: 0.95;
-        }
-
-        .citas-stat-card .stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.35;
-        }
-
-        .date-navigation-bar {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px 18px;
-            margin-bottom: 20px;
-        }
-
-        .badge-turno {
-            background-color: #1e293b;
-            color: #ffffff;
-            font-size: 0.9rem;
-            font-weight: 700;
-            padding: 5px 10px;
-            border-radius: 6px;
-        }
-
-        .patient-search-result-item {
-            cursor: pointer;
-            padding: 10px 14px;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background-color 0.15s ease;
-        }
-
-        .patient-search-result-item:hover {
-            background-color: #eff6ff;
-        }
-
-        .selected-patient-card {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 15px;
-        }
-
-        /* Modales limpios con bordes planos */
-        .modal-header {
-            background-color: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .nav-tabs .nav-link.active {
-            font-weight: 600;
-            border-bottom: 3px solid #2563eb !important;
-            color: #2563eb !important;
-        }
-
-        /* Chips de Selección de Tipo de Atención */
-        .chip-tipo-group {
-            display: flex;
-            gap: 8px;
-        }
-        .chip-tipo-group .btn {
-            border-radius: 20px !important;
-            padding: 8px 16px;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .chip-tipo-group .btn:hover {
-            transform: translateY(-1px);
-        }
-        .chip-tipo-group .btn.active {
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            font-weight: 700;
-        }
-
-        /* ── Floating Actions Dropdown (appended to body, never clipped) ──────── */
-        #floating-cita-menu {
-            position: fixed;
-            z-index: 9999;
-            min-width: 220px;
-            background: #fff;
-            border: 1px solid rgba(0,0,0,.12);
-            border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.08);
-            padding: 4px 0;
-            display: none;
-            animation: fcm-in .12s ease;
-        }
-        @keyframes fcm-in {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        #floating-cita-menu .dropdown-header {
-            font-size: 0.70rem;
-            letter-spacing: .06em;
-            padding: 8px 14px 4px;
-            color: #94a3b8;
-        }
-        #floating-cita-menu .dropdown-item {
-            padding: 7px 14px;
-            font-size: 0.875rem;
-            color: #1e293b;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background .1s;
-        }
-        #floating-cita-menu .dropdown-item:hover {
-            background: #f1f5f9;
-        }
-        #floating-cita-menu .dropdown-item.text-danger {
-            color: #dc2626 !important;
-        }
-        #floating-cita-menu .dropdown-item.text-danger:hover {
-            background: #fef2f2;
-        }
-        #floating-cita-menu .dropdown-divider {
-            margin: 3px 0;
-            border-top: 1px solid #e2e8f0;
-        }
-        /* Keep the acciones column fixed-width, no overflow concern */
-        #table_appointments th:last-child,
-        #table_appointments td:last-child {
-            width: 120px;
-        }
-        /* Fila de paciente interactiva (clic para ver historia y controles) */
-        #table_appointments_body tr {
-            cursor: pointer;
-            transition: background-color 0.15s ease-in-out;
-        }
-        #table_appointments_body tr:hover {
-            background-color: #f1f5f9 !important;
-        }
-        #table_appointments_body tr:hover td:first-child .badge-turno {
-            background-color: #1e293b;
-            color: #fff;
-        }
-        .btn-cita-actions, #floating-cita-menu {
-            cursor: default;
-        }
-    </style>
-
     <div class="content-wrapper">
         <!-- Content Header -->
         <div class="content-header">
@@ -216,7 +23,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Main Content -->
         <section class="content">
             <div class="container-fluid">
@@ -351,14 +157,6 @@
                                 </thead>
                                 <tbody id="table_appointments_body">
                                 </tbody>
-                                {{-- <tbody id="table_appointments_body">
-                                <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">
-                                        <div class="spinner-border spinner-border-sm text-primary mr-2" role="status"></div>
-                                        Cargando lista de turnos...
-                                    </td>
-                                </tr>
-                            </tbody> --}}
                             </table>
                         </div>
                     </div>
@@ -484,23 +282,31 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="font-weight-bold d-block">Tipo de Atención: <span class="text-danger">*</span></label>
+                                    <label class="font-weight-bold d-block">Tipo de Atención: <span
+                                            class="text-danger">*</span></label>
                                     <div class="btn-group btn-group-toggle w-100 chip-tipo-group" data-toggle="buttons">
                                         <label class="btn btn-outline-success chip-tipo-btn flex-fill" data-tipo="1">
-                                            <input type="radio" name="existing_tipo_radio" value="1" autocomplete="off">
+                                            <input type="radio" name="existing_tipo_radio" value="1"
+                                                autocomplete="off">
                                             <i class="bi bi-person-plus-fill mr-1"></i> <b>Nuevo</b>
                                         </label>
-                                        <label class="btn btn-outline-primary chip-tipo-btn active flex-fill" data-tipo="2">
-                                            <input type="radio" name="existing_tipo_radio" value="2" autocomplete="off" checked>
+                                        <label class="btn btn-outline-primary chip-tipo-btn active flex-fill"
+                                            data-tipo="2">
+                                            <input type="radio" name="existing_tipo_radio" value="2"
+                                                autocomplete="off" checked>
                                             <i class="bi bi-arrow-repeat mr-1"></i> <b>Control</b>
                                         </label>
-                                        <label class="btn btn-outline-warning text-dark chip-tipo-btn flex-fill" data-tipo="3">
-                                            <input type="radio" name="existing_tipo_radio" value="3" autocomplete="off">
+                                        <label class="btn btn-outline-warning text-dark chip-tipo-btn flex-fill"
+                                            data-tipo="3">
+                                            <input type="radio" name="existing_tipo_radio" value="3"
+                                                autocomplete="off">
                                             <i class="bi bi-person-check-fill mr-1"></i> <b>Continuador</b>
                                         </label>
                                     </div>
-                                    <input type="hidden" name="id_tipo_atencion" id="existing_id_tipo_atencion" value="2">
-                                    <small class="form-text text-muted">Haga clic en una opción para clasificar la atención del paciente.</small>
+                                    <input type="hidden" name="id_tipo_atencion" id="existing_id_tipo_atencion"
+                                        value="2">
+                                    <small class="form-text text-muted">Haga clic en una opción para clasificar la atención
+                                        del paciente.</small>
                                 </div>
 
                                 <div class="text-right">
@@ -617,21 +423,29 @@
                                         <div class="form-group">
                                             <label class="font-weight-bold d-block">Tipo de Atención: <span
                                                     class="text-danger">*</span></label>
-                                            <div class="btn-group btn-group-toggle w-100 chip-tipo-group" data-toggle="buttons">
-                                                <label class="btn btn-outline-success chip-tipo-btn active flex-fill" data-tipo="1">
-                                                    <input type="radio" name="quick_tipo_radio" value="1" autocomplete="off" checked>
+                                            <div class="btn-group btn-group-toggle w-100 chip-tipo-group"
+                                                data-toggle="buttons">
+                                                <label class="btn btn-outline-success chip-tipo-btn active flex-fill"
+                                                    data-tipo="1">
+                                                    <input type="radio" name="quick_tipo_radio" value="1"
+                                                        autocomplete="off" checked>
                                                     <i class="bi bi-person-plus-fill mr-1"></i> <b>Nuevo</b>
                                                 </label>
-                                                <label class="btn btn-outline-primary chip-tipo-btn flex-fill" data-tipo="2">
-                                                    <input type="radio" name="quick_tipo_radio" value="2" autocomplete="off">
+                                                <label class="btn btn-outline-primary chip-tipo-btn flex-fill"
+                                                    data-tipo="2">
+                                                    <input type="radio" name="quick_tipo_radio" value="2"
+                                                        autocomplete="off">
                                                     <i class="bi bi-arrow-repeat mr-1"></i> <b>Control</b>
                                                 </label>
-                                                <label class="btn btn-outline-warning text-dark chip-tipo-btn flex-fill" data-tipo="3">
-                                                    <input type="radio" name="quick_tipo_radio" value="3" autocomplete="off">
+                                                <label class="btn btn-outline-warning text-dark chip-tipo-btn flex-fill"
+                                                    data-tipo="3">
+                                                    <input type="radio" name="quick_tipo_radio" value="3"
+                                                        autocomplete="off">
                                                     <i class="bi bi-person-check-fill mr-1"></i> <b>Continuador</b>
                                                 </label>
                                             </div>
-                                            <input type="hidden" name="id_tipo_atencion" id="quick_id_tipo_atencion" value="1">
+                                            <input type="hidden" name="id_tipo_atencion" id="quick_id_tipo_atencion"
+                                                value="1">
                                             <small class="form-text text-muted">Por defecto: Nuevo</small>
                                         </div>
                                     </div>
@@ -717,18 +531,22 @@
                 <!-- Header -->
                 <div class="modal-header bg-light py-3 border-bottom">
                     <div class="d-flex align-items-center flex-wrap">
-                        <div class="bg-primary text-white rounded p-2 mr-3 d-flex align-items-center justify-content-center shadow-xs" style="width: 40px; height: 40px;">
+                        <div class="bg-primary text-white rounded p-2 mr-3 d-flex align-items-center justify-content-center shadow-xs"
+                            style="width: 40px; height: 40px;">
                             <i class="bi bi-file-earmark-person-fill" style="font-size: 1.3rem;"></i>
                         </div>
                         <div>
-                            <h5 class="modal-title font-weight-bold text-dark mb-0 d-inline-block" id="modalPatientQuickviewTitle">
+                            <h5 class="modal-title font-weight-bold text-dark mb-0 d-inline-block"
+                                id="modalPatientQuickviewTitle">
                                 <span id="qv_patient_name">Cargando paciente...</span>
                             </h5>
-                            <span class="badge badge-light border text-secondary ml-2 font-weight-normal py-1 px-2" id="qv_patient_dni">
+                            <span class="badge badge-light border text-secondary ml-2 font-weight-normal py-1 px-2"
+                                id="qv_patient_dni">
                                 <i class="bi bi-card-text mr-1"></i>DNI: --
                             </span>
                             <span id="qv_patient_tipo_badge"></span>
-                            <span class="badge badge-danger ml-1 font-weight-normal py-1 px-2" id="qv_patient_deleted_badge" style="display: none;">
+                            <span class="badge badge-danger ml-1 font-weight-normal py-1 px-2"
+                                id="qv_patient_deleted_badge" style="display: none;">
                                 <i class="bi bi-archive-fill mr-1"></i>Historia Archivada
                             </span>
                         </div>
@@ -755,27 +573,34 @@
                         <div class="p-3 mb-3" style="background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
                             <div class="row text-secondary small">
                                 <div class="col-md-3 col-6 mb-2 mb-md-0">
-                                    <div class="text-muted mb-1"><i class="bi bi-cake2 text-info mr-1"></i> Edad / Nacimiento:</div>
+                                    <div class="text-muted mb-1"><i class="bi bi-cake2 text-info mr-1"></i> Edad /
+                                        Nacimiento:</div>
                                     <div class="font-weight-bold text-dark h6 mb-0">
                                         <span id="qv_patient_edad">--</span> años
-                                        <small class="text-muted font-weight-normal">(<span id="qv_patient_fn">--</span>)</small>
+                                        <small class="text-muted font-weight-normal">(<span
+                                                id="qv_patient_fn">--</span>)</small>
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-6 mb-2 mb-md-0">
-                                    <div class="text-muted mb-1"><i class="bi bi-gender-ambiguous text-secondary mr-1"></i> Sexo:</div>
+                                    <div class="text-muted mb-1"><i
+                                            class="bi bi-gender-ambiguous text-secondary mr-1"></i> Sexo:</div>
                                     <div class="font-weight-bold text-dark mb-0" id="qv_patient_sexo">--</div>
                                 </div>
                                 <div class="col-md-3 col-6 mb-2 mb-md-0">
-                                    <div class="text-muted mb-1"><i class="bi bi-telephone text-success mr-1"></i> Teléfono:</div>
+                                    <div class="text-muted mb-1"><i class="bi bi-telephone text-success mr-1"></i>
+                                        Teléfono:</div>
                                     <div class="font-weight-bold text-dark mb-0" id="qv_patient_telefono">--</div>
                                 </div>
                                 <div class="col-md-2 col-6 mb-2 mb-md-0">
-                                    <div class="text-muted mb-1"><i class="bi bi-droplet-half text-danger mr-1"></i> Gr. Sanguíneo:</div>
+                                    <div class="text-muted mb-1"><i class="bi bi-droplet-half text-danger mr-1"></i> Gr.
+                                        Sanguíneo:</div>
                                     <div class="font-weight-bold text-dark mb-0" id="qv_patient_gs">--</div>
                                 </div>
                                 <div class="col-md-2 col-12">
-                                    <div class="text-muted mb-1"><i class="bi bi-briefcase text-primary mr-1"></i> Ocupación:</div>
-                                    <div class="font-weight-bold text-dark text-truncate mb-0" id="qv_patient_ocupacion">--</div>
+                                    <div class="text-muted mb-1"><i class="bi bi-briefcase text-primary mr-1"></i>
+                                        Ocupación:</div>
+                                    <div class="font-weight-bold text-dark text-truncate mb-0" id="qv_patient_ocupacion">
+                                        --</div>
                                 </div>
                             </div>
                         </div>
@@ -783,13 +608,25 @@
                         <!-- Pestañas de Navegación -->
                         <ul class="nav nav-tabs font-weight-bold mb-3" id="qvTabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active py-2 px-3" id="tab-controles-link" data-toggle="tab" href="#tab-qv-controles" role="tab" aria-controls="tab-qv-controles" aria-selected="true">
+                                <a class="nav-link active py-2 px-3" id="tab-controles-link" data-toggle="tab"
+                                    href="#tab-qv-controles" role="tab" aria-controls="tab-qv-controles"
+                                    aria-selected="true">
                                     <i class="bi bi-clock-history text-primary mr-1"></i> Controles Clínicos Previos
                                     <span class="badge badge-primary ml-1" id="qv_appointments_count">0</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link py-2 px-3" id="tab-antecedentes-link" data-toggle="tab" href="#tab-qv-antecedentes" role="tab" aria-controls="tab-qv-antecedentes" aria-selected="false">
+                                <a class="nav-link py-2 px-3" id="tab-examenes-link" data-toggle="tab"
+                                    href="#tab-qv-examenes" role="tab" aria-controls="tab-qv-examenes"
+                                    aria-selected="false">
+                                    <i class="bi bi-file-earmark-medical text-success mr-1"></i> Exámenes Clínicos
+                                    <span class="badge badge-success ml-1" id="qv_exams_count">0</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2 px-3" id="tab-antecedentes-link" data-toggle="tab"
+                                    href="#tab-qv-antecedentes" role="tab" aria-controls="tab-qv-antecedentes"
+                                    aria-selected="false">
                                     <i class="bi bi-clipboard2-pulse text-danger mr-1"></i> Antecedentes y Perfil Clínico
                                 </a>
                             </li>
@@ -798,13 +635,16 @@
                         <!-- Contenido de las Pestañas -->
                         <div class="tab-content" id="qvTabsContent">
                             <!-- PESTAÑA 1: CONTROLES CLÍNICOS PREVIOS -->
-                            <div class="tab-pane fade show active" id="tab-qv-controles" role="tabpanel" aria-labelledby="tab-controles-link">
+                            <div class="tab-pane fade show active" id="tab-qv-controles" role="tabpanel"
+                                aria-labelledby="tab-controles-link">
                                 <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                                     <div class="text-muted small">
-                                        <i class="bi bi-info-circle text-info mr-1"></i> Listado ordenado del más reciente al más antiguo. Soporta pacientes inactivos hasta más de 5 años.
+                                        <i class="bi bi-info-circle text-info mr-1"></i> Listado ordenado del más reciente
+                                        al más antiguo. Soporta pacientes inactivos hasta más de 5 años.
                                     </div>
                                     <div>
-                                        <a href="#" id="qv_btn_add_control" target="_blank" class="btn btn-sm btn-outline-success font-weight-bold">
+                                        <a href="#" id="qv_btn_add_control" target="_blank"
+                                            class="btn btn-sm btn-outline-success font-weight-bold">
                                             <i class="bi bi-plus-circle mr-1"></i> Nuevo Control
                                         </a>
                                     </div>
@@ -830,35 +670,92 @@
                                 </div>
 
                                 <!-- Estado Vacío de Controles -->
-                                <div id="qv_appointments_empty" class="text-center py-5 border rounded bg-white mt-2" style="display: none;">
+                                <div id="qv_appointments_empty" class="text-center py-5 border rounded bg-white mt-2"
+                                    style="display: none;">
                                     <i class="bi bi-clipboard-x text-muted" style="font-size: 2.5rem; opacity: 0.6;"></i>
-                                    <h6 class="font-weight-bold text-dark mt-2 mb-1">No registra controles clínicos previos</h6>
-                                    <p class="text-muted small mb-3">Este paciente no cuenta con atenciones o recetas registradas anteriormente en el sistema.</p>
-                                    <a href="#" id="qv_btn_add_first_control" target="_blank" class="btn btn-sm btn-primary">
+                                    <h6 class="font-weight-bold text-dark mt-2 mb-1">No registra controles clínicos previos
+                                    </h6>
+                                    <p class="text-muted small mb-3">Este paciente no cuenta con atenciones o recetas
+                                        registradas anteriormente en el sistema.</p>
+                                    <a href="#" id="qv_btn_add_first_control" target="_blank"
+                                        class="btn btn-sm btn-primary">
                                         <i class="bi bi-plus-circle mr-1"></i> Registrar Primer Control Clínico
                                     </a>
                                 </div>
                             </div>
 
-                            <!-- PESTAÑA 2: ANTECEDENTES Y PERFIL CLÍNICO -->
-                            <div class="tab-pane fade" id="tab-qv-antecedentes" role="tabpanel" aria-labelledby="tab-antecedentes-link">
+                            <!-- PESTAÑA 2: EXÁMENES CLÍNICOS -->
+                            <div class="tab-pane fade" id="tab-qv-examenes" role="tabpanel"
+                                aria-labelledby="tab-examenes-link">
+                                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                    <div class="text-muted small">
+                                        <i class="bi bi-info-circle text-info mr-1"></i> Exámenes activos registrados,
+                                        ordenados del más reciente al más antiguo.
+                                    </div>
+                                    <div>
+                                        <a href="#" id="qv_btn_add_new_exam" target="_blank"
+                                            class="btn btn-sm btn-outline-success font-weight-bold">
+                                            <i class="bi bi-plus-circle mr-1"></i> Nuevo Examen
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla de Exámenes -->
+                                <div class="table-responsive border rounded bg-white shadow-xs">
+                                    <table class="table table-hover align-middle mb-0" id="table_qv_exams">
+                                        <thead class="bg-light text-muted small text-uppercase">
+                                            <tr>
+                                                <th class="text-center" style="width: 45px;">#</th>
+                                                <th style="width: 175px;">Fecha / Registro</th>
+                                                <th style="width: 120px;">Tipo</th>
+                                                <th>Diagnóstico(s)</th>
+                                                <th>Plan / Observaciones</th>
+                                                <th class="text-center" style="width: 140px;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="qv_exams_tbody" class="small">
+                                            <!-- Rendered dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Estado Vacío de Exámenes -->
+                                <div id="qv_exams_empty" class="text-center py-5 border rounded bg-white mt-2"
+                                    style="display: none;">
+                                    <i class="bi bi-file-earmark-x text-muted"
+                                        style="font-size: 2.5rem; opacity: 0.6;"></i>
+                                    <h6 class="font-weight-bold text-dark mt-2 mb-1">No registra exámenes clínicos</h6>
+                                    <p class="text-muted small mb-3">Este paciente no cuenta con exámenes registrados
+                                        en el sistema.</p>
+                                    <a href="#" id="qv_btn_add_first_exam" target="_blank"
+                                        class="btn btn-sm btn-success">
+                                        <i class="bi bi-plus-circle mr-1"></i> Registrar Primer Examen
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- PESTAÑA 3: ANTECEDENTES Y PERFIL CLÍNICO -->
+                            <div class="tab-pane fade" id="tab-qv-antecedentes" role="tabpanel"
+                                aria-labelledby="tab-antecedentes-link">
                                 <div class="row">
                                     <!-- Antecedentes Patológicos Respiratorios -->
                                     <div class="col-md-6 col-12 mb-3">
                                         <div class="card card-outline card-info h-100 shadow-xs mb-0">
                                             <div class="card-header py-2">
                                                 <h6 class="card-title font-weight-bold text-dark mb-0">
-                                                    <i class="bi bi-lungs text-info mr-1"></i> Patología Respiratoria y Pulmonar
+                                                    Patología Respiratoria y Pulmonar
                                                 </h6>
                                             </div>
                                             <div class="card-body p-3 small">
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Asma Bronquial:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_asma">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_asma">--
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">EPOC:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_epoc">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_epoc">--
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Tuberculosis (TBC):</div>
@@ -866,15 +763,18 @@
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Cáncer de Pulmón:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_cancer">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_cancer">--
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Neumonías previas:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_neumonias">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_neumonias">--
+                                                    </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-6 text-muted">Efusión Pleural:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_efusion">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_efusion">--
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -885,13 +785,14 @@
                                         <div class="card card-outline card-warning h-100 shadow-xs mb-0">
                                             <div class="card-header py-2">
                                                 <h6 class="card-title font-weight-bold text-dark mb-0">
-                                                    <i class="bi bi-fire text-warning mr-1"></i> Tabaquismo y Factores de Exposición
+                                                    Tabaquismo y Factores de Exposición
                                                 </h6>
                                             </div>
                                             <div class="card-body p-3 small">
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Condición de Tabaquismo:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_tabaco">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_tabaco">--
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Índice Paquetes-Año (IPA):</div>
@@ -899,15 +800,19 @@
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-6 text-muted">Contacto TBC:</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_contactotbc">--</div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_contactotbc">
+                                                        --</div>
                                                 </div>
                                                 <div class="row mb-2">
-                                                    <div class="col-6 text-muted">Exposición a Biomasa (humo de leña):</div>
-                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_biomasa">--</div>
+                                                    <div class="col-6 text-muted">Exposición a Biomasa (humo de leña):
+                                                    </div>
+                                                    <div class="col-6 font-weight-bold text-dark" id="qv_ant_biomasa">--
+                                                    </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-6 text-muted">Alergias / Reacción a Drogas:</div>
-                                                    <div class="col-6 font-weight-bold text-danger" id="qv_ant_drogas">--</div>
+                                                    <div class="col-6 font-weight-bold text-danger" id="qv_ant_drogas">--
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -918,26 +823,34 @@
                                         <div class="card card-outline card-secondary shadow-xs mb-0">
                                             <div class="card-header py-2">
                                                 <h6 class="card-title font-weight-bold text-dark mb-0">
-                                                    <i class="bi bi-hospital text-secondary mr-1"></i> Hospitalizaciones, Cirugías y Medicación Habitual
+                                                    Hospitalizaciones, Cirugías y Medicación Habitual
                                                 </h6>
                                             </div>
                                             <div class="card-body p-3 small">
                                                 <div class="row">
                                                     <div class="col-md-6 col-12 mb-2">
-                                                        <div class="text-muted font-weight-bold mb-1">Cirugías previas:</div>
-                                                        <div class="text-dark border rounded p-2 bg-light" id="qv_ant_cirugias">Ninguna</div>
+                                                        <div class="text-muted font-weight-bold mb-1">Cirugías previas:
+                                                        </div>
+                                                        <div class="text-dark border rounded p-2 bg-light"
+                                                            id="qv_ant_cirugias">Ninguna</div>
                                                     </div>
                                                     <div class="col-md-6 col-12 mb-2">
-                                                        <div class="text-muted font-weight-bold mb-1">Hospitalizaciones:</div>
-                                                        <div class="text-dark border rounded p-2 bg-light" id="qv_ant_hospitalizaciones">Ninguna</div>
+                                                        <div class="text-muted font-weight-bold mb-1">Hospitalizaciones:
+                                                        </div>
+                                                        <div class="text-dark border rounded p-2 bg-light"
+                                                            id="qv_ant_hospitalizaciones">Ninguna</div>
                                                     </div>
                                                     <div class="col-md-6 col-12 mb-2">
-                                                        <div class="text-muted font-weight-bold mb-1">Medicación habitual:</div>
-                                                        <div class="text-dark border rounded p-2 bg-light" id="qv_ant_medicacion">Ninguna</div>
+                                                        <div class="text-muted font-weight-bold mb-1">Medicación habitual:
+                                                        </div>
+                                                        <div class="text-dark border rounded p-2 bg-light"
+                                                            id="qv_ant_medicacion">Ninguna</div>
                                                     </div>
                                                     <div class="col-md-6 col-12 mb-2">
-                                                        <div class="text-muted font-weight-bold mb-1">Otros antecedentes / Transfusiones:</div>
-                                                        <div class="text-dark border rounded p-2 bg-light" id="qv_ant_otros">--</div>
+                                                        <div class="text-muted font-weight-bold mb-1">Otros antecedentes /
+                                                            Transfusiones:</div>
+                                                        <div class="text-dark border rounded p-2 bg-light"
+                                                            id="qv_ant_otros">--</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -949,7 +862,7 @@
                                         <div class="card card-outline card-primary shadow-xs mb-0">
                                             <div class="card-header py-2">
                                                 <h6 class="card-title font-weight-bold text-dark mb-0">
-                                                    <i class="bi bi-chat-left-text text-primary mr-1"></i> Motivo de Consulta y Relato Cronológico Inicial
+                                                    Motivo de Consulta y Relato Cronológico Inicial
                                                 </h6>
                                             </div>
                                             <div class="card-body p-3 small">
@@ -974,7 +887,7 @@
                 <div class="modal-footer bg-light py-2 justify-content-between">
                     <div>
                         <a href="#" id="qv_btn_edit_history" class="btn btn-primary mr-2" target="_blank">
-                            <i class="bi bi-pencil-square mr-1"></i> Ver / Editar Historia Completa
+                            Ver / Editar Historia Completa
                         </a>
                         <a href="#" id="qv_btn_new_exam" class="btn btn-outline-secondary mr-2" target="_blank">
                             <i class="bi bi-activity mr-1"></i> Nuevo Examen
