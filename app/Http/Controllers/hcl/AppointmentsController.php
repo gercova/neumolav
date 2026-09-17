@@ -308,20 +308,20 @@ class AppointmentsController extends Controller {
     }
 
     public function destroyDiagnosticAppointment(DiagnosticAppointment $dx): JsonResponse {
-        $dx->delete();
+        $deleted = $dx->delete();
         return response()->json([
-            'status'    => (bool) $dx,
-            'type'      => $dx ? 'success' : 'error',
-            'messages'  => $dx ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $deleted,
+            'type'      => $deleted ? 'success' : 'error',
+            'messages'  => $deleted ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
     public function destroyMedicationAppointment(MedicationAppointment $mx): JsonResponse {
-        $mx->delete();
+        $deleted = $mx->delete();
         return response()->json([
-            'status'    => (bool) $mx,
-            'type'      => $mx ? 'success' : 'error',
-            'messages'  => $mx ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $deleted,
+            'type'      => $deleted ? 'success' : 'error',
+            'messages'  => $deleted ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
