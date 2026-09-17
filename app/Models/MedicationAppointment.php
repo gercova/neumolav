@@ -18,8 +18,8 @@ class MedicationAppointment extends Model {
         'id_control',
         'id_historia',
         'dni',
-        'id_drug',
-        'descipcion',
+        'id_droga',
+        'descripcion',
         'estado'
     ];
 
@@ -27,24 +27,25 @@ class MedicationAppointment extends Model {
 
     protected $casts = [
         'id_control'    => 'integer',
+        'id_historia'   => 'integer',
         'dni'           => 'string',
-        'id_drug'       => 'integer',
-        'descipcion'    => 'string',
+        'id_droga'      => 'integer',
+        'descripcion'   => 'string',
         'estado'        => 'boolean',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime',
     ];
 
-    public function history(): HasMany {
-        return $this->hasMany(History::class);
+    public function history(): BelongsTo {
+        return $this->belongsTo(History::class, 'id_historia', 'id');
     }
 
     public function appointment(): BelongsTo {
-        return $this->belongsTo(Appointment::class);
+        return $this->belongsTo(Appointment::class, 'id_control', 'id');
     }
 
-    public function drug(): HasMany {
-        return $this->hasMany(Drug::class, 'id', 'id_drug');
+    public function drug(): BelongsTo {
+        return $this->belongsTo(Drug::class, 'id_droga', 'id');
     }
 }
