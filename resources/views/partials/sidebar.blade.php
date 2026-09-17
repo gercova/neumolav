@@ -9,11 +9,11 @@
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ auth()->user()->profile_photo_url }}" class="img-circle elevation-2" id="profile-img">
+                <a href="{{ route('profile.edit') }}"><img src="{{ auth()->user()->profile_photo_url }}" class="img-circle elevation-2" id="profile-img" title="Editar mi perfil"></a>
             </div>
             <div class="info">
                 <!-- info usuario -->
-                <a href="#" class="d-block summary-names">{{ auth()->user()->formatted_name }}</a>
+                <a href="{{ route('profile.edit') }}" class="d-block summary-names" title="Editar mi perfil">{{ auth()->user()->formatted_name }}</a>
                 <p class="d-block text-white profile" style="margin-bottom: 0px;">{{ auth()->user()->roles[0]->name }}</p>
             </div>
         </div>
