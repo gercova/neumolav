@@ -78,20 +78,70 @@ $(document).ready(function(){
         } 
     ]);
 
-    // Mostrar nombre de archivo en el input
+    // Mostrar nombre de archivo en el input y vista previa correspondiente
     $('.custom-file-input').on('change', function() {
         let fileName = $(this).val().split('\\').pop();
         $(this).next('.custom-file-label').addClass("selected").html(fileName);
         
-        // Vista previa de la imagen
+        const inputId = $(this).attr('id');
         if (this.files && this.files[0]) {
             var reader = new FileReader();
-            
             reader.onload = function(e) {
-                $('#image-preview').attr('src', e.target.result);
+                if (inputId === 'signature-input') {
+                    $('#signature-preview').attr('src', e.target.result).css('opacity', '1');
+                } else {
+                    $('#image-preview').attr('src', e.target.result);
+                }
             }
-            
             reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Formulario de perfil personal del especialista
+    $('#profileForm').submit(async function(e){
+        e.preventDefault();
+        $('.text-danger').remove();
+        $('.form-control').removeClass('is-invalid is-valid');	
+        const submitButton = $(this).find('button[type="submit"]');
+        const originalButtonText = submitButton.html();
+        submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+        const formData = new FormData(this);
+        try {
+            const response = await axios.post(`${API_BASE_URL}/profile`, formData);
+            if(response.status == 200 && response.data.status == true){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Operación exitosa',
+                    text: response.data.messages,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                }).then((result)=>{
+                    if(result.value){
+                        window.location.reload();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.data.messages || 'No se pudo actualizar el perfil',
+                });
+            }
+        } catch (error) {
+            if(error.response && error.response.data.errors){
+                $.each(error.response.data.errors, function(key, value) {
+                    let inputElement = $(document).find('[name="' + key + '"]');
+                    inputElement.after('<span class="text-danger">' + value[0] + '</span>').closest('.form-control').addClass('is-invalid').focus();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error inesperado al guardar los cambios.',
+                });
+            }
+        } finally {
+            submitButton.prop('disabled', false).html(originalButtonText);
         }
     });
 

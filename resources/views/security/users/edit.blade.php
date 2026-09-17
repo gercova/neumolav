@@ -81,6 +81,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label for="cmp">Número de Colegiatura Médica (CMP): </label>
+                                                        <input type="text" class="form-control" id="cmp" name="cmp" value="{{ $us->cmp }}" placeholder="Ej: 60432">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label for="rne">Registro Nacional de Especialista (RNE): </label>
+                                                        <input type="text" class="form-control" id="rne" name="rne" value="{{ $us->rne }}" placeholder="Ej: 39261">
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <hr>
                                             <div class="row">
                                                 <div class="col-4">
@@ -92,13 +106,27 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group text-center">
-                                                        <img id="image-preview" src="{{ $us->profile_photo_url }}" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                                        <img id="image-preview" src="{{ $us->profile_photo_url }}" class="img-thumbnail" style="max-width: 180px; max-height: 180px;">
                                                     </div>
                                                 </div>
-                                                <div class="col-6">
+                                                <div class="col-4">
                                                     <div class="form-group">
-                                                        <label for="biografia">Biografía breve de estudios y especializaciones (opcional): </label>
-                                                        <textarea class="form-control" id="biografia" name="biografia" rows="3">{{ $us->biografia }}</textarea>
+                                                        <label for="firma_digital">Firma Digital (PNG transparente): </label>
+                                                        <div class="custom-file">
+                                                            <input type="file" class="custom-file-input" id="signature-input" name="firma_digital" accept="image/png,image/jpeg">
+                                                            <label class="custom-file-label" for="firma_digital">Elegir firma</label>
+                                                        </div>
+                                                        <small class="form-text text-muted">Recomendado: PNG fondo transparente (máx. 2MB).</small>
+                                                    </div>
+                                                    <div class="form-group text-center p-2 bg-light border rounded">
+                                                        <img id="signature-preview" src="{{ $us->digital_signature_url ?: asset('dist/img/default-150x150.png') }}" class="img-fluid" style="max-height: 110px; {{ !$us->digital_signature_url ? 'opacity: 0.25;' : '' }}">
+                                                        <p class="text-muted small mt-1 mb-0">{{ $us->digital_signature_url ? 'Firma digital registrada' : 'Sin firma cargada' }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label for="biografia">Biografía breve: </label>
+                                                        <textarea class="form-control" id="biografia" name="biografia" rows="6">{{ $us->biografia }}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
