@@ -4,6 +4,7 @@ $(document).ready(function () {
 
     // Cargar datos iniciales
     initializeDateDisplay(currentDate);
+    loadAppointments(currentDate, $('#filter_status').val());
     loadStats(currentDate);
 
     /* 1. NAVEGACIÓN Y SELECCIÓN DE FECHAS */
@@ -71,7 +72,6 @@ $(document).ready(function () {
     });
 
     /* 2. CARGA DE CITAS (ORDEN FIFO) Y ESTADÍSTICAS */
-
     async function loadAppointments(date, status = '') {
         const tbody = $('#table_appointments_body');
         tbody.html(`
@@ -851,6 +851,10 @@ $(document).ready(function () {
         $('#qv_appointments_tbody').empty();
         $('#qv_appointments_empty').hide();
         $('#table_qv_appointments').show();
+        $('#qv_exams_tbody').empty();
+        $('#qv_exams_empty').hide();
+        $('#table_qv_exams').show();
+        $('#qv_exams_count').text(0);
         $('#tab-controles-link').tab('show');
 
         // Show modal
@@ -899,6 +903,7 @@ $(document).ready(function () {
             $('#qv_btn_add_control').attr('href', routes?.control_add || '#');
             $('#qv_btn_add_first_control').attr('href', routes?.control_add || '#');
             $('#qv_btn_new_exam').attr('href', routes?.exam_add || '#');
+            $('#qv_btn_add_first_exam').attr('href', routes?.exam_add || '#');
             $('#qv_btn_new_report').attr('href', routes?.report_add || '#');
 
             // Fill Appointments (Check-ups) Table
@@ -957,8 +962,62 @@ $(document).ready(function () {
                         </tr>
                     `;
                 });
-
                 $('#qv_appointments_tbody').html(appointmentsHtml);
+            }
+
+            // Fill Exams Table
+            const exams = response.data.exams || [];
+            const examsCount = exams.length;
+            $('#qv_exams_count').text(examsCount);
+
+            if (examsCount === 0) {
+                $('#table_qv_exams').hide();
+                $('#qv_exams_empty').show();
+            } else {
+                $('#table_qv_exams').show();
+                $('#qv_exams_empty').hide();
+
+                let examsHtml = '';
+                exams.forEach((ex) => {
+                    const planText = ex.plan || ex.otros || '--';
+                    examsHtml += `
+                        <tr>
+                            <td class="text-center align-middle font-weight-bold text-muted">${ex.index}</td>
+                            <td class="align-middle">
+                                <div class="font-weight-bold text-dark"><i class="bi bi-calendar3 text-success mr-1"></i>${escapeHtml(ex.fecha_formato)}</div>
+                            </td>
+                            <td class="align-middle">
+                                <span class="badge badge-light border text-dark font-weight-normal">${escapeHtml(ex.tipo)}</span>
+                            </td>
+                            <td class="align-middle">
+                                <div class="font-weight-bold text-dark">${escapeHtml(ex.diagnostico || '--')}</div>
+                            </td>
+                            <td class="align-middle">
+                                <span class="d-inline-block text-truncate" style="max-width: 220px;" title="${escapeHtml(planText)}">
+                                    ${escapeHtml(planText)}
+                                </span>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="btn-group">
+                                    <a href="${ex.edit_url}" target="_blank" class="btn btn-info btn-xs mr-1" title="Ver / Editar examen">
+                                        <i class="bi bi-eye"></i> Ver
+                                    </a>
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="bi bi-printer"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="${ex.print_a4}" target="_blank"><i class="bi bi-file-earmark-pdf text-danger mr-1"></i> Imprimir A4</a>
+                                            <a class="dropdown-item" href="${ex.print_a5}" target="_blank"><i class="bi bi-file-earmark-pdf text-info mr-1"></i> Imprimir A5</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                $('#qv_exams_tbody').html(examsHtml);
             }
 
             // Fill Antecedents Tab
