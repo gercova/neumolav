@@ -61,6 +61,11 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/checkStatusPatient/{id}',                  [HistoriesController::class, 'checkStatusPatient']);
         Route::get('/histories/quick-view/{id}',                [HistoriesController::class, 'quickView'])->name('hcl.histories.quickView');
         /**
+         * PERFIL DEL USUARIO / ESPECIALISTA
+         */
+        Route::get('/profile',                                  [UsersController::class, 'profile'])->name('profile.edit');
+        Route::post('/profile',                                 [UsersController::class, 'updateProfile'])->name('profile.update');
+        /**
          * MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
          */
         Route::get('/citas',                                    [CitasController::class, 'index'])->name('citas.index');
