@@ -35,6 +35,8 @@
     <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
     <!-- Bootstrap Icon -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
+    <!-- Styles -->
+    @yield('styles')
     <script>
         const API_BASE_URL      = "{{ url('/admin/') }}";
         const API_URL           = "{{ url('/') }}";
