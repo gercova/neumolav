@@ -59,6 +59,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/histories/quotes/{hc}',                    [HistoriesController::class, 'addQuotes']);
         Route::get('/qoutes',                                   [HistoriesController::class, 'getQuotes']);
         Route::get('/checkStatusPatient/{id}',                  [HistoriesController::class, 'checkStatusPatient']);
+        Route::get('/histories/quick-view/{id}',                [HistoriesController::class, 'quickView'])->name('hcl.histories.quickView');
         /**
          * MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
          */
@@ -167,7 +168,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'see'])->name('hcl.appointments.see');
             Route::get('/appointments/viewDetail/{ap}',         [AppointmentsController::class, 'viewDetail']);
             Route::get('/appointments/list/{hc}',               [AppointmentsController::class, 'listAppointments']);
-            Route::get('/appointments/listAppointments/{ap}',   [AppointmentsController::class, 'listAppointmentsByHC']);
+            Route::get('/appointments/listAppointments/{id}',   [AppointmentsController::class, 'listAppointmentsByHC']);
             Route::get('/appointments/listDiagnostic/{ap}',     [AppointmentsController::class, 'listOfDiagnosticsByApp']);
             Route::get('/appointments/listMedication/{ap}',     [AppointmentsController::class, 'listOfMedicationByApp']);
             Route::post('/appointments/view-table',             [AppointmentsController::class, 'viewTable']);
