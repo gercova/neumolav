@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\security;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileUpdateValidate;
 use App\Http\Requests\ResetPasswordValidate;
 use App\Http\Requests\UserValidate;
 use App\Models\Enterprise;
@@ -31,6 +32,60 @@ class UsersController extends Controller {
 
     public function index(): View {
         return view('security.users.index');
+    }
+
+    public function profile(): View {
+        $user = auth()->user();
+        $es = Specialty::all();
+        return view('security.users.profile', compact('user', 'es'));
+    }
+
+    public function updateProfile(ProfileUpdateValidate $request): JsonResponse {
+        $validated = $request->validated();
+        $user = User::findOrFail(auth()->id());
+
+        $path = null;
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) Storage::disk('public')->delete($user->avatar);
+            $image = $request->file('avatar');
+            $cleanName = $this->cleanFileName($image->getClientOriginalName());
+            $path = $image->storeAs('users', $cleanName, 'public');
+        }
+
+        $signaturePath = null;
+        if ($request->hasFile('firma_digital')) {
+            if ($user->firma_digital) Storage::disk('public')->delete($user->firma_digital);
+            $sigFile = $request->file('firma_digital');
+            $cleanSigName = time() . '_' . $this->cleanFileName($sigFile->getClientOriginalName());
+            $signaturePath = $sigFile->storeAs('signatures', $cleanSigName, 'public');
+        }
+
+        $updateData = [
+            'name'          => $validated['name'],
+            'biografia'     => $validated['biografia'] ?? null,
+            'cmp'           => $validated['cmp'] ?? null,
+            'rne'           => $validated['rne'] ?? null,
+        ];
+        if (!empty($validated['specialty'])) {
+            $updateData['specialty'] = $validated['specialty'];
+        }
+        if ($path) {
+            $updateData['avatar'] = $path;
+        }
+        if ($signaturePath) {
+            $updateData['firma_digital'] = $signaturePath;
+        }
+
+        $user->update($updateData);
+
+        return response()->json([
+            'status'        => true,
+            'type'          => 'success',
+            'messages'      => 'Perfil y credenciales actualizados correctamente',
+            'signature_url' => $user->digital_signature_url,
+            'avatar_url'    => $user->profile_photo_url,
+            'route'         => route('profile.edit'),
+        ], 200);
     }
 
     public function add(): View {
@@ -163,11 +218,27 @@ class UsersController extends Controller {
             $path = $image->storeAs('users', $cleanName, 'public');
         }
 
+        $signaturePath = null;
+        if ($request->hasFile('firma_digital')) {
+            if ($id) {
+                $user = User::find($id);
+                if ($user && $user->firma_digital) Storage::disk('public')->delete($user->firma_digital);
+            }
+            $sigFile = $request->file('firma_digital');
+            $cleanSigName = time() . '_' . $this->cleanFileName($sigFile->getClientOriginalName());
+            $signaturePath = $sigFile->storeAs('signatures', $cleanSigName, 'public');
+        }
+
+        $existingUser   = $id ? User::find($id) : null;
+        $nickname       = $existingUser ? $existingUser->username : $this->createNickname($validated['name']);
+        $email          = $existingUser ? $existingUser->email : $nickname . '@' . Enterprise::findOrFail(1)->pagina_web;
+
         $data           = array_merge($validated, [
-            'username'  => $nickename = $this->createNickname($validated['name']),
-            'email'     => $nickename.'@'.Enterprise::findOrFail(1)->pagina_web,
-            'password'  => $request->password ? Hash::make($request->password) : Hash::make('password'),
-            'avatar'    => $path ? $path : ($id ? User::find($id)->avatar : null)
+            'username'      => $nickname,
+            'email'         => $email,
+            'password'      => $request->password ? Hash::make($request->password) : ($existingUser ? $existingUser->password : Hash::make('password')),
+            'avatar'        => $path ? $path : ($existingUser ? $existingUser->avatar : null),
+            'firma_digital' => $signaturePath ? $signaturePath : ($existingUser ? $existingUser->firma_digital : null)
         ]);
 
         DB::beginTransaction();
