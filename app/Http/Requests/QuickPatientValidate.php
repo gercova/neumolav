@@ -22,6 +22,7 @@ class QuickPatientValidate extends FormRequest
             'fecha_cita'       => 'required|date',
             'hora_cita'        => 'nullable',
             'motivo'           => 'nullable|string|max:255',
+            'id_tipo_atencion' => 'nullable|integer|exists:tipos_atencion,id',
         ];
     }
     
