@@ -228,8 +228,8 @@
             <div class="logo-section">
                 <h1 class="clinic-name">{{ $en->nombre_comercial }}</h1>
                 <p class="clinic-slogan">{{ $en->slogan }}</p>
-                <p class="doctor-info"><strong>{{ $en->representante_legal }} - Médico Neumólogo</strong></p>
-                <p class="doctor-credentials">CMP: 60432 | RNE: 39261</p>
+                <p class="doctor-info"><strong>{{ !empty($us->name) ? $us->name : $en->representante_legal }} - {{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</strong></p>
+                <p class="doctor-credentials">CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} | RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</p>
                 <p class="clinic-address">Dirección: {{ $en->direccion }}, {{ $en->ubigeo }}</p>
             </div>
             <div class="patient-info-section">
@@ -303,6 +303,23 @@
             <h3 class="section-title">SUGERENCIAS</h3>
             <div class="section-content">
                 <p>{!! $rp->sugerencia !!}</p>
+            </div>
+        </div>
+
+        <!-- Firma y Sello -->
+        <div class="signature-area no-break" style="margin-top: 30px; text-align: center;">
+            @if(!empty($withSignature) && !empty($signatureBase64))
+                <div style="margin-bottom: -15px;">
+                    <img src="{{ $signatureBase64 }}" style="max-height: 75px; max-width: 220px;" alt="Firma Digital">
+                </div>
+            @else
+                <div style="height: 50px;"></div>
+            @endif
+            <div class="signature-line" style="width: 240px; border-top: 1px solid #333; margin: 0 auto 4px;"></div>
+            <div class="doctor-signature" style="font-size: 11px; line-height: 1.2;">
+                <strong>Dr(a). {{ !empty($us->name) ? $us->name : $en->representante_legal }}</strong><br>
+                <span>{{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</span><br>
+                <span>CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} &nbsp;|&nbsp; RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</span>
             </div>
         </div>
     </div>
