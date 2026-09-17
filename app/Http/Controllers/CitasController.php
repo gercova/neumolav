@@ -127,9 +127,9 @@ class CitasController extends Controller
                 'created_at_raw'     => Carbon::parse($item->created_at)->format('Y-m-d H:i:s'),
                 'routes'             => [
                     'history_edit' => $patient ? route('hcl.histories.edit', ['history' => $patient->id]) : '#',
-                    'control_add'  => $patient ? route('hcl.appointments.add', ['hc' => $patient->dni]) : '#',
-                    'exam_add'     => $patient ? route('hcl.exams.add', ['hc' => $patient->dni]) : '#',
-                    'report_add'   => $patient ? route('hcl.reports.add', ['hc' => $patient->dni]) : '#',
+                    'control_add'  => $patient ? route('hcl.appointments.add', ['hc' => $patient->id]) : '#',
+                    'exam_add'     => $patient ? route('hcl.exams.add', ['hc' => $patient->id]) : '#',
+                    'report_add'   => $patient ? route('hcl.reports.add', ['hc' => $patient->id]) : '#',
                 ],
 				'buttons'            => $buttons,
 			];
