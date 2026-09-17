@@ -150,9 +150,21 @@ $(document).ready(function(){
                         icon: response.data.type || 'success',
                         title: response.data.messages || 'Información guardada correctamente',
                         html: response.data.route_print ?
-                            `<a class="btn btn-info" href="${response.data.route_print}" target="_blank">
-                                <i class="bi bi-file-earmark-pdf"></i> Imprimir prescripción
-                            </a>` : '',
+                            `<div class="mb-3">
+                                <div class="custom-control custom-checkbox mb-3 text-center">
+                                    <input type="checkbox" class="custom-control-input" id="swalReportSignatureCheck" checked>
+                                    <label class="custom-control-label font-weight-bold" for="swalReportSignatureCheck">Incluir firma digital</label>
+                                </div>
+                                <a id="swalReportPrintBtn" class="btn btn-info" href="${response.data.route_print}?signature=1" target="_blank">
+                                    <i class="bi bi-file-earmark-pdf"></i> Imprimir informe
+                                </a>
+                            </div>` : '',
+                        didOpen: () => {
+                            $('#swalReportSignatureCheck').on('change', function() {
+                                const checked = $(this).is(':checked');
+                                $('#swalReportPrintBtn').attr('href', `${response.data.route_print}?signature=${checked ? 1 : 0}`);
+                            });
+                        },
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });
@@ -260,13 +272,25 @@ $(document).ready(function(){
                     </div>
                 `;
                 button = `
-                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Cerrar</button>
-                    <a class="btn btn-primary pull-right" href="${API_BASE_URL}/reports/print/${rp.id}" target="_blank">
-                        <i class="bi bi-file-earmark-pdf"></i> Imprimir
-                    </a>
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <div class="d-flex align-items-center">
+                            <div class="custom-control custom-checkbox mr-3">
+                                <input type="checkbox" class="custom-control-input" id="reportSignatureCheck" checked>
+                                <label class="custom-control-label font-weight-normal" for="reportSignatureCheck">Incluir firma digital</label>
+                            </div>
+                            <a id="btnReportPrint" class="btn btn-primary" href="${API_BASE_URL}/reports/print/${rp.id}?signature=1" target="_blank">
+                                <i class="bi bi-file-earmark-pdf"></i> Imprimir
+                            </a>
+                        </div>
+                    </div>
                 `;
                 $('.modal-body').append(html);
                 $('.modal-footer').append(button);
+                $('#reportSignatureCheck').on('change', function() {
+                    const isChecked = $(this).is(':checked');
+                    $('#btnReportPrint').attr('href', `${API_BASE_URL}/reports/print/${rp.id}?signature=${isChecked ? 1 : 0}`);
+                });
                 $('#modal-default').modal('show');
             }else {
                 throw new Error('Datos de la respuesta no válidos');
