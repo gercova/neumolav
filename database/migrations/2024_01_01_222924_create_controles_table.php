@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_historia')->nullable();
             $table->string('dni', 11);
-            $table->text('sintomas')->default('NO');
-            $table->text('diagnostico')->default('NO');
-            $table->text('plan')->default('NO');
-            $table->text('tratamiento')->default('NO');
+            $table->text('sintomas')->nullable()->default('NO');
+            $table->text('diagnostico')->nullable()->default('NO');
+            $table->text('plan')->nullable()->default('NO');
+            $table->text('tratamiento')->nullable()->default('NO');
             $table->string('recomendaciones', 255)->nullable();
             $table->boolean('estado')->default(true);
             $table->timestamps();
