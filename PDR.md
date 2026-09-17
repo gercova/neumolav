@@ -544,7 +544,7 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `POST` | `/admin/appointments/store` | — | `AppointmentsController@store` | `auth`, `prevent.back` | `permission:controles`, `permission:control_crear` |
 | `DELETE` | `/admin/appointments/delete/{ap}`| — | `AppointmentsController@destroy` | `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
 | `DELETE` | `/admin/ap-dx/delete/{dx}` | — | `AppointmentsController@destroyDiagnosticAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
-| `DELETE` | `/admin/ap-mx/delete/{ap}` | — | `AppointmentsController@destroyMedicationAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
+| `DELETE` | `/admin/ap-mx/delete/{mx}` | — | `AppointmentsController@destroyMedicationAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
 | `GET` | `/admin/reports/home` | `hcl.reports.home` | `ReportsController@index` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_acceder` |
 | `GET` | `/admin/reports/add/{hc}` | `hcl.reports.add` | `ReportsController@add` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_crear` |
 | `GET` | `/admin/reports/edit/{rp}` | `hcl.reports.edit` | `ReportsController@edit` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_actualizar` |
