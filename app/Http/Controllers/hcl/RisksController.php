@@ -18,7 +18,7 @@ class RisksController extends Controller {
     public function __construct() {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:riesgo_acceder')->only('index');
-		$this->middleware('permission:riesgo_ver')->only('seeRisks', 'viewRiskDetail', 'listRisks', 'listRisksByDNI', 'printRiskReportId');
+		$this->middleware('permission:riesgo_ver')->only('seeRisks', 'viewRiskDetail', 'listRisks', 'listRisksByDNI', 'printRiskReport');
 		$this->middleware('permission:riesgo_crear')->only('add', 'store');
 		$this->middleware('permission:riesgo_actualizar')->only('edit', 'store');
 		$this->middleware('permission:riesgo_borrar')->only('destroy');
@@ -33,7 +33,7 @@ class RisksController extends Controller {
     }
 
     public function edit(Risk $rk): View {
-        $hc	= History::where('id', $rk->id)->first();
+        $hc	= History::where('id', $rk->id_historia)->first();
         return view('hcl.risks.edit', compact('hc', 'rk'));
     }
 
@@ -59,7 +59,7 @@ class RisksController extends Controller {
             return response()->json([
                 'status' 		=> true,
                 'type'			=> 'success',
-                'messages' 		=> $report->wasChanged() ? 'Se ha añadido un nuevo reporte' : 'Reporte actualizado exitosamente',
+                'messages' 		=> $report->wasRecentlyCreated ? 'Se ha añadido un nuevo reporte' : 'Reporte actualizado exitosamente',
                 'route' 		=> route('hcl.risks.see', $report->id_historia),
                 'route_print' 	=> route('hcl.risks.print', $id)
             ], 200);

@@ -66,7 +66,7 @@ class ReportsController extends Controller {
             return response()->json([
                 'status' 		=> true,
                 'type'			=> 'success',
-                'messages' 		=> empty($id) ? 'Se ha añadido un nuevo reporte' : 'Actualizado exitosamente',
+                'messages' 		=> $report->wasRecentlyCreated ? 'Se ha añadido un nuevo reporte' : 'Actualizado exitosamente',
                 'route' 		=> route('hcl.reports.see', $historia),
                 'route_print' 	=> route('hcl.reports.print', $report->id)
             ], 200);
