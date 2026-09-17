@@ -11,6 +11,7 @@ use App\Models\History;
 use App\Models\MedicationAppointment;
 use App\Services\TableViewService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -102,7 +103,7 @@ class AppointmentsController extends Controller {
         }
     }
 
-    protected function saveDiagnostic($id, $historia, $dni, $diagnosticId) {
+    protected function saveDiagnostic(int $id, string $historia, string $dni, array $diagnosticId) {
         $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $historia, $dni) {
 			return [
 				'id_control'    	=> $id,
@@ -117,7 +118,7 @@ class AppointmentsController extends Controller {
 		return;
     }
 
-    protected function saveMedication($id, $historia, $dni, $drugId, $description) {
+    protected function saveMedication(int $id, string $historia, string $dni, array $drugId, array $description) {
         // Prepara los datos para la inserción
 		$data = [];
 		for ($i = 0; $i < count($drugId); $i++) {
@@ -177,16 +178,49 @@ class AppointmentsController extends Controller {
  		], 200);
 	}
 
-	public function listAppointmentsByHC(Appointment $ap): JsonResponse {
-        $results    = DB::select('CALL PA_getAppointmentsByHC(?)', [$ap->id_historia]);
-        $data       = collect($results)->map(function ($item, $index) {
+	public function listAppointmentsByHC(int|string $id): JsonResponse {
+        // Soporta recibir tanto ID de Historia como ID de Appointment o DNI (para pacientes inactivos hasta 5+ años)
+        $historyId = $id;
+        $history = History::withTrashed()->find($id);
+        if ($history) {
+            $historyId = $history->id;
+        } else {
+            $appointment = Appointment::withTrashed()->find($id);
+            if ($appointment) {
+                $historyId = $appointment->id_historia;
+            } else {
+                $byDni = History::withTrashed()->where('dni', $id)->first();
+                if ($byDni) {
+                    $historyId = $byDni->id;
+                }
+            }
+        }
+
+        // Consultar todos los controles sin filtro de fecha reciente y con soporte de soft-deletes (5+ años de inactividad)
+        $appointments = Appointment::withTrashed()
+            ->with(['diagnostics.diagnostic'])
+            ->where('id_historia', $historyId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $data = $appointments->map(function ($item, $index) {
+            $user = auth()->user();
+            $buttons = sprintf(
+                '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s"><i class="bi bi-eye"></i> Ver receta</button>',
+                $item->id
+            );
+
+            if ($user && $user->can('control_actualizar')) {
+                $buttons .= sprintf(
+                    '&nbsp;<a type="button" class="btn btn-warning btn-xs" href="%s"><i class="bi bi-pencil-square"></i> Editar</a>',
+                    route('hcl.appointments.edit', ['ap' => $item->id])
+                );
+            }
+
             return [
                 $index + 1,
-                $item->created_at,
-                sprintf(
-                    '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s"><i class="bi bi-eye"></i> Ver receta</button>',
-                    $item->id,
-                )
+                $item->created_at ? Carbon::parse($item->created_at)->format('d/m/Y H:i') : '--',
+                $buttons
             ];
         });
 
@@ -195,6 +229,7 @@ class AppointmentsController extends Controller {
             "iTotalRecords"			=> $data->count(),
             "iTotalDisplayRecords"	=> $data->count(),
             "aaData"				=> $data ?? [],
+            "appointments"          => $appointments,
         ], 200);
     }
 
