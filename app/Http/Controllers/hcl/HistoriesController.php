@@ -5,6 +5,7 @@ namespace App\Http\Controllers\hcl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HistoryValidate;
 use App\Models\Appointment;
+use App\Models\Exam;
 use App\Models\BloodGroups;
 use App\Models\DegreesInstruction;
 use App\Models\DocumentType;
@@ -396,9 +397,18 @@ class HistoriesController extends Controller {
         }
 
         // Obtener controles clínicos previos sin límite de antigüedad (5+ años) y con soporte para soft-deletes
-        $appointments = Appointment::withTrashed()
+        // Se excluyen controles con estado=0 (inactivos/borrador)
+        $appointments = Appointment::where('id_historia', $history->id)
             ->with(['diagnostics.diagnostic'])
-            ->where('id_historia', $history->id)
+            ->where('estado', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Obtener exámenes activos del paciente (estado=1)
+        $exams = Exam::where('id_historia', $history->id)
+            ->where('estado', 1)
+            ->whereNull('deleted_at')
+            ->with(['diagnostics.diagnostic', 'type'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -472,6 +482,31 @@ class HistoriesController extends Controller {
             'relatocronologico'  => $history->relatocronologico,
         ];
 
+        // Mapear exámenes
+        $examsData = $exams->map(function ($item, $index) {
+            $diagnosticsList = $item->diagnostics ? $item->diagnostics->map(function ($d) {
+                return $d->diagnostic ? $d->diagnostic->descripcion : null;
+            })->filter()->values() : collect();
+
+            $diagnosticText = $diagnosticsList->isNotEmpty()
+                ? $diagnosticsList->implode(', ')
+                : ($item->diagnostico ?? 'Sin diagnóstico registrado');
+
+            return [
+                'index'         => $index + 1,
+                'id'            => $item->id,
+                'id_historia'   => $item->id_historia,
+                'fecha_formato' => $item->created_at ? Carbon::parse($item->created_at)->format('d/m/Y h:i A') : '--',
+                'tipo'          => $item->type ? $item->type->descripcion : 'Examen',
+                'diagnostico'   => $diagnosticText,
+                'plan'          => $item->plan ?: '',
+                'otros'         => $item->otros ?: '',
+                'print_a4'      => route('hcl.exams.print', ['ex' => $item->id, 'format' => 'a4']),
+                'print_a5'      => route('hcl.exams.print', ['ex' => $item->id, 'format' => 'a5']),
+                'edit_url'      => route('hcl.exams.edit', ['ex' => $item->id]),
+            ];
+        });
+
         return response()->json([
             'status'  => true,
             'history' => [
@@ -497,11 +532,13 @@ class HistoriesController extends Controller {
             ],
             'appointments_count' => $appointmentsData->count(),
             'appointments'       => $appointmentsData,
+            'exams_count'        => $examsData->count(),
+            'exams'              => $examsData,
             'routes' => [
                 'history_edit' => route('hcl.histories.edit', ['history' => $history->id]),
-                'control_add'  => route('hcl.appointments.add', ['hc' => $history->dni]),
-                'exam_add'     => route('hcl.exams.add', ['hc' => $history->dni]),
-                'report_add'   => route('hcl.reports.add', ['hc' => $history->dni]),
+                'control_add'  => route('hcl.appointments.add', ['hc' => $history->id]),
+                'exam_add'     => route('hcl.exams.add', ['hc' => $history->id]),
+                'report_add'   => route('hcl.reports.add', ['hc' => $history->id]),
             ]
         ], 200);
     }
