@@ -49,14 +49,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{-- <div class="col-12">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label" for="tratamiento">Tratamiento:</label>
-                                            <div class="col-sm-10">
-                                                <textarea class="form-control form-control-sm" id="tratamiento" name="tratamiento" rows="2">{{ old('tratamiento', $ap->tratamiento ?? '') }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div> --}}
                                 </div>
                             </div>
                         </div>
