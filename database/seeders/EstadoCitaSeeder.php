@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\AppointmentStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EstadoCitaSeeder extends Seeder
 {
@@ -13,12 +13,16 @@ class EstadoCitaSeeder extends Seeder
      */
     public function run(): void
     {
-        AppointmentStatus::create(['descripcion' => 'PENDIENTE']);
-        AppointmentStatus::create(['descripcion' => 'CONFIRMADO']);
-        AppointmentStatus::create(['descripcion' => 'CANCELADO']);
-        AppointmentStatus::create(['descripcion' => 'REAGENDADO']);
-        AppointmentStatus::create(['descripcion' => 'NO ASISTIO']);
-        AppointmentStatus::create(['descripcion' => 'ATENDIDO']);
-        AppointmentStatus::create(['descripcion' => 'EN ESPERA']);
+        $statuses = [
+            ['id' => 1, 'descripcion' => 'PENDIENTE'],
+            ['id' => 2, 'descripcion' => 'CONFIRMADO'],
+            ['id' => 3, 'descripcion' => 'CANCELADO'],
+            ['id' => 4, 'descripcion' => 'REAGENDADO'],
+            ['id' => 5, 'descripcion' => 'NO ASISTIO'],
+            ['id' => 6, 'descripcion' => 'ATENDIDO'],
+            ['id' => 7, 'descripcion' => 'EN ESPERA'],
+        ];
+
+        DB::table('estado_cita')->upsert($statuses, ['id'], ['descripcion']);
     }
 }
