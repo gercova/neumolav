@@ -20,7 +20,15 @@ class GSGISeeder extends Seeder
         Sex::create(['id' => 'M', 'descripcion' => 'Masculino']);
         
         $grado_instruccion = [
-            'Primaria completa','Primaria incompleta','Secundaria completa','Secundaria incompleta','Universitaria completa','Universitaria incompleta','Técnica completa','Técnica incompleta','Sin grado'
+            'Primaria completa',
+            'Primaria incompleta',
+            'Secundaria completa',
+            'Secundaria incompleta',
+            'Universitaria completa',
+            'Universitaria incompleta',
+            'Técnica completa',
+            'Técnica incompleta',
+            'Sin grado'
         ];
         foreach ($grado_instruccion as $grado) {
             DegreesInstruction::create(['descripcion' => $grado]);
