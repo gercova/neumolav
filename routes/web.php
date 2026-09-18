@@ -60,14 +60,10 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::get('/qoutes',                                   [HistoriesController::class, 'getQuotes']);
         Route::get('/checkStatusPatient/{id}',                  [HistoriesController::class, 'checkStatusPatient']);
         Route::get('/histories/quick-view/{id}',                [HistoriesController::class, 'quickView'])->name('hcl.histories.quickView');
-        /**
-         * PERFIL DEL USUARIO / ESPECIALISTA
-         */
+        // MÓDULO DE PERFIL DEL USUARIO / ESPECIALISTA
         Route::get('/profile',                                  [UsersController::class, 'profile'])->name('profile.edit');
         Route::post('/profile',                                 [UsersController::class, 'updateProfile'])->name('profile.update');
-        /**
-         * MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
-         */
+        // MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
         Route::get('/citas',                                    [CitasController::class, 'index'])->name('citas.index');
         Route::get('/citas/list',                               [CitasController::class, 'list'])->name('citas.list');
         Route::get('/citas/stats',                              [CitasController::class, 'stats'])->name('citas.stats');
@@ -78,9 +74,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::post('/citas/{id}/status',                       [CitasController::class, 'updateStatus'])->name('citas.updateStatus');
         Route::delete('/citas/{id}',                            [CitasController::class, 'destroy'])->name('citas.destroy');
         Route::middleware(['role:administrador', 'permission:seguridad'])->group(function(){
-            /**
-             * PERMISOS
-             */
+            // MÓDULO DE PERMISOS
             Route::middleware(['permission:permisos'])->group(function(){
                 Route::get('/permissions',                      [PermissionController::class, 'index'])->name('security.permissions');
                 Route::get('/permissions/list',                 [PermissionController::class, 'list']);
@@ -89,9 +83,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::post('/permissions/search',              [PermissionController::class, 'search']);
                 Route::delete('/permissions/delete/{id}',       [PermissionController::class, 'destroy']);
             });
-            /**
-             * ROLES
-             */
+            // MÓDULO DE ROLES
             Route::middleware(['permission:roles'])->group(function(){
                 Route::get('/roles',                            [RolesController::class, 'index'])->name('security.roles');
                 Route::get('/roles/list',                       [RolesController::class, 'list']);
@@ -102,9 +94,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::post('/roles/{id}/syncPermissions',      [RolesController::class, 'syncPermissions'])->name('security.roles.syncPermissions');
                 Route::delete('/roles/delete/{id}',             [RolesController::class, 'destroy']);
             });
-            /**
-             * ESPECIALIDADES
-             */
+            // MÓDULO DE ESPECIALIDADES
             Route::middleware(['permission:especialidades'])->group(function(){
                 Route::get('/specialties',                      [SpecialtiesController::class, 'index'])->name('security.specialties');
                 Route::get('/specialties/list',                 [SpecialtiesController::class, 'list']);
@@ -112,9 +102,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::post('/specialties/store',               [SpecialtiesController::class, 'store']);
                 Route::delete('/specialties/delete/{id}',       [SpecialtiesController::class, 'destroy']);
             });
-            /**
-             * USUARIOS
-             */
+            // MÓDULO DE USUARIOS
             Route::middleware(['permission:usuarios'])->group(function(){
                 Route::get('/users/home',                       [UsersController::class, 'index'])->name('security.users.home');
                 Route::get('/users/add',                        [UsersController::class, 'add'])->name('security.users.add');
@@ -128,9 +116,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::delete('/users/delete/{id}',             [UsersController::class, 'destroy']);
             });
         });
-        /**
-         * HISTORIAS
-         */
+        // MÓDULO DE HISTORIAS
         Route::middleware(['permission:historias'])->group(function(){
             Route::get('/histories/home',           [HistoriesController::class, 'index'])->name('hcl.histories.home');
             Route::get('/histories/add',            [HistoriesController::class, 'add'])->name('hcl.histories.add');
@@ -142,9 +128,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/histories/list',          [HistoriesController::class, 'list']);
             Route::delete('/histories/{hc}',        [HistoriesController::class, 'destroy']);
         });
-        /**
-         * EXÁMENES
-         */
+        // MÓDULO DE EXÁMENES
         Route::middleware(['permission:examenes'])->group(function(){
             Route::get('/exams/home',                   [ExamsController::class, 'index'])->name('hcl.exams.home');
             Route::get('/exams/add/{hc}',               [ExamsController::class, 'add'])->name('hcl.exams.add');
@@ -163,9 +147,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::delete('/ex-mx/delete/{mx}',         [ExamsController::class, 'destroyPrescriptionDrug']);
             Route::delete('/ex-img/delete/{ix}',        [ExamsController::class, 'destroyExamImage']);
         });
-        /**
-         * CONTROLES
-         */
+        // MÓDULO DE CONTROLES
         Route::middleware(['permission:controles'])->group(function(){
             Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
             Route::get('/appointments/add/{hc}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
@@ -183,9 +165,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::delete('/ap-dx/delete/{dx}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
             Route::delete('/ap-mx/delete/{mx}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
         });
-        /**
-         * INFORMES CLÍNICOS
-         */
+        // MÓDULO DE INFORMES CLÍNICOS
         Route::middleware(['permission:informes'])->group(function(){
             Route::get('/reports/home',                         [ReportsController::class, 'index'])->name('hcl.reports.home');
             Route::get('/reports/add/{hc}',                     [ReportsController::class, 'add'])->name('hcl.reports.add');
@@ -200,9 +180,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::delete('/reports/delete/{rp}',               [ReportsController::class, 'destroy']);
             Route::delete('/rp-dx/delete/{dx}',                 [ReportsController::class, 'destroyDiagnosticReport']);
         });
-        /**
-         * INFORMES DE RIESGO CLÍNICO
-         */
+        // MÓDULO DE INFORMES DE RIESGO CLÍNICO
         Route::middleware(['permission:riesgos'])->group(function(){
             Route::get('/risks/home',                           [RisksController::class, 'index'])->name('hcl.risks.home');
             Route::get('/risks/add/{hc}',                       [RisksController::class, 'add'])->name('hcl.risks.add');
@@ -215,9 +193,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/risks/store',                         [RisksController::class, 'store']);
             Route::delete('/risks/delete/{rk}',                 [RisksController::class, 'destroy']);
         });
-        /**
-         * CATEGORÍA DROGA
-         */
+        // MÓDULO DE CATEGORÍA DROGA
         Route::middleware(['permission:categorias'])->group(function(){
             Route::get('/categories',                           [CategoriesController::class, 'index'])->name('maintenance.categories');
             Route::get('/categories/list',                      [CategoriesController::class, 'list']);
@@ -225,9 +201,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/categories/store',                    [CategoriesController::class, 'store']);
             Route::delete('/categories/delete/{cat}',            [CategoriesController::class, 'destroy']);
         });
-        /**
-         * PRESENTACIÓN DROGA
-         */
+        // MÓDULO DE PRESENTACIÓN DROGA
         Route::middleware(['permission:presentaciones'])->group(function(){
             Route::get('/presentations',                        [DPController::class, 'index'])->name('maintenance.presentations');
             Route::get('/presentations/list',                   [DPController::class, 'list']);
@@ -235,9 +209,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/presentations/store',                 [DPController::class, 'store']);
             Route::delete('/presentations/delete/{pre}',        [DPController::class, 'destroy']);
         });
-        /**
-         * DROGA
-         */
+        // MÓDULO DE DROGA
         Route::middleware(['permission:farmacos'])->group(function(){
             Route::get('/drugs',                    [DrugsController::class, 'index'])->name('maintenance.drugs');
             Route::get('/drugs/list',               [DrugsController::class, 'list']);
@@ -246,9 +218,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/drugs/search',            [DrugsController::class, 'search']);
             Route::delete('/drugs/delete/{drug}',   [DrugsController::class, 'destroy']);
         });
-        /**
-         * DIAGNOSTÍCO
-         */
+        // MÓDULO DE DIAGNOSTÍCO
         Route::middleware(['permission:diagnosticos'])->group(function(){
             Route::get('/diagnostics',                          [DiagnosticsController::class, 'index'])->name('maintenance.diagnostics');
             Route::get('/diagnostics/list',                     [DiagnosticsController::class, 'list']);
@@ -258,9 +228,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/diagnostics/search',                  [DiagnosticsController::class, 'search']);
             Route::delete('/diagnostics/delete/{diagnostic}',   [DiagnosticsController::class, 'destroy']);
         });
-        /**
-         * OCUPACIONES
-         */
+        // MÓDULO DE OCUPACIÓN
         Route::post('/occupations/store',                   [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
         Route::middleware(['permission:ocupaciones'])->group(function(){
             Route::get('/occupations',                          [OccupationsController::class, 'index'])->name('maintenance.occupations');
@@ -269,16 +237,12 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/occupations/search',                  [OccupationsController::class, 'search']);
             Route::delete('/occupations/delete/{oc}',           [OccupationsController::class, 'destroy']);
         });
-        /**
-         * ENTERPRISE
-         */
+        // MÓDULO DE EMPRESA
         Route::middleware(['permission:empresa'])->group(function(){
             Route::post('/enterprise/store',                        [EnterpriseController::class, 'store']);
             Route::get('/enterprise',                               [EnterpriseController::class, 'index'])->name('business.enterprise');
         });
-        /**
-         * PUBLICACIONES
-         */
+        // MÓDULO DE PUBLICACIONES
         Route::middleware(['permission:posts'])->group(function(){
             Route::get('/publications',                             [PostsController::class, 'index'])->name('business.posts');
             Route::get('/publications/add/',                        [PostsController::class, 'add'])->name('business.posts.add');
@@ -288,9 +252,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::post('/publications/store',                      [PostsController::class, 'store']);
             Route::delete('/publications/delete/{id}',              [PostsController::class, 'destroy']);
         });
-        /**
-         * REPORTES GRAFICOS
-         */
+        // MÓDULO DE REPORTES GRAFICOS
         Route::middleware(['permission:reportes'])->group(function(){
             Route::middleware(['permission:dashboard'])->group(function(){
                 Route::get('/dashboard',                            [StatisticsController::class, 'index'])->name('dashboard');
