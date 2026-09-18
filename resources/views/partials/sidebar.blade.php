@@ -2,24 +2,28 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
-        <img src="{{ asset('storage/'.$enterprise->logo) }}" class="brand-image img-circle elevation-3">
+        <img src="{{ asset('storage/' . $enterprise->logo) }}" class="brand-image img-circle elevation-3">
         <span class="brand-text font-weight-light">{{ $enterprise->nombre_comercial }}</span>
     </a>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <a href="{{ route('profile.edit') }}"><img src="{{ auth()->user()->profile_photo_url }}" class="img-circle elevation-2" id="profile-img" title="Editar mi perfil"></a>
+                <a href="{{ route('profile.edit') }}"><img src="{{ auth()->user()->profile_photo_url }}"
+                        class="img-circle elevation-2" id="profile-img" title="Editar mi perfil"></a>
             </div>
             <div class="info">
                 <!-- info usuario -->
-                <a href="{{ route('profile.edit') }}" class="d-block summary-names" title="Editar mi perfil">{{ auth()->user()->formatted_name }}</a>
-                <p class="d-block text-white profile" style="margin-bottom: 0px;">{{ auth()->user()->roles[0]->name }}</p>
+                <a href="{{ route('profile.edit') }}" class="d-block summary-names"
+                    title="Editar mi perfil">{{ auth()->user()->formatted_name }}</a>
+                <p class="d-block text-white profile" style="margin-bottom: 0px;">{{ auth()->user()->roles[0]->name }}
+                </p>
             </div>
         </div>
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
                 <li class="nav-item">
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                         <i class="nav-icon fa bi bi-house"></i>
@@ -27,14 +31,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
+                    <a href="{{ route('citas.index') }}"
+                        class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
                         <i class="nav-icon fa bi bi-calendar2-check"></i>
                         <p>Citas / Turnos</p>
                     </a>
                 </li>
                 @can('dashboard')
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard')? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}"
+                            class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="nav-icon fa bi bi-speedometer"></i>
                             <p>Reportes</p>
                         </a>
@@ -52,15 +58,17 @@
                         <ul class="nav nav-treeview">
                             @can('historia_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('hcl.histories.home') }}" class="nav-link {{ request()->routeIs('hcl.histories.*') ? 'active' : '' }}">
+                                    <a href="{{ route('hcl.histories.home') }}"
+                                        class="nav-link {{ request()->routeIs('hcl.histories.*') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Historias clínicas</p>
                                     </a>
-                                </li>    
+                                </li>
                             @endcan
                             @can('examen_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('hcl.exams.home') }}" class="nav-link {{ request()->routeIs('hcl.exams.*') ? 'active' : '' }}">
+                                    <a href="{{ route('hcl.exams.home') }}"
+                                        class="nav-link {{ request()->routeIs('hcl.exams.*') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Exámenes</p>
                                     </a>
@@ -68,7 +76,8 @@
                             @endcan
                             @can('control_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('hcl.appointments.home') }}" class="nav-link {{ request()->routeIs('hcl.appointments.*') ? 'active' : '' }}">
+                                    <a href="{{ route('hcl.appointments.home') }}"
+                                        class="nav-link {{ request()->routeIs('hcl.appointments.*') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Controles</p>
                                     </a>
@@ -76,19 +85,21 @@
                             @endcan
                             @can('informe_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('hcl.reports.home') }}" class="nav-link {{ request()->routeIs('hcl.reports.*') ? 'active' : '' }}">
+                                    <a href="{{ route('hcl.reports.home') }}"
+                                        class="nav-link {{ request()->routeIs('hcl.reports.*') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Informes</p>
                                     </a>
                                 </li>
                             @endcan
                             @can('riesgo_acceder')
-                            <li class="nav-item">
-                                <a href="{{ route('hcl.risks.home') }}" class="nav-link {{ request()->routeIs('hcl.risks.*') ? 'active' : '' }}">
-                                    <i class="bi bi-chevron-right"></i>
-                                    <p>Riesgos</p>
-                                </a>
-                            </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('hcl.risks.home') }}"
+                                        class="nav-link {{ request()->routeIs('hcl.risks.*') ? 'active' : '' }}">
+                                        <i class="bi bi-chevron-right"></i>
+                                        <p>Riesgos</p>
+                                    </a>
+                                </li>
                             @endcan
                         </ul>
                     </li>
@@ -105,7 +116,8 @@
                         <ul class="nav nav-treeview">
                             @can('categoria_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('maintenance.categories') }}" class="nav-link {{ request()->routeIs('maintenance.categories') ? 'active' : '' }}">
+                                    <a href="{{ route('maintenance.categories') }}"
+                                        class="nav-link {{ request()->routeIs('maintenance.categories') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Categorías</p>
                                     </a>
@@ -113,7 +125,8 @@
                             @endcan
                             @can('presentacion_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('maintenance.presentations') }}" class="nav-link {{ request()->routeIs('maintenance.presentations') ? 'active' : '' }}">
+                                    <a href="{{ route('maintenance.presentations') }}"
+                                        class="nav-link {{ request()->routeIs('maintenance.presentations') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Presentación fármaco</p>
                                     </a>
@@ -121,7 +134,8 @@
                             @endcan
                             @can('farmaco_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('maintenance.drugs') }}" class="nav-link {{ request()->routeIs('maintenance.drugs') ? 'active' : '' }}">
+                                    <a href="{{ route('maintenance.drugs') }}"
+                                        class="nav-link {{ request()->routeIs('maintenance.drugs') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Fármacos</p>
                                     </a>
@@ -129,7 +143,8 @@
                             @endcan
                             @can('diagnostico_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('maintenance.diagnostics') }}" class="nav-link {{ request()->routeIs('maintenance.diagnostics') ? 'active' : '' }}">
+                                    <a href="{{ route('maintenance.diagnostics') }}"
+                                        class="nav-link {{ request()->routeIs('maintenance.diagnostics') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Diagnósticos</p>
                                     </a>
@@ -137,7 +152,8 @@
                             @endcan
                             @can('ocupacion_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('maintenance.occupations') }}" class="nav-link {{ request()->routeIs('maintenance.occupations') ? 'active' : '' }}">
+                                    <a href="{{ route('maintenance.occupations') }}"
+                                        class="nav-link {{ request()->routeIs('maintenance.occupations') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Ocupaciones</p>
                                     </a>
@@ -158,18 +174,20 @@
                         <ul class="nav nav-treeview">
                             @can('empresa_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('business.enterprise') }}" class="nav-link {{ request()->routeIs('business.enterprise') ? 'active' : '' }}">
+                                    <a href="{{ route('business.enterprise') }}"
+                                        class="nav-link {{ request()->routeIs('business.enterprise') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Empresa</p>
                                     </a>
                                 </li>
                             @endcan
-                                <li class="nav-item">
-                                    <a href="{{ route('business.posts') }}" class="nav-link {{ request()->routeIs('business.posts') ? 'active' : '' }}">
-                                        <i class="bi bi-chevron-right"></i>
-                                        <p>Post</p>
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a href="{{ route('business.posts') }}"
+                                    class="nav-link {{ request()->routeIs('business.posts') ? 'active' : '' }}">
+                                    <i class="bi bi-chevron-right"></i>
+                                    <p>Post</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endcan
@@ -183,17 +201,10 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('modulo_acceder')
-                                <li class="nav-item">
-                                    <a href="{{ route('security.modules') }}" class="nav-link {{ request()->routeIs('security.modules') ? 'active' : '' }}">
-                                        <i class="bi bi-chevron-right"></i>
-                                        <p>Módulos</p>
-                                    </a>
-                                </li>
-                            @endcan
                             @can('permiso_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('security.permissions') }}" class="nav-link {{ request()->routeIs('security.permissions') ? 'active' : '' }}">
+                                    <a href="{{ route('security.permissions') }}"
+                                        class="nav-link {{ request()->routeIs('security.permissions') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Permisos</p>
                                     </a>
@@ -201,7 +212,8 @@
                             @endcan
                             @can('rol_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('security.roles') }}" class="nav-link {{ request()->routeIs('security.roles') ? 'active' : '' }}">
+                                    <a href="{{ route('security.roles') }}"
+                                        class="nav-link {{ request()->routeIs('security.roles') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Roles</p>
                                     </a>
@@ -209,7 +221,8 @@
                             @endcan
                             @can('especialidad_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('security.specialties') }}" class="nav-link {{ request()->routeIs('security.specialties') ? 'active' : '' }}">
+                                    <a href="{{ route('security.specialties') }}"
+                                        class="nav-link {{ request()->routeIs('security.specialties') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Especialidades</p>
                                     </a>
@@ -217,7 +230,8 @@
                             @endcan
                             @can('usuario_acceder')
                                 <li class="nav-item">
-                                    <a href="{{ route('security.users.home') }}" class="nav-link {{ request()->routeIs('security.users.*') ? 'active' : '' }}">
+                                    <a href="{{ route('security.users.home') }}"
+                                        class="nav-link {{ request()->routeIs('security.users.*') ? 'active' : '' }}">
                                         <i class="bi bi-chevron-right"></i>
                                         <p>Usuarios</p>
                                     </a>
