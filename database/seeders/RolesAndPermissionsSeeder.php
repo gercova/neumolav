@@ -18,8 +18,8 @@ class RolesAndPermissionsSeeder extends Seeder {
 
         // Permisos
         $crudPermissions    = ['acceder', 'ver', 'crear', 'actualizar', 'borrar'];
-        $modulos            = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'modulos', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
-        $modules            = ['historia', 'examen', 'control', 'informe','riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'modulo', 'especialidad', 'usuario', 'rol', 'permiso'];
+        $modulos            = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
+        $modules            = ['historia', 'examen', 'control', 'informe','riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'especialidad', 'usuario', 'rol', 'permiso'];
 
         foreach($modulos as $m) {
             Permission::create(['name' => $m]);
