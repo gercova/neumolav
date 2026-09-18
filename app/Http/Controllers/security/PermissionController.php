@@ -60,7 +60,9 @@ class PermissionController extends Controller {
         return response()->json([
             'status'    => (bool) $result,
             'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? ($result->wasChanged() ? 'El permiso ha sido actualizado' : 'Se ha añadido un nuevo permiso') : 'Recargue la página, algo salió mal',
+            'messages'  => $result ? ($result->wasChanged() 
+                ? 'El permiso ha sido actualizado' : 'Se ha añadido un nuevo permiso') 
+                : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
