@@ -199,6 +199,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('rol_acceder')
+                                <li class="nav-item">
+                                    <a href="{{ route('security.roles') }}" class="nav-link {{ request()->routeIs('security.roles') ? 'active' : '' }}">
+                                        <i class="bi bi-chevron-right"></i>
+                                        <p>Roles</p>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('especialidad_acceder')
                                 <li class="nav-item">
                                     <a href="{{ route('security.specialties') }}" class="nav-link {{ request()->routeIs('security.specialties') ? 'active' : '' }}">
