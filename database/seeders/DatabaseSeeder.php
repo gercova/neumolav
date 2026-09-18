@@ -14,11 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Catalog tables with FK inter-dependencies run first.
+        // AuditLogTrait silently skips logging when user #1 doesn't exist yet.
         $this->call(EstadoCitaSeeder::class);
         $this->call(TipoAtencionSeeder::class);
         $this->call(EstadoCivilSeeder::class);
-        $this->call(OcupacionSeeder::class);
-        $this->call(EspecialidadSeeder::class);
+        $this->call(OcupacionSeeder::class);       // ocupaciones ← no FK deps
+        $this->call(EspecialidadSeeder::class);    // especialidades ← needs ocupaciones
         $this->call(UbigeoDepartamentoSeeder::class);
         $this->call(UbigeoProvinciaSeeder::class);
         $this->call(UbigeoDistritoSeeder::class);
@@ -32,6 +34,8 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoDocumentoSeeder::class);
         $this->call(TabaquismoSeeder::class);
         // $this->call(ModuleSeeder::class);
+
+        // Users and roles run last (they reference catalog tables above).
         $this->call(UserSeeder::class);
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(EnterpriseSeeder::class);
