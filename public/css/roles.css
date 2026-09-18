@@ -1,0 +1,42 @@
+.permission-panel {
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.permission-panel .table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 5;
+}
+
+.row-highlight {
+    background-color: #e8f4fd !important;
+    transition: background-color 0.25s ease;
+}
+
+.transfer-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-top: 40px;
+}
+
+.counter-badge {
+    font-size: 0.78rem;
+    margin-left: 6px;
+}
+
+.search-box {
+    margin-bottom: 8px;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}
+
+#modalPermissions .modal-body {
+    padding: 1rem 1.25rem;
+}
