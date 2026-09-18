@@ -83,14 +83,19 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
              * MÓDULOS DEL SISTEMA
              */
             Route::middleware(['permission:modulos'])->group(function(){
-                Route::get('/modules',                          [ModulesController::class, 'index'])->name('security.modules');
-                Route::get('/modules/list',                     [ModulesController::class, 'list']);
-                Route::post('/modules/storeModule',             [ModulesController::class, 'storeModule']);
-                Route::post('/modules/storeSubmodule',          [ModulesController::class, 'storeSubmodule']);
-                Route::get('/modules/module/{id}',              [ModulesController::class, 'showModule']);
-                Route::get('/modules/submodule/{id}',           [ModulesController::class, 'showSubmodule']);
-                Route::delete('/modules/delete/{id}',           [ModulesController::class, 'destroyModule']);
-                Route::delete('/submodules/delete/{id}',        [ModulesController::class, 'destroySubmodule']);
+                Route::get('/modules',                                  [ModulesController::class, 'index'])->name('security.modules');
+                Route::get('/modules/list',                             [ModulesController::class, 'list']);
+                Route::post('/modules/storeModule',                     [ModulesController::class, 'storeModule']);
+                Route::post('/modules/storeSubmodule',                  [ModulesController::class, 'storeSubmodule']);
+                Route::get('/modules/module/{id}',                      [ModulesController::class, 'showModule']);
+                Route::get('/modules/submodule/{id}',                   [ModulesController::class, 'showSubmodule']);
+                Route::delete('/modules/delete/{id}',                   [ModulesController::class, 'destroyModule']);
+                Route::delete('/submodules/delete/{id}',                [ModulesController::class, 'destroySubmodule']);
+                // Permission assignment
+                Route::get('/modules/{id}/permissions',                 [ModulesController::class, 'getModulePermissions']);
+                Route::post('/modules/{id}/permissions/sync',           [ModulesController::class, 'syncModulePermissions']);
+                Route::get('/submodules/{id}/permissions',              [ModulesController::class, 'getSubmodulePermissions']);
+                Route::post('/submodules/{id}/permissions/sync',        [ModulesController::class, 'syncSubmodulePermissions']);
             });
             /**
              * PERMISOS
