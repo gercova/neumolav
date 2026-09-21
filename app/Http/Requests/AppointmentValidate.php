@@ -17,7 +17,7 @@ class AppointmentValidate extends FormRequest {
             'sintomas'                  => 'required|string',
             'diagnostico'               => 'nullable|string',
             'plan'                      => 'required|string',
-            'tratamiento'               => 'required|string',
+            //'tratamiento'               => 'required|string',
             'recomendaciones'           => 'nullable|string',
         ];
     }
@@ -28,7 +28,7 @@ class AppointmentValidate extends FormRequest {
             'dni.required'              => 'El campo DNI es requerido',
             'sintomas.required'         => 'El campo Síntomas es requerido',
             'plan.required'             => 'El campo Plan es requerido',
-            'tratamiento.required'      => 'El campo Tratamiento es requerido',
+            //'tratamiento.required'      => 'El campo Tratamiento es requerido',
         ];
     }
 
@@ -39,7 +39,7 @@ class AppointmentValidate extends FormRequest {
             'sintomas'                  => trim(strip_tags($this->sintomas)),
             'diagnostico'               => trim(strip_tags($this->diagnostico)),
             'plan'                      => trim(strip_tags($this->plan)),
-            'tratamiento'               => trim(strip_tags($this->tratamiento)),
+            //'tratamiento'               => trim(strip_tags($this->tratamiento)),
             'recomendaciones'           => trim(strip_tags($this->recomendaciones)),
         ]);
     }
