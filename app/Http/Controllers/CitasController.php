@@ -6,27 +6,19 @@ use App\Http\Requests\QuickPatientValidate;
 use App\Http\Requests\RescheduleValidate;
 use App\Models\AppointmentStatus;
 use App\Models\Cita;
-use App\Models\DocumentType;
 use App\Models\History;
-use App\Models\Sex;
 use App\Models\TipoAtencion;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
 
 class CitasController extends Controller
 {
-    public function index(Request $request): View {
-        $selectedDate  = $request->query('date', Carbon::today()->format('Y-m-d'));
-        $documentTypes = DocumentType::where('id', '!=', 2)->get();
-        $sexes         = Sex::get();
-        $statuses      = AppointmentStatus::all();
-        $tiposAtencion = TipoAtencion::all();
-
-        return view('citas.index', compact('selectedDate', 'documentTypes', 'sexes', 'statuses', 'tiposAtencion'));
+    public function index(Request $request): RedirectResponse {
+        return redirect()->route('home', $request->query());
     }
 
     public function list(Request $request): JsonResponse {
@@ -99,8 +91,11 @@ class CitasController extends Controller
                 default => 'bi-tag'
             };
             $badgeHtml = sprintf(
-                '<span class="badge %s ml-2 font-weight-normal py-1 px-2"><i class="bi %s mr-1"></i>%s</span>',
+                '<span class="badge %s ml-2 py-1 px-2 btn-change-tipo-atencion" style="cursor: pointer;" data-id="%s" data-patient="%s" data-current="%s" title="Haga clic para cambiar tipo de atención"><i class="bi %s mr-1"></i>%s <i class="bi bi-pencil-square ml-1" style="font-size:0.75rem; opacity:0.8;"></i></span>',
                 $badgeColor,
+                htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($patient ? strtoupper($patient->nombres) : '', ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($item->id_tipo_atencion ?? 1, ENT_QUOTES, 'UTF-8'),
                 $icon,
                 htmlspecialchars($badgeDesc, ENT_QUOTES, 'UTF-8')
             );
@@ -352,6 +347,51 @@ class CitasController extends Controller
             'status'   => true,
             'type'     => 'success',
             'messages' => "Estado actualizado a '{$statusName}'.",
+        ]);
+    }
+
+    // actualizar tipo de atención de la cita y del paciente
+    public function updateTipoAtencion(Request $request, int $id): JsonResponse {
+        $validator = Validator::make($request->all(), [
+            'id_tipo_atencion' => 'required|integer|exists:tipos_atencion,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'   => false,
+                'type'     => 'error',
+                'messages' => 'Tipo de atención no válido.',
+            ], 422);
+        }
+
+        $cita = Cita::with('history')->find($id);
+        if (!$cita) {
+            return response()->json([
+                'status'   => false,
+                'type'     => 'error',
+                'messages' => 'Cita no encontrada.',
+            ], 404);
+        }
+
+        $cita->id_tipo_atencion = (int) $request->id_tipo_atencion;
+        $cita->save();
+
+        if ($cita->history) {
+            $cita->history->id_tipo_atencion = (int) $request->id_tipo_atencion;
+            $cita->history->save();
+        }
+
+        $tipoDesc = TipoAtencion::where('id', $request->id_tipo_atencion)->value('descripcion') ?? 'Actualizado';
+
+        return response()->json([
+            'status'   => true,
+            'type'     => 'success',
+            'messages' => "Tipo de atención cambiado a '{$tipoDesc}' exitosamente.",
+            'data'     => [
+                'id'               => $cita->id,
+                'id_tipo_atencion' => $cita->id_tipo_atencion,
+                'tipo_desc'        => $tipoDesc,
+            ],
         ]);
     }
 
