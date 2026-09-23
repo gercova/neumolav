@@ -25,16 +25,9 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home', 'citas.*') ? 'active' : '' }}">
                         <i class="nav-icon fa bi bi-house"></i>
-                        <p>Inicio</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('citas.index') }}"
-                        class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
-                        <i class="nav-icon fa bi bi-calendar2-check"></i>
-                        <p>Citas / Turnos</p>
+                        <p>Inicio / Citas</p>
                     </a>
                 </li>
                 @can('dashboard')
