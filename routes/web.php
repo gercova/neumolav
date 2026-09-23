@@ -72,6 +72,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         Route::post('/citas/quick-patient',                     [CitasController::class, 'quickPatient'])->name('citas.quickPatient');
         Route::post('/citas/{id}/reschedule',                   [CitasController::class, 'reschedule'])->name('citas.reschedule');
         Route::post('/citas/{id}/status',                       [CitasController::class, 'updateStatus'])->name('citas.updateStatus');
+        Route::post('/citas/{id}/tipo-atencion',                [CitasController::class, 'updateTipoAtencion'])->name('citas.updateTipoAtencion');
         Route::delete('/citas/{id}',                            [CitasController::class, 'destroy'])->name('citas.destroy');
         Route::middleware(['role:administrador', 'permission:seguridad'])->group(function(){
             // MÓDULO DE PERMISOS
@@ -229,7 +230,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::delete('/diagnostics/delete/{diagnostic}',   [DiagnosticsController::class, 'destroy']);
         });
         // MÓDULO DE OCUPACIÓN
-        Route::post('/occupations/store',                   [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
+        Route::post('/occupations/store',                       [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
         Route::middleware(['permission:ocupaciones'])->group(function(){
             Route::get('/occupations',                          [OccupationsController::class, 'index'])->name('maintenance.occupations');
             Route::get('/occupations/list',                     [OccupationsController::class, 'list']);
