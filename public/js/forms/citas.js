@@ -180,6 +180,8 @@ $(document).ready(function () {
                             class="btn btn-sm btn-outline-secondary btn-cita-actions"
                             data-id="${item.id}"
                             data-status="${item.status_id}"
+                            data-tipo="${item.id_tipo_atencion || 1}"
+                            data-tipo-desc="${escapeHtml(item.tipo_atencion_desc || '')}"
                             data-patient="${escapeHtml(item.nombres)}"
                             data-date="${item.fecha_formato}"
                             data-rawdate="${item.fecha_cita}"
@@ -218,6 +220,7 @@ $(document).ready(function () {
         const $btn    = $(this);
         const id      = $btn.data('id');
         const statusId= parseInt($btn.data('status'));
+        const tipoId  = parseInt($btn.data('tipo')) || 1;
         const patient = $btn.data('patient');
         const dateFmt = $btn.data('date');
         const rawdate = $btn.data('rawdate');
@@ -232,6 +235,10 @@ $(document).ready(function () {
             ${statusId !== 1 ? `<a class="dropdown-item btn-quick-status" href="javascript:void(0)" data-id="${id}" data-status="1"><i class="bi bi-hourglass-split text-warning"></i> Marcar 'Pendiente'</a>` : ''}
             ${statusId !== 3 ? `<a class="dropdown-item btn-quick-status text-danger" href="javascript:void(0)" data-id="${id}" data-status="3"><i class="bi bi-x-circle"></i> Cancelar Cita</a>` : ''}
             <div class="dropdown-divider"></div>
+            <a class="dropdown-item btn-change-tipo-atencion" href="javascript:void(0)"
+                data-id="${id}" data-patient="${patient}" data-current="${tipoId}">
+                <i class="bi bi-tag-fill text-primary"></i> Cambiar Tipo de Atención
+            </a>
             <a class="dropdown-item btn-open-reschedule" href="javascript:void(0)"
                 data-id="${id}" data-patient="${patient}" data-date="${dateFmt}"
                 data-rawdate="${rawdate}" data-time="${time}">
@@ -250,22 +257,41 @@ $(document).ready(function () {
 
         $fcm.html(menuHtml);
 
-        // Position relative to button using viewport coordinates (fixed positioning)
-        const rect = this.getBoundingClientRect();
-        const menuH = 380; // estimated max height
-        const viewH = window.innerHeight;
+        // Pre-render offscreen to accurately measure real rendered dimensions
+        $fcm.css({
+            display: 'block',
+            visibility: 'hidden',
+            top: '-9999px',
+            left: '-9999px'
+        });
+        const realMenuH = $fcm.outerHeight();
+        const realMenuW = $fcm.outerWidth() || 224;
+        $fcm.css({ display: 'none', visibility: 'visible' });
 
-        let top = rect.bottom + 4;
-        // Flip upward if not enough space below
-        if (top + menuH > viewH - 16) {
-            top = rect.top - menuH - 4;
-            if (top < 8) top = 8;
+        // Position relative to button with minimal, elegant spacing (3px gap)
+        const rect = this.getBoundingClientRect();
+        const viewH = window.innerHeight;
+        const viewW = window.innerWidth;
+        const gap = 3;
+
+        const spaceBelow = viewH - rect.bottom;
+        const spaceAbove = rect.top;
+
+        let top;
+        // Flip upward if space below is insufficient and space above is greater
+        if (spaceBelow < realMenuH + gap && spaceAbove > spaceBelow) {
+            top = rect.top - realMenuH - gap;
+            if (top < 6) top = 6;
+        } else {
+            top = rect.bottom + gap;
+            if (top + realMenuH > viewH - 6) {
+                top = viewH - realMenuH - 6;
+            }
         }
 
-        const menuW = 224;
-        let left = rect.right - menuW;
+        let left = rect.right - realMenuW;
         if (left < 8) left = rect.left;
-        if (left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+        if (left + realMenuW > viewW - 8) left = viewW - realMenuW - 8;
 
         $fcm.css({ top: top + 'px', left: left + 'px' }).show();
     });
@@ -669,7 +695,84 @@ $(document).ready(function () {
         }
     });
 
-    /* 7. CAMBIO RÁPIDO DE ESTADO & ELIMINACIÓN */
+    /* 7. CAMBIO DE TIPO DE ATENCIÓN, ESTADO RÁPIDO & ELIMINACIÓN */
+    $(document).on('click', '.btn-change-tipo-atencion', async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeFCM();
+
+        const id = $(this).data('id');
+        const patientName = $(this).data('patient') || 'el paciente';
+        const currentTipo = parseInt($(this).data('current')) || 1;
+
+        const { value: selectedTipo } = await Swal.fire({
+            title: 'Tipo de Atención',
+            html: `
+                <p class="text-muted small mb-3">Paciente: <b>${escapeHtml(patientName)}</b></p>
+                <div class="text-left mb-2">
+                    <label class="font-weight-bold text-dark small mb-2">Seleccione el nuevo tipo de atención:</label>
+                    <div class="list-group" id="swal_tipo_atencion_group">
+                        <label class="list-group-item list-group-item-action d-flex align-items-center py-2 px-3 border rounded mb-2 ${currentTipo === 1 ? 'active' : ''}" style="cursor:pointer;">
+                            <input type="radio" name="swal_tipo_radio" value="1" ${currentTipo === 1 ? 'checked' : ''} class="mr-2">
+                            <span class="badge badge-success py-1 px-2 mr-2"><i class="bi bi-person-plus-fill"></i> Nuevo</span>
+                            <small class="text-muted ml-auto ${currentTipo === 1 ? 'text-white' : ''}">Primera consulta</small>
+                        </label>
+                        <label class="list-group-item list-group-item-action d-flex align-items-center py-2 px-3 border rounded mb-2 ${currentTipo === 2 ? 'active' : ''}" style="cursor:pointer;">
+                            <input type="radio" name="swal_tipo_radio" value="2" ${currentTipo === 2 ? 'checked' : ''} class="mr-2">
+                            <span class="badge badge-primary py-1 px-2 mr-2"><i class="bi bi-arrow-repeat"></i> Control</span>
+                            <small class="text-muted ml-auto ${currentTipo === 2 ? 'text-white' : ''}">Reevaluación / Seguimiento</small>
+                        </label>
+                        <label class="list-group-item list-group-item-action d-flex align-items-center py-2 px-3 border rounded mb-1 ${currentTipo === 3 ? 'active' : ''}" style="cursor:pointer;">
+                            <input type="radio" name="swal_tipo_radio" value="3" ${currentTipo === 3 ? 'checked' : ''} class="mr-2">
+                            <span class="badge badge-warning text-dark py-1 px-2 mr-2"><i class="bi bi-person-check-fill"></i> Continuador</span>
+                            <small class="text-muted ml-auto ${currentTipo === 3 ? 'text-dark' : ''}">Tratamiento prolongado</small>
+                        </label>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="bi bi-check2 mr-1"></i> Guardar Cambio',
+            cancelButtonText: 'Cancelar',
+            didOpen: () => {
+                $('#swal_tipo_atencion_group label').on('click', function () {
+                    $('#swal_tipo_atencion_group label').removeClass('active').find('small').removeClass('text-white');
+                    $(this).addClass('active');
+                    $(this).find('small').addClass('text-white');
+                    $(this).find('input[type="radio"]').prop('checked', true);
+                });
+            },
+            preConfirm: () => {
+                const val = $('input[name="swal_tipo_radio"]:checked').val();
+                if (!val) {
+                    Swal.showValidationMessage('Debe seleccionar un tipo de atención.');
+                    return false;
+                }
+                return val;
+            }
+        });
+
+        if (selectedTipo) {
+            try {
+                const response = await axios.post(`${API_BASE_URL}/citas/${id}/tipo-atencion`, {
+                    id_tipo_atencion: selectedTipo,
+                    _token: token,
+                });
+
+                if (response.data && response.data.status) {
+                    alertNotify('success', response.data.messages);
+                    loadAppointments(currentDate, $('#filter_status').val());
+                } else {
+                    Swal.fire('Atención', response.data.messages || 'No se pudo actualizar.', 'warning');
+                }
+            } catch (error) {
+                console.error('Error actualizando tipo de atención:', error);
+                Swal.fire('Error', 'No se pudo actualizar el tipo de atención.', 'error');
+            }
+        }
+    });
+
     $(document).on('click', '.btn-quick-status', async function (e) {
         e.preventDefault();
         const id = $(this).data('id');
