@@ -215,6 +215,16 @@ $(document).ready(function () {
     $(window).on('scroll.fcm resize.fcm', function () { closeFCM(); });
     $('#table_appointments').closest('.table-responsive').on('scroll.fcm', function () { closeFCM(); });
 
+    // Close when clicking any item inside the floating menu
+    $(document).on('click', '#floating-cita-menu .dropdown-item', function () {
+        closeFCM();
+    });
+
+    // Close when any Bootstrap modal is triggered
+    $(document).on('show.bs.modal', function () {
+        closeFCM();
+    });
+
     $(document).on('click', '.btn-cita-actions', function (e) {
         e.stopPropagation();
         const $btn    = $(this);
@@ -636,6 +646,7 @@ $(document).ready(function () {
 
     /* 6. REAGENDAMIENTO DE CITAS */
     $(document).on('click', '.btn-open-reschedule', function () {
+        closeFCM();
         const id = $(this).data('id');
         const patient = $(this).data('patient');
         const currentDateFormat = $(this).data('date');
@@ -775,6 +786,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-quick-status', async function (e) {
         e.preventDefault();
+        closeFCM();
         const id = $(this).data('id');
         const statusId = $(this).data('status');
 
@@ -797,6 +809,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-delete-cita', async function (e) {
         e.preventDefault();
+        closeFCM();
         const id = $(this).data('id');
 
         const result = await Swal.fire({

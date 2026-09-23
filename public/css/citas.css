@@ -130,7 +130,7 @@
 /* ── Floating Actions Dropdown (appended to body, never clipped) ──────── */
 #floating-cita-menu {
     position: fixed;
-    z-index: 9999;
+    z-index: 1035;
     min-width: 220px;
     max-height: calc(100vh - 20px);
     overflow-y: auto;
