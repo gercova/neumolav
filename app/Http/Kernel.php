@@ -70,7 +70,7 @@ class Kernel extends HttpKernel
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-        // ✅ AGREGAR ESTOS DOS MIDDLEWARES NUEVOS
+        // AGREGAR ESTOS DOS MIDDLEWARES NUEVOS
         'prevent.cache' => \App\Http\Middleware\PreventBrowserCacheAfterLogout::class,
         'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
     ];
