@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/usr/bin/php8.3",
+            "args": [
+                "/media/gercova/DATA1/PROYECTOS WEB/neumo-lav/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
