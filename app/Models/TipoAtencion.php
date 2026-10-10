@@ -11,10 +11,13 @@ class TipoAtencion extends Model
     use HasFactory;
 
     protected $table = 'tipos_atencion';
+
     protected $primaryKey = 'id';
 
     public const NUEVO = 1;
+
     public const CONTROL = 2;
+
     public const CONTINUADOR = 3;
 
     protected $fillable = [

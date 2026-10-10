@@ -19,7 +19,7 @@ $(document).ready(function(){
             let email       = $('#email').val();
             let password    = $('#password').val();
             // Configurar el cuerpo de la solicitud
-            const data = { email, password };
+            const data      = { email, password };
             // Enviar la solicitud con Axios (usando async/await)
             const response = await axios.post(`${API_BASE_URL}/login`, data);
             // Procesar la respuesta

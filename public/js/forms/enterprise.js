@@ -35,9 +35,7 @@ $(document).ready(function(){
     //crear nuevo logo
     $(".mini-logo").change(function(){
         let imagen = this.files[0];
-        /*=============================================
-        VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG
-        =============================================*/
+        /* VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG */
         if(imagen["type"] != "image/jpeg" && imagen["type"] != "image/png"){
             $(".mini-logo").val("");
             swal.fire({
@@ -66,9 +64,7 @@ $(document).ready(function(){
     //crear nuevo logo
     $(".logo").change(function(){
         let imagen = this.files[0];
-        /*=============================================
-        VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG
-        =============================================*/
+        /* VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG */
         if(imagen["type"] != "image/jpeg" && imagen["type"] != "image/png"){
             $(".logo").val("");
             swal.fire({
@@ -97,9 +93,7 @@ $(document).ready(function(){
     //crear nuevo logo
     $(".logo-receta").change(function(){
         let imagen = this.files[0];
-        /*=============================================
-        VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG
-        =============================================*/
+        /* VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG */
         if(imagen["type"] != "image/jpeg" && imagen["type"] != "image/png"){
             $(".logo-receta").val("");
             swal.fire({

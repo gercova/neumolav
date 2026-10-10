@@ -647,11 +647,11 @@ $(document).ready(function () {
     /* 6. REAGENDAMIENTO DE CITAS */
     $(document).on('click', '.btn-open-reschedule', function () {
         closeFCM();
-        const id = $(this).data('id');
-        const patient = $(this).data('patient');
+        const id                = $(this).data('id');
+        const patient           = $(this).data('patient');
         const currentDateFormat = $(this).data('date');
-        const rawDate = $(this).data('rawdate');
-        const time = $(this).data('time');
+        const rawDate           = $(this).data('rawdate');
+        const time              = $(this).data('time');
 
         $('#reschedule_cita_id').val(id);
         $('#reschedule_patient_name').text(patient);
@@ -666,10 +666,10 @@ $(document).ready(function () {
     $('#form_reschedule_appointment').on('submit', async function (e) {
         e.preventDefault();
 
-        const id = $('#reschedule_cita_id').val();
-        const newDate = $('#reschedule_new_date').val();
-        const newTime = $('#reschedule_new_time').val();
-        const note = $('#reschedule_note').val();
+        const id        = $('#reschedule_cita_id').val();
+        const newDate   = $('#reschedule_new_date').val();
+        const newTime   = $('#reschedule_new_time').val();
+        const note      = $('#reschedule_note').val();
 
         if (!newDate) {
             Swal.fire('Atención', 'Debe seleccionar una nueva fecha.', 'warning');
@@ -682,9 +682,9 @@ $(document).ready(function () {
         try {
             const response = await axios.post(`${API_BASE_URL}/citas/${id}/reschedule`, {
                 fecha_cita: newDate,
-                hora_cita: newTime || null,
-                motivo: note || null,
-                _token: token,
+                hora_cita:  newTime || null,
+                motivo:     note || null,
+                _token:     token,
             });
 
             if (response.data && response.data.status) {
@@ -847,9 +847,9 @@ $(document).ready(function () {
     }
 
     function formatDateToString(d) {
-        const year = d.getFullYear();
+        const year  = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+        const day   = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
@@ -863,10 +863,10 @@ $(document).ready(function () {
     function initializeDateDisplay(dateStr) {
         const parts = dateStr.split('-');
         if (parts.length === 3) {
-            const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const formatted = dateObj.toLocaleDateString('es-ES', options);
-            const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            const dateObj       = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            const options       = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formatted     = dateObj.toLocaleDateString('es-ES', options);
+            const capitalized   = formatted.charAt(0).toUpperCase() + formatted.slice(1);
             $('#label_current_date_display').text(capitalized);
         }
     }
@@ -906,8 +906,8 @@ $(document).ready(function () {
             return;
         }
 
-        const historyId = $(this).data('history-id');
-        const patientName = $(this).data('patient');
+        const historyId     = $(this).data('history-id');
+        const patientName   = $(this).data('patient');
 
         if (!historyId) {
             Swal.fire({
@@ -953,9 +953,9 @@ $(document).ready(function () {
     });
 
     async function openPatientQuickView(historyId) {
-        const $modal = $('#modal_patient_quickview');
-        const $loading = $('#qv_loading_state');
-        const $content = $('#qv_content_state');
+        const $modal    = $('#modal_patient_quickview');
+        const $loading  = $('#qv_loading_state');
+        const $content  = $('#qv_content_state');
 
         // Reset and show loading state
         $loading.show();

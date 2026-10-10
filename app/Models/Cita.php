@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cita extends Model
 {
-    use HasFactory, SoftDeletes, AuditLogTrait;
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
     protected $table = 'citas';
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -36,12 +37,12 @@ class Cita extends Model
 
     protected $casts = [
         'id_tipo_atencion' => 'integer',
-        'fecha_cita'       => 'date:Y-m-d',
-        'numero_turno'     => 'integer',
-        'id_estado'        => 'integer',
-        'created_at'       => 'datetime',
-        'updated_at'       => 'datetime',
-        'deleted_at'       => 'datetime',
+        'fecha_cita' => 'date:Y-m-d',
+        'numero_turno' => 'integer',
+        'id_estado' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -81,7 +82,6 @@ class Cita extends Model
      */
     public function scopeFifo($query)
     {
-        return $query->orderBy('numero_turno', 'asc')
-                     ->orderBy('created_at', 'asc');
+        return $query->orderBy('numero_turno', 'asc')->orderBy('created_at', 'asc');
     }
 }
