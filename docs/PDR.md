@@ -1,8 +1,8 @@
 # PDR — Documento de Definición de Producto y Reporte de Arquitectura del Sistema
 
-**Sistema:** Neumo-LAV / Neumotar (Gestión de Historias Clínicas Electrónicas, Diagnósticos Neumológicos y Salud Ocupacional)  
-**Versión del Sistema:** 2.0 (Edición Corporativa)  
-**Entorno Tecnológico:** PHP 8.1+ / Laravel Framework 10.x / MySQL 8.0+ / MariaDB / AdminLTE 3 / Bootstrap 4  
+**Sistema:** Neumo-LAV / Neumotar (Gestión de Historias Clínicas Electrónicas, Diagnósticos Neumológicos Especializados, Control de Turnos en Sala de Espera y Salud Ocupacional)  
+**Versión del Sistema:** 2.5 (Edición Corporativa y Asistencial)  
+**Entorno Tecnológico:** PHP 8.1+ (8.3 compatible) / Laravel Framework 10.x / MySQL 8.0+ / MariaDB 10.5+ / AdminLTE 3 / Bootstrap 4  
 **Entidad Propietaria:** Medytarq SAC (RUC: 20605677593)  
 **Establecimiento:** Jr. Paraguay 136, Tarapoto, San Martín, Perú  
 
@@ -11,74 +11,81 @@
 ## Índice de Contenidos
 
 - [1. Introducción y Visión General del Producto](#1-introducción-y-visión-general-del-producto)
-  - [1.1 Propósito y Justificación](#11-propósito-y-justificación)
+  - [1.1 Propósito y Justificación Médica](#11-propósito-y-justificación-médica)
   - [1.2 Alcance Funcional y Clínico](#12-alcance-funcional-y-clínico)
   - [1.3 Perfiles de Usuario y Modelo de Roles (RBAC)](#13-perfiles-de-usuario-y-modelo-de-roles-rbac)
 - [2. Arquitectura Tecnológica y Patrones de Diseño](#2-arquitectura-tecnológica-y-patrones-de-diseño)
   - [2.1 Diagrama de Arquitectura de Capas](#21-diagrama-de-arquitectura-de-capas)
-  - [2.2 Flujo del Proceso de Atención Médica](#22-flujo-del-proceso-de-atención-médica)
+  - [2.2 Flujos de Secuencia Clínica y Procesos Asistenciales](#22-flujos-de-secuencia-clínica-y-procesos-asistenciales)
   - [2.3 Pila Tecnológica y Dependencias Principales](#23-pila-tecnológica-y-dependencias-principales)
-- [3. Capa de Seguridad, Autenticación y Auditoría](#3-capa-de-seguridad-autenticación-y-auditoría)
+- [3. Capa de Seguridad, Autenticación, Credenciales y Auditoría](#3-capa-de-seguridad-autenticación-credenciales-y-auditoría)
   - [3.1 Control de Acceso y Pipeline de Middleware](#31-control-de-acceso-y-pipeline-de-middleware)
   - [3.2 Mecanismo Anti Fuerza Bruta y Protección de Sesión](#32-mecanismo-anti-fuerza-bruta-y-protección-de-sesión)
-  - [3.3 Sistema de Trazabilidad y Auditoría Transaccional](#33-sistema-de-trazabilidad-y-auditoría-transaccional)
+  - [3.3 Credenciales Médicas y Firma Digitalizada del Especialista](#33-credenciales-médicas-y-firma-digitalizada-del-especialista)
+  - [3.4 Trazabilidad y Auditoría Transaccional Inmutable (`AuditLogTrait`)](#34-trazabilidad-y-auditoría-transaccional-inmutable-auditlogtrait)
 - [4. Especificación Detallada de Módulos y Controladores](#4-especificación-detallada-de-módulos-y-controladores)
-  - [4.1 Módulo Clínico: Historia Clínica Electrónica (HCL)](#41-módulo-clínico-historia-clínica-electrónica-hcl)
-  - [4.2 Módulo Clínico: Controles Médicos y Recetas](#42-módulo-clínico-controles-médicos-y-recetas)
-  - [4.3 Módulo Clínico: Exámenes Auxiliares e Imágenes](#43-módulo-clínico-exámenes-auxiliares-e-imágenes)
-  - [4.4 Módulo Clínico: Informes Médicos](#44-módulo-clínico-informes-médicos)
-  - [4.5 Módulo Clínico: Informes de Riesgo Quirúrgico](#45-módulo-clínico-informes-de-riesgo-quirúrgico)
-  - [4.6 Módulo Estadístico y Analítica Epidemiológica](#46-módulo-estadístico-y-analítica-epidemiológica)
-  - [4.7 Módulo de Mantenimiento y Catálogos Maestros](#47-módulo-de-mantenimiento-y-catálogos-maestros)
-  - [4.8 Módulo de Seguridad y Administración de Usuarios](#48-módulo-de-seguridad-y-administración-de-usuarios)
-  - [4.9 Módulo de Gestión Empresarial y Contenidos](#49-módulo-de-gestión-empresarial-y-contenidos)
-  - [4.10 Módulo Web Público y Portal de Pacientes](#410-módulo-web-público-y-portal-de-pacientes)
-- [5. Servicios Especializados e Integraciones Externas](#5-servicios-especializados-e-integraciones-externas)
-  - [5.1 Integración RENIEC (Consulta DNI en Tiempo Real)](#51-integración-reniec-consulta-dni-en-tiempo-real)
+  - [4.1 Módulo Operativo: Citas, Turnos y Sala de Espera (`CitasController`)](#41-módulo-operativo-citas-turnos-y-sala-de-espera-citascontroller)
+  - [4.2 Módulo Clínico: Historia Clínica Electrónica (`HistoriesController`)](#42-módulo-clínico-historia-clínica-electrónica-historiescontroller)
+  - [4.3 Módulo Clínico: Controles Médicos y Recetas Duales A4/A5 (`AppointmentsController`)](#43-módulo-clínico-controles-médicos-y-recetas-duales-a4a5-appointmentscontroller)
+  - [4.4 Módulo Clínico: Exámenes Auxiliares, Espirometría e Imagenología (`ExamsController`)](#44-módulo-clínico-exámenes-auxiliares-espirometría-e-imagenología-examscontroller)
+  - [4.5 Módulo Clínico: Informes Médicos Formales (`ReportsController`)](#45-módulo-clínico-informes-médicos-formales-reportscontroller)
+  - [4.6 Módulo Clínico: Informes de Riesgo Quirúrgico Neumológico (`RisksController`)](#46-módulo-clínico-informes-de-riesgo-quirúrgico-neumológico-riskscontroller)
+  - [4.7 Módulo Estadístico y Analítica Epidemiológica (`StatisticsController`)](#47-módulo-estadístico-y-analítica-epidemiológica-statisticscontroller)
+  - [4.8 Módulo de Mantenimiento y Catálogos Maestros](#48-módulo-de-mantenimiento-y-catálogos-maestros)
+  - [4.9 Módulo de Seguridad y Administración de Usuarios y Roles](#49-módulo-de-seguridad-y-administración-de-usuarios-y-roles)
+  - [4.10 Módulo de Gestión Empresarial y Contenidos CMS](#410-módulo-de-gestión-empresarial-y-contenidos-cms)
+  - [4.11 Módulo Web Público y Portal de Reservas Omnicanal](#411-módulo-web-público-y-portal-de-reservas-omnicanal)
+- [5. Servicios Especializados, Helpers y Validadores](#5-servicios-especializados-helpers-y-validadores)
+  - [5.1 Integración RENIEC (Consulta DNI en Vivo)](#51-integración-reniec-consulta-dni-en-vivo)
   - [5.2 Motor de Notificaciones WhatsApp Cloud API](#52-motor-de-notificaciones-whatsapp-cloud-api)
   - [5.3 Servicio de Resumen Automatizado con IA (DeepSeek / Kimi AI)](#53-servicio-de-resumen-automatizado-con-ia-deepseek--kimi-ai)
-  - [5.4 Motor de Generación e Impresión de Recetas PDF (A4 y A5)](#54-motor-de-generación-e-impresión-de-recetas-pdf-a4-y-a5)
-- [6. Diccionario de Datos y Modelos Eloquent](#6-diccionario-de-datos-y-modelos-eloquent)
+  - [5.4 Motor de Renderizado de Recetas PDF (Formatos A4 y A5)](#54-motor-de-renderizado-de-recetas-pdf-formatos-a4-y-a5)
+  - [5.5 Catálogo Exhaustivo de Form Requests (23 Validadores)](#55-catálogo-exhaustivo-de-form-requests-23-validadores)
+  - [5.6 Catálogo de Recursos API (Eloquent Resources)](#56-catálogo-de-recursos-api-eloquent-resources)
+- [6. Diccionario de Datos y Modelos Eloquent (36 Entidades)](#6-diccionario-de-datos-y-modelos-eloquent-36-entidades)
 - [7. Catálogo de Procedimientos Almacenados y Vistas SQL](#7-catálogo-de-procedimientos-almacenados-y-vistas-sql)
-  - [7.1 Procedimientos Almacenados (Stored Procedures)](#71-procedimientos-almacenados-stored-procedures)
-  - [7.2 Vistas de Base de Datos](#72-vistas-de-base-de-datos)
-- [8. Matriz Integral de Rutas del Sistema](#8-matriz-integral-de-rutas-del-sistema)
+  - [7.1 Procedimientos Almacenados (18 PA_*)](#71-procedimientos-almacenados-18-pa_)
+  - [7.2 Vistas de Base de Datos Optimizadas (7 Vistas)](#72-vistas-de-base-de-datos-optimizadas-7-vistas)
+- [8. Matriz Integral de Rutas del Sistema (85+ Rutas)](#8-matriz-integral-de-rutas-del-sistema-85-rutas)
 - [9. Despliegue, Respaldos y Mantenimiento Operativo](#9-despliegue-respaldos-y-mantenimiento-operativo)
-  - [9.1 Variables de Entorno Requeridas](#91-variables-de-entorno-requeridas)
-  - [9.2 Política y Ejecución de Respaldos de Base de Datos](#92-política-y-ejecución-de-respaldos-de-base-de-datos)
+  - [9.1 Parámetros de Configuración del Entorno (.env)](#91-parámetros-de-configuración-del-entorno-env)
+  - [9.2 Política y Automatización de Respaldos de Base de Datos](#92-política-y-automatización-de-respaldos-de-base-de-datos)
 
 ---
 
 ## 1. Introducción y Visión General del Producto
 
-### 1.1 Propósito y Justificación
-El sistema **Neumo-LAV** (denominado comercialmente en la atención al paciente como **Neumotar**) es una solución informática de alta especialización concebida para la gestión médica, clínica, epidemiológica y administrativa del centro especializado en neumología y salud respiratoria operado por la empresa **Medytarq SAC**.
+### 1.1 Propósito y Justificación Médica
+El software **Neumo-LAV** (denominado comercialmente en la atención al paciente como **Neumotar**) constituye una solución integral de alta especialización concebida para la gestión médica, asistencial, preventiva, ocupacional, epidemiológica y administrativa de la clínica de neumología y salud respiratoria operada por la sociedad **Medytarq SAC** en la ciudad de Tarapoto, Región San Martín, Perú.
 
-El sistema da respuesta a los desafíos operativos y normativos del sector salud en el Perú (directivas del Ministerio de Salud - MINSA):
-- Eliminación del soporte físico de historias clínicas y mitigación del riesgo de pérdida o deterioro documental.
-- Estandarización de diagnósticos mediante el catálogo internacional **CIE-10**.
-- Cálculo automatizado y objetivo de índices de riesgo tabáquico (**Índice Paquete Año - IPA**).
-- Detección sistemática y registro de exposición a factores ambientales de la Amazonía peruana (humo de biomasa, leña, contacto con tuberculosis - TBC, antecedentes de COVID-19 y polvos ocupacionales).
-- Trazabilidad total de la prescripción farmacológica y expedición inmediata de recetas médicas en formatos estándar **A4** y de medio pliego **A5** con códigos de control, membrete institucional y firma digitalizada del médico especialista.
+La solución aborda de forma sistemática los requerimientos asistenciales del sector salud peruano (normativas y directivas del Ministerio de Salud - MINSA):
+- **Cero Papel y Custodia Digital:** Supresión de expedientes físicos vulnerables al extravío, degradación biológica o manipulación no autorizada, garantizando custodia digital inalterable.
+- **Estandarización Diagnóstica Internacional:** Integración de la codificación **CIE-10** en todos los actos médicos (controles, exámenes auxiliares, informes clínicos y peritajes).
+- **Cálculo Objetivo de Carga Tabáquica:** Determinación algorítmica instantánea del **Índice Paquete Año (IPA)**:
+  $$\text{IPA} = \frac{\text{Cigarrillos al día} \times \text{Años de consumo}}{20}$$
+- **Vigilancia de Factores Ambientales de la Amazonía:** Registro sistemático de exposición doméstica a humo de biomasa/leña en cocina tradicional, polvos ocupacionales orgánicos e inorgánicos (minería, madereras, agroindustria) y antecedentes de tuberculosis (contacto TBC intradomiciliario) y secuelas de COVID-19.
+- **Trazabilidad Farmacológica y Receta Médica Dual:** Generación automática de recetas médicas normalizadas en formatos **A4** (expediente formal) y **A5** (medio pliego para recetario de mostrador), con código de control, membrete corporativo y firma digitalizada del médico especialista con acreditación CMP y RNE.
+- **Optimización de Sala de Espera y Turnos:** Flujo operativo automatizado bajo principio First-In, First-Out (FIFO) para el llamado de pacientes, control de tiempos de espera y clasificación del tipo de atención (`Nuevo`, `Control`, `Continuador`).
 
 ### 1.2 Alcance Funcional y Clínico
 La plataforma abarca la totalidad del ciclo de atención del paciente ambulatorio y ocupacional:
-1. **Admisión y Filiación Demográfica:** Registro de identidad asistido por consulta sincrónica a la base de datos de **RENIEC**, codificación geográfica normalizada mediante el estándar nacional de **Ubigeo** (departamento, provincia, distrito) y codificación de ocupación según la Clasificación Internacional Uniforme de Ocupaciones (**CIUO**).
-2. **Historia Clínica Neumológica (HCL):** Anamnesis completa, tiempo de enfermedad, síntomas cardinales respiratorios (tos, disnea, dolor torácico, expectoración, hemoptisis), antecedentes mórbidos personales (asma bronquial, EPOC, EPID, tuberculosis, cáncer de pulmón, efusión pleural, neumonías recurrentes) y quirúrgicos.
-3. **Controles y Consultas Médicas:** Registro evolutivo de cada cita médica, evaluación de signos vitales, asociación de múltiples diagnósticos CIE-10, formulación posológica de medicamentos y emisión de recetas.
-4. **Exámenes Auxiliares de Diagnóstico:** Gestión de órdenes y resultados de pruebas diagnósticas (Espirometrías basales y con broncodilatador, Tomografía Axial Computarizada - TAC de tórax, Radiografías simples, Test de Asma) con almacenamiento y visor de imágenes radiológicas y trazados espirométricos.
-5. **Informes Médicos e Informes de Riesgo:** Emisión de dictámenes clínicos oficiales, evaluaciones de riesgo quirúrgico neumológico y cardiovascular preoperatorio.
-6. **Analítica Epidemiológica y Estadísticas:** Tableros de control ejecutivos que presentan en tiempo real tendencias temporales, distribución demográfica, morbilidad respiratoria y perfiles de consumo de medicamentos.
-7. **Portal Web y Autoservicio de Citas:** Módulo de atención al usuario final que permite la lectura de artículos médicos y la solicitud de citas en línea con notificación vía WhatsApp Cloud API y correo electrónico.
+1. **Admisión y Filiación Demográfica Asistida:** Consulta sincrónica a la base de datos de **RENIEC** mediante API REST Decolecta para el autocompletado fidedigno de identidad. Normalización territorial según los 1,874 distritos del **Ubigeo Nacional** y clasificación de ocupación bajo el estándar **CIUO**.
+2. **Gestión de Turnos y Sala de Espera del Día:** Tablero interactivo en la vista principal (`/admin/home`) con semaforización de estados (`En Espera`, `Atendido`, `Cancelado`, `Reagendado`), filtro por fecha, buscador predictivo y registro express de pacientes (`quickPatient`).
+3. **Historia Clínica Neumológica (HCL):** Anamnesis completa, tiempo de enfermedad, síntomas cardinales respiratorios (tos, disnea, dolor torácico, expectoración, hemoptisis), antecedentes mórbidos (asma bronquial, EPOC, EPID, TBC, cáncer pulmonar, efusión pleural, neumonías recurrentes) y encolamiento automático de citas en admisión.
+4. **Controles Médicos y Consultas Asistenciales:** Registro evolutivo de cada cita médica, funciones vitales completas, formulación posológica detallada e impresión instantánea de recetas A4/A5 con firma médica digital.
+5. **Exámenes Auxiliares de Diagnóstico:** Gestión de pruebas de función pulmonar (espirometría basal y con broncodilatador, FEV1, FVC, ratio FEV1/FVC), análisis de laboratorio y fluidos pleurales (ADA, PAP, cultivos, BK), con repositorio fotográfico y visor de imágenes radiológicas y trazados.
+6. **Informes Médicos e Informes de Riesgo Quirúrgico:** Emisión de dictámenes clínicos oficiales para empleadores, peritajes o trámites de salud pública, y evaluaciones de riesgo quirúrgico neumológico y cardiovascular preoperatorio.
+7. **Analítica Epidemiológica en Tiempo Real:** Tableros estadísticos interactivos desarrollados con Highcharts que visualizan morbilidad respiratoria, Top 15 de diagnósticos, Top 15 de medicamentos y métricas sociodemográficas.
+8. **Portal Web y Reservas Omnicanal:** Portal web público con artículos de salud respiratoria y motor de solicitud de citas en línea con confirmación vía **WhatsApp Cloud API** y correo electrónico transaccional.
 
 ### 1.3 Perfiles de Usuario y Modelo de Roles (RBAC)
 El sistema implementa el paquete `spatie/laravel-permission` estructurado en una matriz de tres roles institucionales:
 
 | Rol | Identificador | Nivel de Acceso y Funciones |
 | :--- | :--- | :--- |
-| **Administrador** | `administrador` | Acceso global irrestricto. Gestión de usuarios, asignación de roles y permisos granulares, configuración institucional, catálogo de módulos y submódulos dinámicos, gestión de backups del sistema y acceso a todos los submódulos clínicos. |
-| **Especialista** | `especialista` | Perfil médico (Neumólogo / Médico Cirujano). Acceso integral al circuito clínico: apertura y edición de historias clínicas, consultas y controles, exámenes auxiliares, carga de imágenes diagnósticas, emisión de informes clínicos y de riesgo quirúrgico, prescripción de recetas y consulta del dashboard estadístico. Restringido para administración de usuarios y seguridad. |
-| **Asistente** | `asistente` | Personal asistencial y de recepción. Permiso de consulta y creación (`ver`, `crear`) de admisiones de pacientes, asignación de citas en cola diaria y confirmación de turnos. Restringido para modificación de diagnósticos médicos, prescripción de medicamentos y anulación de registros. |
+| **Administrador** | `administrador` | Acceso global irrestricto. Gestión de usuarios, asignación de roles y permisos granulares mediante interfaz dual-panel, configuración institucional corporativa, gestión de copias de seguridad del sistema y acceso a todos los submódulos clínicos. |
+| **Especialista** | `especialista` | Perfil médico (Neumólogo / Médico Cirujano). Acceso integral al circuito clínico: apertura y edición de historias clínicas, consultas y controles, exámenes auxiliares, carga de imágenes diagnósticas, emisión de informes clínicos y de riesgo quirúrgico, prescripción de recetas A4/A5, firma digitalizada y consulta del dashboard estadístico. |
+| **Asistente** | `asistente` | Personal asistencial y de recepción. Permiso de consulta y creación de admisiones de pacientes, asignación de turnos en cola diaria FIFO, registro rápido de pacientes (`quickPatient`), cambio de estado en sala de espera (`En Espera`) y confirmación de turnos. Restringido para emisión de diagnósticos y prescripciones. |
 
 ---
 
@@ -88,7 +95,7 @@ El sistema implementa el paquete `spatie/laravel-permission` estructurado en una
 
 ```mermaid
 graph TD
-    ClientBrowser[Navegador Web / Interfaz de Usuario] -->|HTTPS Requests| ReverseProxy[Servidor Web Nginx / Apache]
+    ClientBrowser[Navegador Web / Terminal del Consultorio / Recepción] -->|HTTPS Requests| ReverseProxy[Servidor Web Nginx / Apache]
     
     subgraph Capa de Presentacion
         ReverseProxy --> BladeViews[Vistas Blade / AdminLTE 3 / Bootstrap 4]
@@ -101,80 +108,108 @@ graph TD
     end
 
     subgraph Capa de Controladores
+        MiddlewarePipeline --> CitasCtrl[CitasController: Turnos FIFO, Sala de Espera, Quick Patient]
         MiddlewarePipeline --> HclControllers[Controladores Clinicos: Histories, Appointments, Exams, Reports, Risks, Statistics]
         MiddlewarePipeline --> MaintControllers[Controladores Maestros: Drugs, Categories, Presentations, Diagnostics, Occupations]
-        MiddlewarePipeline --> SecControllers[Controladores de Seguridad: Users, Permissions, Modules, Specialties]
+        MiddlewarePipeline --> SecControllers[Controladores de Seguridad: Users, Roles, Permissions, Specialties, Config]
         MiddlewarePipeline --> WebControllers[Controladores Publicos: HomePage, Auth, Enterprise, Posts]
     end
 
     subgraph Capa de Servicios y Logica de Negocio
         HclControllers --> SummaryService[SummaryService: Integracion IA DeepSeek / Kimi]
         HclControllers --> TableViewService[TableViewService: Tablas Dinamicas]
-        HclControllers --> DomPdfEngine[Barryvdh DomPDF: Generador Recetas A4 / A5]
+        HclControllers --> DomPdfEngine[Barryvdh DomPDF: Generador Recetas A4 / A5 con Firma Digital]
         WebControllers --> WhatsAppApi[Netflie WhatsAppCloudApi Engine]
-        HclControllers --> ReniecApi[API Decolecta: Consulta RENIEC DNI]
+        HclControllers --> ReniecApi[API Decolecta: Consulta RENIEC DNI sincrónica]
     end
 
     subgraph Capa de Persistencia y Base de Datos
-        HclControllers --> EloquentModels[38 Modelos Eloquent: History, Appointment, Exam, Drug, etc.]
-        EloquentModels --> AuditTrait[AuditLogTrait: Trazabilidad Automatica]
-        AuditTrait --> DB[(Base de Datos MySQL 8.0 / MariaDB)]
+        HclControllers --> EloquentModels[36 Modelos Eloquent: History, Cita, Appointment, Exam, Drug, etc.]
+        SecControllers --> SpatieModels[Spatie Permission: Role, Permission, User]
+        EloquentModels --> AuditTrait[AuditLogTrait: Trazabilidad Automatica con JSON diff]
+        AuditTrait --> DB[(Base de Datos MySQL 8.0+ / MariaDB 10.5+)]
         DB --> StoredProcs[18 Procedimientos Almacenados: PA_*]
-        DB --> SqlViews[7 Vistas SQL Optimizadas: view_active_*]
+        DB --> SqlViews[7 Vistas SQL Optimizadas: view_active_*, vista_*]
     end
 ```
 
-### 2.2 Flujo del Proceso de Atención Médica
+### 2.2 Flujos de Secuencia Clínica y Procesos Asistenciales
 
+#### Flujo 1: Admisión, Registro Rápido y Asignación de Turnos (FIFO)
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Paciente
-    actor Asistente
-    actor Medico
-    participant Web as Portal / Sistema
-    participant Controller as HCL Controllers
-    participant Reniec as API RENIEC
-    participant DB as Base de Datos MySQL
-    participant PDF as Motor DomPDF
+    actor Paciente as Paciente
+    actor Recepcion as Asistente / Recepción
+    participant Controller as CitasController / HistoriesController
+    participant Reniec as API RENIEC (Decolecta)
+    participant BD as Base de Datos MySQL
 
-    Paciente->>Asistente: Acude al centro o solicita atención
-    Asistente->>Web: Ingresa DNI en módulo de Historias
-    Web->>Reniec: Consulta sincrónica número de documento
-    Reniec-->>Web: Retorna Nombres y Apellidos oficiales
-    Asistente->>Web: Registra filiación, residencia y ubigeo
-    Web->>DB: Guarda Historia y encola automáticamente en tabla citas
-    
-    Medico->>Web: Visualiza cola de atención del día
-    Medico->>Controller: Inicia Atención / Consulta Médica
-    Controller->>DB: Registra examen físico y factores de riesgo pulmonar (IPA, TBC, Biomasa)
-    Medico->>Controller: Asigna Diagnósticos CIE-10 y Fármacos
-    Controller->>DB: Ejecuta transacción (controles, control_diagnostico, control_medicacion)
-    Controller->>PDF: Invoca generación de receta médica estructurada
-    PDF-->>Medico: Retorna Receta Oficial en formato A4 o A5 con membrete y código
-    Medico->>Paciente: Entrega receta y plan de tratamiento
+    Paciente->>Recepcion: Se presenta en mostrador para consulta
+    alt Paciente Nuevo con Atención Rápida
+        Recepcion->>Controller: Invoca quickPatient con DNI
+        Controller->>Reniec: Consulta sincrónica número de documento
+        Reniec-->>Controller: Retorna nombres completos oficiales
+        Controller->>BD: Inicia transacción atómica (DB::beginTransaction)
+        Controller->>BD: Crea Historia con valores seguros por defecto y Tipo de Atención: Nuevo (1)
+        Controller->>BD: Calcula turno máximo del día (MAX(numero_turno) + 1)
+        Controller->>BD: Crea Cita con fecha actual, turno asignado y estado "Pendiente"
+        Controller->>BD: Confirma transacción (DB::commit)
+        Controller-->>Recepcion: Retorna éxito con # de turno asignado
+    else Paciente Existente en Archivo
+        Recepcion->>Controller: Busca paciente por DNI o nombres (searchPatients)
+        Controller->>BD: Consulta historias clínicas activas
+        BD-->>Controller: Retorna listado coincidente
+        Recepcion->>Controller: Selecciona paciente y agenda cita (store)
+        Controller->>BD: Verifica duplicidad activa en la fecha y genera turno secuencial
+        Controller-->>Recepcion: Cita agendada con # de turno asignado
+    end
+    Recepcion->>Controller: Actualiza estado a "En Espera" (id_estado: 7)
+```
+
+#### Flujo 2: Consulta Médica, Prescripción y Receta Dual A4/A5
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Medico as Médico Especialista
+    participant Controller as AppointmentsController
+    participant BD as Base de Datos MySQL
+    participant PDF as Motor DomPDF
+    actor Paciente as Paciente
+
+    Medico->>Controller: Selecciona paciente de la cola diaria
+    Controller->>BD: Actualiza estado de Cita a "Atendido" (id_estado: 6)
+    Medico->>Controller: Ingresa Anamnesis, Funciones Vitales y Relato Cronológico
+    Medico->>Controller: Busca y asigna diagnósticos CIE-10 (diagnosticos)
+    Medico->>Controller: Selecciona fármacos del vademécum y define posología
+    Controller->>BD: Ejecuta transacción: guarda controles, control_diagnostico, control_medicacion
+    Medico->>Controller: Solicita impresión de receta (Formato 'a4' o 'a5')
+    Controller->>BD: Obtiene datos del paciente, membrete de empresa y firma digital del usuario
+    Controller->>PDF: Renderiza vista Blade correspondiente (pdf-a4 o pdf-a5)
+    PDF-->>Medico: Entrega documento PDF estructurado y firmado
+    Medico->>Paciente: Entrega receta impresa con indicaciones
 ```
 
 ### 2.3 Pila Tecnológica y Dependencias Principales
 
 | Categoría | Tecnología / Paquete | Versión | Propósito en la Solución |
 | :--- | :--- | :--- | :--- |
-| **Lenguaje Core** | PHP | `^8.1` | Motor de ejecución del servidor con soporte de tipado estricto. |
-| **Framework Web** | `laravel/framework` | `^10.10` | Arquitectura MVC, inyección de dependencias, Eloquent ORM y migraciones. |
-| **Generador PDF** | `barryvdh/laravel-dompdf` | `^3.1` | Renderizado de documentos clínicos y recetas médicas (A4 / A5). |
-| **Gestión de Permisos** | `spatie/laravel-permission` | `^6.21` | Implementación de RBAC en rutas, vistas y controladores. |
-| **Copias de Seguridad** | `spatie/laravel-backup` | `^8.8` | Respaldo periódico programado de la base de datos y archivos multimedia. |
-| **Notificaciones WhatsApp** | `netflie/whatsapp-cloud-api`| `^2.2` | Conexión directa a Meta Cloud API para confirmación de citas web. |
+| **Lenguaje Core** | PHP | `^8.1` / `8.3.6` | Motor de ejecución del servidor con soporte de tipado estricto y constructor promotion. |
+| **Framework Web** | `laravel/framework` | `^10.10` | Arquitectura MVC, inyección de dependencias, Eloquent ORM, validación y migraciones. |
+| **Generador PDF** | `barryvdh/laravel-dompdf` | `^3.1` | Renderizado de documentos clínicos y recetas médicas duales (A4 / A5) con firma digital. |
+| **Gestión de Permisos** | `spatie/laravel-permission` | `^6.21` | Implementación de RBAC en rutas, vistas y controladores con interfaz dual-panel. |
+| **Copias de Seguridad** | `spatie/laravel-backup` | `^8.8` | Respaldo periódico programado de la base de datos y archivos multimedia de exámenes. |
+| **Notificaciones WhatsApp** | `netflie/whatsapp-cloud-api`| `^2.2` | Conexión directa a Meta Cloud API para confirmación de citas del portal web. |
 | **Cliente HTTP** | `guzzlehttp/guzzle` | `^7.2` | Consultas HTTP a la API de RENIEC y a las APIs de IA (DeepSeek / Kimi). |
 | **Machine Learning** | `php-ai/php-ml` | `^0.10.0` | Utilidades de predicción y análisis algorítmico en PHP. |
-| **Autenticación API** | `laravel/sanctum` | `^3.3` | Emisión de tokens de autenticación para servicios móviles/API. |
-| **UI Framework** | AdminLTE | `v3.2` | Plantilla administrativa basada en Bootstrap 4. |
-| **Gráficos Estadísticos** | Highcharts JS | `v10+` | Renderizado de gráficos interactivos, diagramas de barras y series de tiempo. |
-| **Tablas Dinámicas** | DataTables & JTable | `v1.10+` | Renderizado de listados paginados por AJAX con filtros avanzados. |
+| **Autenticación API** | `laravel/sanctum` | `^3.3` | Emisión de tokens de autenticación para servicios móviles y API. |
+| **UI Framework** | AdminLTE | `v3.2` | Plantilla administrativa basada en Bootstrap 4.6. |
+| **Gráficos Estadísticos** | Highcharts JS | `v10+` | Renderizado de tableros epidemiológicos interactivos y series de tiempo. |
+| **Tablas Dinámicas** | DataTables & JTable | `v1.10+` | Renderizado de listados paginados por AJAX con filtros avanzados y ordenamiento. |
 
 ---
 
-## 3. Capa de Seguridad, Autenticación y Auditoría
+## 3. Capa de Seguridad, Autenticación, Credenciales y Auditoría
 
 ### 3.1 Control de Acceso y Pipeline de Middleware
 El archivo [`app/Http/Kernel.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Kernel.php) configura la secuencia de filtros obligatorios para cada solicitud HTTP:
@@ -183,7 +218,7 @@ El archivo [`app/Http/Kernel.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/n
 [Cliente HTTP]
        │
        ▼
-[Global Stack: TrustProxies -> HandleCors -> PreventRequestsDuringMaintenance -> ValidatePostSize -> TrimStrings -> ConvertEmptyStringsToNull]
+[Global Stack: TrustProxies -> PreventRequestsDuringMaintenance -> ValidatePostSize -> TrimStrings -> ConvertEmptyStringsToNull]
        │
        ▼
 [Grupo 'web': EncryptCookies -> AddQueuedCookiesToResponse -> StartSession -> ShareErrorsFromSession -> VerifyCsrfToken -> SubstituteBindings]
@@ -224,120 +259,218 @@ El controlador [`app/Http/Controllers/auth/AuthController.php`](file:///media/ge
 4. **Registro de Último Inicio de Sesión:** Se actualiza o crea un registro en la tabla `user_last_login` documentando la marca de tiempo `last_login` y la IP del cliente.
 5. **Cierre de Sesión Seguro (`logout`):** Invalida completamente la sesión en el servidor (`$request->session()->invalidate()`) y regenera el token CSRF (`$request->session()->regenerateToken()`).
 
-### 3.3 Sistema de Trazabilidad y Auditoría Transaccional
-La solución cuenta con un subsistema dual de auditoría compuesto por:
-1. **Auditoría de Accesos (`LogUserActivity`):** Registra cada petición procesada en el sistema, guardando el identificador del usuario, el nombre de la ruta o URI accedida, la IP y el User-Agent del navegador.
-2. **Auditoría de Estado de Entidades (`AuditLogTrait`):** Aplicado a modelos críticos como `User` e `History`. Intercepta los eventos de Eloquent:
-   - `created`: Guarda el registro nuevo (`new_data`).
-   - `updated`: Almacena en formato JSON tanto el estado original (`old_data`) como los valores modificados, garantizando la inmutabilidad de la trazabilidad médico-legal.
-   - `deleted`: Documenta la eliminación del registro con su estado previo a la baja lógica.
+### 3.3 Credenciales Médicas y Firma Digitalizada del Especialista
+En la gestión de usuarios y en el perfil personal del facultativo (`/admin/profile`, gestionado por `UsersController@profile` y `updateProfile`), se han integrado campos especializados:
+- **Colegio Médico del Perú (CMP):** Almacenado en la columna `cmp` de la tabla `users`.
+- **Registro Nacional de Especialista (RNE):** Almacenado en la columna `rne` de la tabla `users`.
+- **Firma Digitalizada (`firma_digital`):** Carga segura de imagen de firma y sello en `storage/app/public/signatures/`.
+  - El modelo `User` expone el accesor dinámico `digital_signature_url`, que verifica la existencia física en el disco `public` antes de generar la URL absoluta.
+  - La firma se incrusta automáticamente en las recetas médicas (A4 y A5), informes clínicos y evaluaciones de riesgo quirúrgico.
+
+### 3.4 Trazabilidad y Auditoría Transaccional Inmutable (`AuditLogTrait`)
+El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Traits/AuditLogTrait.php) en los modelos clínicos y de seguridad (`History`, `Cita`, `Appointment`, `Exam`, `Report`, `Risk`, `User`). Intercepta automáticamente los eventos de Eloquent:
+- `created`: Registra la acción `created`, el módulo, el identificador y el objeto creado en formato JSON en `new_data`.
+- `updated`: Registra la acción `updated`, documentando en `old_data` los atributos modificados previos al cambio y en `new_data` los nuevos valores persistidos.
+- `deleted`: Registra la acción `deleted` junto con el estado del registro inmediatamente antes de su baja lógica.
+- Toda transacción almacena de forma inmutable el `user_id` autenticado, la dirección IP del cliente y el User-Agent del navegador en la tabla `audit_logs`.
 
 ---
 
 ## 4. Especificación Detallada de Módulos y Controladores
 
-### 4.1 Módulo Clínico: Historia Clínica Electrónica (HCL)
+### 4.1 Módulo Operativo: Citas, Turnos y Sala de Espera (`CitasController`)
+- **Controlador:** [`app/Http/Controllers/CitasController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/CitasController.php)
+- **Modelos:** `Cita`, `History`, `AppointmentStatus`, `TipoAtencion`
+- **Validadores:** `QuickPatientValidate`, `RescheduleValidate`
+- **Vista Principal:** Integrada en [`resources/views/home/index.blade.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/home/index.blade.php) y motor JavaScript [`public/js/forms/citas.js`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/public/js/forms/citas.js)
+
+#### Funcionalidades y Acciones
+1. `index(Request $request)`: Redirecciona al panel principal `home` conservando los parámetros de consulta por fecha.
+2. `list(Request $request)`: Retorna la lista de citas del día para la tabla interactiva AJAX. Aplica ordenamiento secuencial FIFO (`COALESCE(numero_turno, 999999) ASC, created_at ASC`), genera badges coloreados del tipo de atención y renderiza el grupo de botones de acciones clínicas contextuales.
+3. `stats(Request $request)`: Retorna los contadores estadísticos del día: total de citas, en espera (sala), atendidos, pendientes y cancelados.
+4. `store(Request $request)`: Agenda una cita para un paciente existente. Valida que el paciente no tenga ya otra cita activa en la misma fecha (excluyendo canceladas). Asigna de forma automática el siguiente turno secuencial disponible para el día.
+5. `quickPatient(QuickPatientValidate $request)`: Registra a un nuevo paciente con valores demográficos seguros y genera su primera cita con turno secuencial en una única transacción atómica (`DB::beginTransaction`).
+6. `reschedule(RescheduleValidate $request, int $id)`: Reagenda una cita para una nueva fecha. Valida que el paciente no tenga otra cita activa en el día de destino, asigna un nuevo número de turno secuencial y actualiza el estado a `4 (Reagendado)`.
+7. `updateStatus(Request $request, int $id)`: Modifica el estado de la cita (`En Espera`, `Atendido`, `Cancelado`, etc.).
+8. `updateTipoAtencion(Request $request, int $id)`: Permite cambiar el tipo de atención (`1: Nuevo`, `2: Control`, `3: Continuador`), sincronizando el valor tanto en la cita como en la historia clínica del paciente.
+9. `searchPatients(Request $request)`: Servicio de autocompletado predictivo para buscar pacientes por DNI o nombres al programar citas en mostrador.
+10. `destroy(int $id)`: Ejecuta la eliminación lógica (soft delete) de la cita seleccionada.
+
+---
+
+### 4.2 Módulo Clínico: Historia Clínica Electrónica (`HistoriesController`)
 - **Controlador:** [`app/Http/Controllers/hcl/HistoriesController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/HistoriesController.php)
 - **Modelo:** [`app/Models/History.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Models/History.php)
 - **Validador:** [`app/Http/Requests/HistoryValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/HistoryValidate.php)
+- **Vistas:** [`resources/views/hcl/histories/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/histories)
 
-El módulo centraliza la apertura y mantenimiento de la historia clínica médica:
-- **Gestión Demográfica y RENIEC:** El método `searchDni(Request $request)` conecta con la API externa de RENIEC para autocompletar nombres completos y garantizar la fidelidad de la identidad del paciente.
-- **Normalización Geográfica (Ubigeo):** Mediante `searchLocation(Request $request)`, el sistema realiza búsquedas compuestas sobre los 1,874 distritos del Perú unificando Departamento, Provincia y Distrito.
-- **Evaluación de Factores de Riesgo Pulmonar:**
-  - **Índice Paquete Año (IPA / Pack-Year Index):** Calcula la carga de tabaquismo mediante la fórmula clínica:
-    $$\text{IPA} = \frac{\text{Cigarrillos al día} \times \text{Años fumando}}{20}$$
-  - **Exposición a Biomasa:** Registro de años de exposición al humo de leña o carbón vegetal en cocina tradicional.
-  - **Antecedentes Epidemiológicos:** Registro estructurado de contacto con tuberculosis (TBC), asma bronquial, enfermedad pulmonar obstructiva crónica (EPOC), enfermedad pulmonar intersticial difusa (EPID), cáncer pulmonar y neumonías previas.
-- **Encolamiento Automático de Citas:** Al crear una nueva historia clínica (`isNew`), el sistema genera de forma transparente un registro en la tabla `citas` para la fecha actual, integrando al paciente en el flujo de atención del consultorio.
+#### Funcionalidades y Acciones
+1. `index()`: Despliega el listado principal de pacientes administrado mediante JTable.
+2. `list(Request $request)`: Consume la vista SQL `view_active_histories` para ofrecer paginación rápida por servidor (`jtStartIndex`, `jtPageSize`) con cálculo exacto de edad cronológica.
+3. `add()` / `edit(History $history)`: Formularios de apertura y modificación de expediente, vinculando catálogos de Ubigeo, Ocupaciones CIUO, Grados de Instrucción, Grupos Sanguíneos y Tipos de Atención.
+4. `store(HistoryValidate $request)`: Almacena o actualiza la historia clínica. Al registrar un nuevo paciente (`isNew`), calcula el IPA y encola automáticamente un registro en la tabla `citas` para la atención del día.
+5. `searchDni(Request $request)`: Consulta sincrónica con RENIEC vía API REST Decolecta.
+6. `searchLocation(Request $request)`: Búsqueda dinámica de Ubigeo territorial por código, departamento, provincia o distrito.
+7. `searchOccupation(Request $request)`: Búsqueda predictiva de ocupaciones CIUO.
+8. `quickView(int|string $id)`: Retorna un resumen JSON para la ventana modal de consulta rápida, incorporando datos de filiación, signos vitales recientes y últimos exámenes/controles.
+9. `destroy(History $hc)`: Eliminación lógica con verificación de integridad referencial.
 
-### 4.2 Módulo Clínico: Controles Médicos y Recetas
+---
+
+### 4.3 Módulo Clínico: Controles Médicos y Recetas Duales A4/A5 (`AppointmentsController`)
 - **Controlador:** [`app/Http/Controllers/hcl/AppointmentsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/AppointmentsController.php)
-- **Modelos:** `Appointment`, `DiagnosticAppointment`, `MedicationAppointment`, `Enterprise`
+- **Modelos:** `Appointment` (tabla `controles`), `DiagnosticAppointment`, `MedicationAppointment`, `Enterprise`
 - **Validador:** [`app/Http/Requests/AppointmentValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/AppointmentValidate.php)
+- **Servicio:** [`app/Services/TableViewService.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Services/TableViewService.php)
 
-Gestiona las consultas médicas y revisiones periódicas:
-- **Lógica Transaccional (`store`):** Utiliza transacciones de base de datos (`DB::beginTransaction() / DB::commit()`) para asegurar la atomicidad al guardar la consulta, los diagnósticos CIE-10 asociados y los medicamentos prescritos.
-- **Prescripción Farmacológica:** Vincula medicamentos del catálogo maestro junto con su indicación posológica específica (dosis, vía de administración, frecuencia y duración).
-- **Emisión de Receta Médica (`printPrescription`):** Produce el documento oficial en formato PDF mediante `Barryvdh\DomPDF`, permitiendo elegir entre **A4** (reporte formal extendido) o **A5** (recetario médico de mano), configurando márgenes de impresión exactos y vinculando la información de la empresa y del médico tratante.
+#### Funcionalidades y Acciones
+1. `index()` / `see(History $hc)`: Panel de visualización de consultas y controles asociados a un paciente.
+2. `add(History $hc)` / `edit(Appointment $ap)`: Formularios de consulta clínica médica.
+3. `store(AppointmentValidate $request)`: Transacción que persiste el control clínico, asocia diagnósticos CIE-10 (`control_diagnostico`) y prescribe medicamentos con posología (`control_medicacion`).
+4. `viewDetail(Appointment $ap)`: Retorna la información clínica completa del control en formato JSON.
+5. `listAppointments(History $hc)`: Invoca el procedimiento almacenado `PA_getAppointmentsByMedicalHistory`.
+6. `listOfDiagnosticsByApp(Appointment $ap)`: Invoca el procedimiento `PA_getDiagnosticByAppointment`.
+7. `listOfMedicationByApp(Appointment $ap)`: Invoca el procedimiento `PA_getMedicationByAppointment`.
+8. `printPrescription(Appointment $ap, string $format = 'a5')`: Genera el documento PDF de la receta médica a través de DomPDF. Soporta formato `a4` (expediente clínico completo) o `a5` (recetario de mano), incrustando el membrete institucional de Medytarq SAC y la firma digitalizada del médico especialista con CMP y RNE.
+9. `destroy(Appointment $ap)`: Eliminación lógica del control médico.
+10. `destroyDiagnosticAppointment` / `destroyMedicationAppointment`: Eliminación individual de diagnósticos o prescripciones específicas de la consulta.
 
-### 4.3 Módulo Clínico: Exámenes Auxiliares e Imágenes
+---
+
+### 4.4 Módulo Clínico: Exámenes Auxiliares, Espirometría e Imagenología (`ExamsController`)
 - **Controlador:** [`app/Http/Controllers/hcl/ExamsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/ExamsController.php)
 - **Modelos:** `Exam`, `ExamType`, `DiagnosticExam`, `MedicationExam`, `Imagen`
 - **Validador:** [`app/Http/Requests/ExamValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/ExamValidate.php)
 
-Administra las pruebas de apoyo al diagnóstico neumológico:
-- **Tipos de Exámenes:** Espirometrías simples y pre/post-broncodilatador, Test de la Marcha de 6 Minutos, Tomografías, Radiografías de Tórax P/A y Lateral, Baciloscopías y Pruebas Cutáneas.
-- **Gestión Multimedia (`uploadImage`):** Almacenamiento seguro en disco local (`storage/app/public/exams/`) de placas radiográficas, capturas de curvas flujo-volumen y reportes escaneados, vinculados a la historia del paciente mediante el modelo `Imagen`.
-- **Visor de Imágenes:** Servicio JSON a través de `ImageResource` para inspección rápida de estudios imagenológicos dentro de la interfaz.
-
-### 4.4 Módulo Clínico: Informes Médicos
-- **Controlador:** [`app/Http/Controllers/hcl/ReportsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/ReportsController.php)
-- **Modelos:** `Report`, `DiagnosticReport`, `History`
-- **Validador:** [`app/Http/Requests/ReportValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/ReportValidate.php)
-
-Generación de informes médicos oficiales requeridos para trámites laborales, peritajes, derivaciones hospitalarias o solicitudes de seguros:
-- Incorpora resumen de anamnesis, hallazgos físicos relevantes, correlación diagnóstica con codificación CIE-10, conclusiones y recomendaciones terapéuticas.
-- Emisión de informe en PDF institucional con firma y sello médico.
-
-### 4.5 Módulo Clínico: Informes de Riesgo Quirúrgico
-- **Controlador:** [`app/Http/Controllers/hcl/RisksController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/RisksController.php)
-- **Modelos:** `Risk`, `History`
-- **Validador:** [`app/Http/Requests/RiskValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/RiskValidate.php)
-
-Valoración del riesgo quirúrgico pulmonar y cardiovascular preoperatorio:
-- Evaluación de comorbilidades respiratorias (hiperreactividad bronquial, obstrucción al flujo aéreo, insuficiencia ventilatoria).
-- Clasificación del riesgo quirúrgico y recomendaciones anestésicas perioperatorias.
-- Exportación del informe en PDF listo para adjuntar al expediente quirúrgico del paciente.
-
-### 4.6 Módulo Estadístico y Analítica Epidemiológica
-- **Controlador:** [`app/Http/Controllers/hcl/StatisticsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/StatisticsController.php)
-
-Proporciona inteligencia clínica y analítica en tiempo real a través de endpoints consumidos por **Highcharts**:
-- `getCountRows()`: Métricas clave del día (historias totales, exámenes acumulados, citas totales y pacientes admitidos hoy).
-- `getAnnualData($year)`: Serie temporal mensual (12 meses) que compara la evolución de historias clínicas, exámenes auxiliares y citas de control.
-- `getDiagnosticsByExam()`: Ranking del **Top 15 de diagnósticos más frecuentes** en la práctica médica del centro.
-- `getDrugsByExam()`: Ranking del **Top 15 de fármacos respiratorios más recetados**.
-- `getHistoriesBySex()` / `getHistoriesBySmoking()` / `getHistoriesByBloodingGroup()` / `getHistoriesByDegreeIntruction()` / `getHistoriesByMaritalStatus()`: Distribuciones demográficas de la población atendida.
-
-### 4.7 Módulo de Mantenimiento y Catálogos Maestros
-- **Vademécum Farmacológico:**
-  - `CategoriesController`: Familias farmacológicas (Broncodilatadores de acción corta/larga, Corticoides inhalados/sistémicos, Antileucotrienos, Antibióticos respiratorios, Mucolíticos).
-  - `PresentationsController`: Formas farmacéuticas (Inhalador de dosis medida MDI, Polvo seco DPI, Nebulizador, Tabletas, Jarabes).
-  - `DrugsController`: Catálogo de fármacos con concentración, principio activo y nombre comercial, optimizado mediante la vista SQL `view_active_drugs`.
-- **Catálogo CIE-10 (`DiagnosticsController`):** Maestro de patologías respiratorias y generales codificadas con búsqueda predictiva AJAX (`advancedSearch`).
-- **Ocupaciones (`OccupationsController`):** Catálogo de actividades laborales para identificar riesgos ocupacionales neumológicos (minería, carpintería, panadería, agricultura).
-
-### 4.8 Módulo de Seguridad y Administración de Usuarios
-- **Controladores:** `UsersController`, `PermissionController`, `ModulesController`, `SpecialtiesController`, `ConfigController`
-- **Gestión RBAC:** Asignación de roles predeterminados o permisos específicos directos a usuarios del sistema.
-- **Gestión de Facultativos:** Vinculación del usuario médico con su especialidad (`Specialty`) y carga de avatar digital.
-- **Navegación Dinámica:** Administración del menú lateral del sistema a través de `Module` y `Submodule`, permitiendo activar o desactivar módulos del panel sin alterar el código fuente.
-
-### 4.9 Módulo de Gestión Empresarial y Contenidos
-- **Datos Institucionales (`EnterpriseController`):** Edición de razón social, RUC, dirección, geolocalización Google Maps, teléfonos y carga de cuatro activos visuales diferenciados:
-  1. `foto_representante`: Fotografía del director médico / representante legal.
-  2. `logo`: Logotipo principal del portal y login.
-  3. `logo_mini`: Isotipo para el encabezado del sidebar contraído.
-  4. `logo_receta`: Logotipo optimizado en alta resolución para el membrete de las recetas médicas PDF.
-- **Publicaciones Médicas (`PostsController`):** Gestor de contenidos (CMS) para divulgación científica, prevención respiratoria y noticias del centro médico, con soporte de editor enriquecido Summernote/CKEditor.
-
-### 4.10 Módulo Web Público y Portal de Pacientes
-- **Controlador:** [`app/Http/Controllers/web/HomePageController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/web/HomePageController.php)
-- **Vistas:** [`resources/views/homepage/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/homepage)
-
-Portal público de cara al paciente:
-- Presentación institucional, cartera de servicios médicos de neumología y equipo de profesionales.
-- Blog respiratorio abierto a la comunidad.
-- Formulario de contacto y solicitud de citas online con envío de correo de confirmación (`CitaSolicitada`) y enlace directo al canal de WhatsApp del centro.
+#### Funcionalidades y Acciones
+1. `index()` / `see(History $hc)`: Listado cronológico de exámenes auxiliares realizados al paciente.
+2. `add(History $hc)` / `edit(Exam $ex)`: Registro de funciones vitales completas, examen físico general, paneles laboratoriales, fluidos pleurales (ADA, PAP, cultivos) y parámetros espirométricos (FEV1, FVC, FEV1/FVC basal y post-BD).
+3. `store(ExamValidate $request)`: Guarda el examen, asocia diagnósticos CIE-10, fármacos administrados y procesa la carga múltiple de imágenes médicas (`imagenes`) almacenadas en `storage/app/public/exams/`.
+4. `viewDetail(Exam $ex)`: Retorna el detalle clínico del examen mediante JSON.
+5. `viewExamImage(Imagen $image)` / `listOfImagesByExam(Exam $ex)`: Consulta de trazados espirométricos y radiografías para el visor de imágenes integrado.
+6. `printPrescription(Exam $ex, string $format = 'a5')`: Emisión de receta o constancia de examen auxiliar en PDF (A4 / A5).
+7. `destroy(Exam $ex)` / `destroyExamImage(Imagen $ix)`: Eliminación lógica del examen o desvinculación individual de imágenes diagnósticas.
 
 ---
 
-## 5. Servicios Especializados e Integraciones Externas
+### 4.5 Módulo Clínico: Informes Médicos Formales (`ReportsController`)
+- **Controlador:** [`app/Http/Controllers/hcl/ReportsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/ReportsController.php)
+- **Modelos:** `Report` (tabla `historia_informe`), `DiagnosticReport`, `History`
+- **Validador:** [`app/Http/Requests/ReportValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/ReportValidate.php)
 
-### 5.1 Integración RENIEC (Consulta DNI en Tiempo Real)
+#### Funcionalidades y Acciones
+1. `index()` / `see(History $hc)`: Historial de informes médicos emitidos al paciente.
+2. `add(History $hc)` / `edit(Report $rp)`: Formulario estructurado para emisión de dictámenes: antecedentes, historia de la enfermedad actual, examen físico, exámenes complementarios, correlación diagnóstica CIE-10, tratamiento y sugerencias.
+3. `store(ReportValidate $request)`: Persistencia transaccional del informe y sus diagnósticos vinculados.
+4. `listReports(History $hc)`: Invoca el procedimiento almacenado `PA_getReportsByMedicalHistory`.
+5. `printReport(Request $request, Report $rp)`: Renderizado y descarga de informe clínico oficial en PDF con formato membretado, sellos institucionales y firma médica digitalizada.
+6. `destroy(Report $rp)` / `destroyDiagnosticReport`: Anulación del informe o retiro de diagnósticos específicos.
+
+---
+
+### 4.6 Módulo Clínico: Informes de Riesgo Quirúrgico Neumológico (`RisksController`)
+- **Controlador:** [`app/Http/Controllers/hcl/RisksController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/RisksController.php)
+- **Modelos:** `Risk` (tabla `historia_riesgo`), `History`
+- **Validador:** [`app/Http/Requests/RiskValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/RiskValidate.php)
+
+#### Funcionalidades y Acciones
+1. `index()` / `see(History $hc)`: Listado de evaluaciones preoperatorias registradas.
+2. `add(History $hc)` / `edit(Risk $rk)`: Formulario de valoración prequirúrgica: motivo de intervención, antecedentes cardiorrespiratorios, examen físico segmentario, pruebas de espirometría/gases arteriales, estratificación de riesgo neumológico (Bajo, Moderado, Alto) y recomendaciones anestésicas perioperatorias.
+3. `store(RiskValidate $request)`: Guarda o actualiza la evaluación de riesgo.
+4. `listRisks(History $hc)`: Invoca el procedimiento `PA_getRisksByMedicalHistory`.
+5. `printRiskReport(Request $request, Risk $rk)`: Emisión del informe de riesgo preoperatorio en PDF para adjuntar a la historia quirúrgica del paciente.
+6. `destroy(Risk $rk)`: Eliminación lógica del registro.
+
+---
+
+### 4.7 Módulo Estadístico y Analítica Epidemiológica (`StatisticsController`)
+- **Controlador:** [`app/Http/Controllers/hcl/StatisticsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/StatisticsController.php)
+- **Vistas:** [`resources/views/hcl/statistics/index.blade.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/statistics/index.blade.php) y motor JS [`public/js/forms/dashboard.js`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/public/js/forms/dashboard.js)
+
+#### Endpoints y Métricas Epidemiológicas
+1. `index()`: Vista principal del dashboard analítico.
+2. `getCountRows()`: Métricas acumuladas: total de historias clínicas, exámenes auxiliares, citas de control y nuevos pacientes admitidos.
+3. `HCByMonth()` / `getAnnualData($year)`: Serie temporal de 12 meses comparando el volumen mensual de historias clínicas y atenciones.
+4. `getDiagnosticsByExam()`: Ranking interactivo del **Top 15 de diagnósticos más frecuentes** en la práctica neumológica del centro.
+5. `getDrugsByExam()`: Ranking interactivo del **Top 15 de fármacos respiratorios más recetados**.
+6. `getHistoriesBySex()`: Distribución demográfica por sexo biológico (Masculino / Femenino).
+7. `getHistoriesBySmoking()`: Distribución poblacional por consumo de tabaco consumiendo la vista `vista_tabaquismo`.
+8. `getHistoriesByBloodingGroup()`: Distribución por grupo sanguíneo y factor Rh mediante `vista_grupo_sanguineo`.
+9. `getHistoriesByMaritalStatus()`: Distribución por estado civil mediante `vista_estado_civil`.
+10. `getHistoriesByDegreeIntruction()`: Distribución por nivel de instrucción educativa.
+
+---
+
+### 4.8 Módulo de Mantenimiento y Catálogos Maestros
+
+| Controlador | Modelo Principal | Endpoint Base | Responsabilidad Funcional |
+| :--- | :--- | :--- | :--- |
+| [`CategoriesController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/maintenance/CategoriesController.php) | `Category` (`droga_categoria`) | `/admin/categories` | Gestión CRUD de familias farmacológicas (Broncodilatadores, Corticoides, etc.). |
+| [`PresentationsController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/maintenance/PresentationsController.php) | `Presentation` (`droga_presentacion`) | `/admin/presentations` | Gestión CRUD de formas farmacéuticas (Inhalador MDI, Polvo seco DPI, Tabletas, Jarabes). |
+| [`DrugsController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/maintenance/DrugsController.php) | `Drug` (`drogas`) | `/admin/drugs` | Vademécum activo de fármacos y concentraciones, consumiendo la vista SQL `view_active_drugs`. |
+| [`DiagnosticsController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/maintenance/DiagnosticsController.php) | `Diagnostic` (`diagnosticos`) | `/admin/diagnostics` | Catálogo de enfermedades CIE-10 con búsqueda predictiva AJAX (`advancedSearch` y `autocomplete`). |
+| [`OccupationsController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/maintenance/OccupationsController.php) | `Occupation` (`ocupaciones`) | `/admin/occupations` | Catálogo de ocupaciones CIUO para vigilancia de riesgos respiratorios en el trabajo. |
+
+---
+
+### 4.9 Módulo de Seguridad y Administración de Usuarios y Roles
+
+#### [`UsersController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/security/UsersController.php)
+- Gestión integral de usuarios con validación `UserValidate`.
+- Visualización consolidada mediante la vista SQL `view_user_roles_last_login`.
+- Asignación y revocación de roles Spatie Permission y permisos directos por usuario (`storePermission`).
+- Reseteo administrativo de contraseñas mediante `storePassword` con `ResetPasswordValidate`.
+- Submódulo **Mi Perfil (`profile.edit` / `profile.update`)**: Actualización de avatar, biografía, número de colegiatura médica (`cmp`), registro de especialista (`rne`) y carga de la firma digitalizada (`firma_digital`) utilizada en recetas e informes.
+
+#### [`RolesController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/security/RolesController.php)
+- Gestión CRUD de roles (`Role::updateOrCreate`).
+- Panel dual modal para inspeccionar permisos disponibles y permisos asignados (`getPermissions`).
+- Sincronización masiva de permisos mediante `syncPermissions(Request $request, int $id)`.
+- Consulta de usuarios asignados al rol seleccionado (`getUsers`).
+
+#### [`PermissionController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/security/PermissionController.php)
+- Mantenimiento del catálogo de permisos granulares Spatie (`permiso_acceder`, `rol_acceder`, `control_crear`, etc.).
+
+#### [`SpecialtiesController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/security/SpecialtiesController.php)
+- Mantenimiento de especialidades médicas vinculadas a los profesionales de la salud.
+
+---
+
+### 4.10 Módulo de Gestión Empresarial y Contenidos CMS
+
+#### [`EnterpriseController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/business/EnterpriseController.php)
+- Administra los datos fiscales e institucionales de la empresa **Medytarq SAC**: Razón Social, RUC (20605677593), Dirección física, teléfonos, correos, coordenadas e iframe de Google Maps.
+- Gestión modular de cuatro recursos gráficos independientes:
+  1. `foto-representante`: Fotografía del director médico / representante legal.
+  2. `logo`: Logotipo institucional principal (login y cabeceras web).
+  3. `mini-logo`: Isotipo optimizado para la barra lateral contraída de AdminLTE.
+  4. `logo-receta`: Logotipo en alta resolución optimizado para el membrete de recetas médicas y reportes PDF.
+
+#### [`PostsController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/business/PostsController.php)
+- Administrador de contenidos (CMS) para artículos educativos de salud respiratoria.
+- Soporte para etiquetas temáticas, imágenes de cabecera, tipos de publicación y autor médico.
+- Integración con el servicio `SummaryService` para generación asistida de resúmenes mediante IA.
+
+---
+
+### 4.11 Módulo Web Público y Portal de Reservas Omnicanal
+- **Controlador:** [`app/Http/Controllers/web/HomePageController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/web/HomePageController.php)
+- **Vistas:** [`resources/views/homepage/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/homepage)
+
+#### Funcionalidades Públicas
+- `index()`: Página de inicio con presentación del centro médico, cartera de servicios respiratorios, equipo médico y últimos artículos del blog.
+- `posts($tags = null)` / `show($url)`: Catálogo de artículos médicos con filtrado por etiquetas temáticas y lectura completa.
+- `aboutus()`: Reseña institucional sobre la misión, visión y trayectoria de Neumotar / Medytarq SAC.
+- `contact()` / `sendContact()`: Formulario de contacto y consultas.
+- `storeMail(ReservationValidate $request)`: Motor de reservas de citas online. Persiste la solicitud en la tabla `reservations` y despacha el correo transaccional `CitaSolicitada` al área de admisión, permitiendo al mismo tiempo iniciar el contacto por WhatsApp Cloud API.
+
+---
+
+## 5. Servicios Especializados, Helpers y Validadores
+
+### 5.1 Integración RENIEC (Consulta DNI en Vivo)
 Implementada en `HistoriesController@searchDni`:
-- Conecta vía cliente HTTP de Laravel contra el servicio REST de **Decolecta** (`https://api.decolecta.com/v1/reniec/dni?numero={dni}`).
+- Conecta vía cliente HTTP de Laravel con el servicio REST de **Decolecta** (`https://api.decolecta.com/v1/reniec/dni?numero={dni}`).
 - Permite obtener de forma sincrónica el nombre y apellidos completos oficiales registrados en el Registro Nacional de Identificación y Estado Civil del Perú, eliminando errores de transcripción en historias clínicas.
 
 ### 5.2 Motor de Notificaciones WhatsApp Cloud API
@@ -347,68 +480,105 @@ Implementado en `HomePageController` haciendo uso del paquete `netflie/whatsapp-
 - Envía un mensaje estructurado al número de teléfono del paciente con el código de país `51` confirmando la reserva médica solicitada.
 
 ### 5.3 Servicio de Resumen Automatizado con IA (DeepSeek / Kimi AI)
-Implementado en [`app/Services/SummaryService.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Services/SummaryService.php):
+Implementado en [`app/Services/SummaryService.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Services/SummaryService.php) y apoyado por el helper `generateMocSummary` en [`app/Helpers/SummaryHelper.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Helpers/SummaryHelper.php):
 - **Estrategia de Fallback Dual:**
   1. Realiza una petición POST con timeout de 15 segundos hacia el endpoint de **DeepSeek API** (`DEEPSEEK_API_KEY`).
   2. Si la consulta falla o supera el tiempo límite, conmuta de forma automática hacia la API de **Kimi AI** (`https://api.kimi.ai/v1/summarize` con `KIMI_API_KEY`).
   3. Si ambos servicios son inaccesibles, retorna `null` controladamente sin provocar caídas en el sistema.
 - **Propósito:** Generación de resúmenes concisos de artículos médicos, síntesis de antecedentes complejos o notas clínicas extensas.
 
-### 5.4 Motor de Generación e Impresión de Recetas PDF (A4 y A5)
+### 5.4 Motor de Renderizado de Recetas PDF (Formatos A4 y A5)
 Implementado en `AppointmentsController@printPrescription`:
 - Utiliza la fachada `Barryvdh\DomPDF\Facade\Pdf`.
 - Ofrece dos plantillas de renderizado:
   - `hcl.appointments.pdf-a4`: Formato A4 tradicional con márgenes amplios (10mm superior/inferior, 15mm laterales) para historias clínicas completas.
   - `hcl.appointments.pdf-a5`: Formato de recetario de bolsillo A5 con márgenes optimizados de 0.5mm, ideal para entrega inmediata de indicaciones farmacológicas en mostrador.
+- Incorpora automáticamente los logotipos de alta resolución de Medytarq SAC y la firma digitalizada del médico especialista con CMP y RNE.
 - Configuración de aislamiento y seguridad:
   - `isHtml5ParserEnabled`: `true`
   - `isRemoteEnabled`: `false` (Previene ataques de Server-Side Request Forgery - SSRF vía inclusión de recursos remotos en plantillas).
   - `chroot`: Restringido al directorio raíz del proyecto mediante `realpath(base_path())`.
 
+### 5.5 Catálogo Exhaustivo de Form Requests (23 Validadores)
+
+| Form Request | Ubicación | Reglas y Campos Clave Validados |
+| :--- | :--- | :--- |
+| `AppointmentValidate` | `app/Http/Requests/AppointmentValidate.php` | Valida campos clínicos del control: síntomas, diagnósticos CIE-10 y medicamentos prescritos. |
+| `CategoryValidate` | `app/Http/Requests/CategoryValidate.php` | Valida descripción única de categoría farmacológica. |
+| `DiagnosticValidate` | `app/Http/Requests/DiagnosticValidate.php` | Valida descripción y formato del diagnóstico CIE-10. |
+| `DrugValidate` | `app/Http/Requests/DrugValidate.php` | Valida descripción del fármaco, categoría y presentación asociada. |
+| `EnterpriseValidate` | `app/Http/Requests/EnterpriseValidate.php` | Valida razón social, RUC (11 dígitos), correo, teléfono y archivos gráficos. |
+| `ExamValidate` | `app/Http/Requests/ExamValidate.php` | Valida tipo de examen, signos vitales, parámetros espirométricos y archivos de imagen. |
+| `HistoryValidate` | `app/Http/Requests/HistoryValidate.php` | Valida DNI (8 dígitos), nombres, fecha de nacimiento, sexo, ubigeo y antecedentes. |
+| `LoginValidate` | `app/Http/Requests/LoginValidate.php` | Valida formato de correo y presencia de contraseña. |
+| `ModuleValidate` | `app/Http/Requests/ModuleValidate.php` | Valida nombre e icono del módulo. |
+| `OccupationValidate` | `app/Http/Requests/OccupationValidate.php` | Valida código y descripción de ocupación CIUO. |
+| `PermissionValidate` | `app/Http/Requests/PermissionValidate.php` | Valida nombre único de permiso Spatie y guard_name. |
+| `PostValidate` | `app/Http/Requests/PostValidate.php` | Valida título, contenido, tipo de post, imagen destacada y etiquetas. |
+| `PresentationValidate` | `app/Http/Requests/PresentationValidate.php` | Valida denominación de presentación farmacéutica. |
+| `ProfileUpdateValidate` | `app/Http/Requests/ProfileUpdateValidate.php` | Valida nombre, biografía, CMP, RNE, archivo de avatar y archivo de firma digital. |
+| `QuickPatientValidate` | `app/Http/Requests/QuickPatientValidate.php` | Valida DNI, nombres, fecha de nacimiento, sexo, teléfono, fecha y hora de cita para registro express. |
+| `ReportValidate` | `app/Http/Requests/ReportValidate.php` | Valida anamnesis, examen físico, conclusiones y diagnósticos de informes clínicos. |
+| `RescheduleValidate` | `app/Http/Requests/RescheduleValidate.php` | Valida fecha de destino futura o actual y formato de hora para reagendamiento de citas. |
+| `ReservationValidate` | `app/Http/Requests/ReservationValidate.php` | Valida nombre, teléfono, correo y fecha de reserva desde la web pública. |
+| `ResetPasswordValidate`| `app/Http/Requests/ResetPasswordValidate.php` | Valida longitud mínima (6 caracteres) y confirmación de nueva contraseña. |
+| `RiskValidate` | `app/Http/Requests/RiskValidate.php` | Valida motivo quirúrgico, examen físico, riesgo neumológico y sugerencias perioperatorias. |
+| `SpecialtyValidate` | `app/Http/Requests/SpecialtyValidate.php` | Valida denominación de la especialidad médica. |
+| `SubmoduleValidate` | `app/Http/Requests/SubmoduleValidate.php` | Valida nombre, ruta y módulo padre de submódulos. |
+| `UserValidate` | `app/Http/Requests/UserValidate.php` | Valida nombre de usuario, correo único, contraseña, rol y especialidad. |
+
+### 5.6 Catálogo de Recursos API (Eloquent Resources)
+- `CategoryResource`: Transformación estructurada de categorías farmacológicas.
+- `DiagnosticResource`: Formateo de diagnósticos CIE-10 para respuestas AJAX.
+- `DrugResource`: Presentación de vademécum activo.
+- `ImageResource`: Metadatos y URL de imágenes médicas para el visor modal.
+- `OccupationResource`: Formateo de oficios CIUO.
+- `PresentationResource`: Presentación de formatos de medicamentos.
+
 ---
 
-## 6. Diccionario de Datos y Modelos Eloquent
+## 6. Diccionario de Datos y Modelos Eloquent (36 Entidades)
 
-El sistema cuenta con **38 modelos Eloquent** en el directorio [`app/Models/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Models):
+El sistema opera con **36 modelos Eloquent activos** en [`app/Models/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Models):
 
-| Modelo | Tabla | Clave Primaria | Rasgos (Traits) | Relaciones Principales | Descripción Funcional |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `Appointment` | `controles` | `id` | SoftDeletes | `belongsTo(History)`, `hasMany(DiagnosticAppointment)`, `hasMany(MedicationAppointment)` | Citas y revisiones médicas realizadas al paciente. |
-| `AppointmentStatus` | `estado_cita` | `id` | — | `hasMany(Appointment)` | Estados de una cita médica (`Pendiente`, `Atendido`, `Cancelado`). |
-| `AuditLog` | `audit_logs` | `id` | — | `belongsTo(User)` | Bitácora de accesos, operaciones de creación, edición y borrado de datos. |
-| `BloodGroups` | `grupo_sanguineo` | `id` | — | `hasMany(History)` | Grupos sanguíneos y factores Rh (A+, O+, B-, etc.). |
-| `Category` | `droga_categoria` | `id` | SoftDeletes | `hasMany(Drug)` | Familias y categorías farmacológicas de medicamentos. |
-| `DegreesInstruction` | `grado_instruccion` | `id` | — | `hasMany(History)` | Nivel educativo alcanzado por el paciente. |
-| `Diagnostic` | `diagnosticos` | `id` | SoftDeletes | `hasMany(DiagnosticAppointment)`, `hasMany(DiagnosticExam)` | Catálogo de enfermedades según la codificación internacional CIE-10. |
-| `DiagnosticAppointment`| `control_diagnostico`| `id` | SoftDeletes | `belongsTo(Appointment)`, `belongsTo(Diagnostic)` | Asociación diagnóstica asignada en una consulta médica. |
-| `DiagnosticExam` | `examen_diagnostico`| `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(Diagnostic)` | Diagnóstico específico derivado de un examen auxiliar. |
-| `DiagnosticReport` | `informe_diagnostico`| `id`| SoftDeletes | `belongsTo(Report)`, `belongsTo(Diagnostic)` | Diagnósticos vinculados a un informe médico formal. |
-| `DocumentType` | `tipo_documento` | `id` | — | `hasMany(History)` | Documentos de identidad oficiales (DNI, Carné de Extranjería, Pasaporte). |
-| `Drug` | `drogas` | `id` | SoftDeletes | `belongsTo(Category)`, `belongsTo(Presentation)` | Vademécum de fármacos disponibles para prescripción. |
-| `Enterprise` | `empresa` | `id` | — | — | Datos institucionales y fiscales del centro médico (Medytarq SAC). |
-| `Exam` | `examenes` | `id` | SoftDeletes | `belongsTo(History)`, `belongsTo(ExamType)`, `hasMany(Imagen)` | Órdenes y resultados de pruebas diagnósticas y espirometrías. |
-| `ExamType` | `tipo_examen` | `id` | — | `hasMany(Exam)` | Clasificación de exámenes (Espirometría, TAC, Radiografía, etc.). |
-| `History` | `historias` | `id` | HasFactory, SoftDeletes, AuditLogTrait | `hasMany(Appointment)`, `hasMany(Exam)`, `hasMany(Report)`, `hasMany(Risk)`, `belongsTo(DocumentType)`, `belongsTo(Sex)` | Entidad central del paciente y expediente clínico neumológico. |
-| `Imagen` | `imagenes` | `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(History)` | Archivos de imagen (radiografías, curvas espirométricas) vinculados a exámenes. |
-| `MaritalStatus` | `estado_civil` | `id` | — | `hasMany(History)` | Estado civil del paciente (Soltero, Casado, Conviviente, Viudo). |
-| `MedicationAppointment`| `control_medicacion`| `id` | SoftDeletes | `belongsTo(Appointment)`, `belongsTo(Drug)` | Medicamentos recetados en una consulta médica con su posología. |
-| `MedicationExam` | `examen_medicacion` | `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(Drug)` | Fármacos recetados o utilizados durante un procedimiento auxiliar. |
-| `Module` | `module` | `id` | SoftDeletes | `hasMany(Submodule)` | Módulos principales del menú de navegación del sistema. |
-| `Occupation` | `ocupaciones` | `id` | SoftDeletes | `hasMany(History)` | Oficios y profesiones según la clasificación CIUO. |
-| `Post` | `post` | `id` | SoftDeletes | `belongsTo(User)`, `belongsTo(PostType)` | Artículos médicos y de salud pública publicados en el blog del portal. |
-| `PostType` | `post_type` | `id` | — | `hasMany(Post)` | Categorías o tipos de publicaciones informativas. |
-| `Presentation` | `droga_presentacion`| `id` | SoftDeletes | `hasMany(Drug)` | Presentaciones comerciales de medicamentos (Inhalador, Jarabe, Tabletas). |
-| `Profile` | `perfiles` | `id` | — | `belongsTo(User)` | Perfiles complementarios de usuario en el sistema. |
-| `Report` | `historia_informe` | `id` | SoftDeletes | `belongsTo(History)`, `hasMany(DiagnosticReport)` | Informes médicos oficiales de neumología. |
-| `Reservation` | `reservations` | `id` | — | — | Solicitudes de citas registradas por los pacientes en la página web. |
-| `Risk` | `historia_riesgo` | `id` | SoftDeletes | `belongsTo(History)` | Evaluaciones de riesgo quirúrgico pulmonar y cardiovascular. |
-| `Sex` | `sexo` | `id` | — | `hasMany(History)` | Sexo biológico del paciente (`Masculino`, `Femenino`). |
-| `Smoking` | `tabaquismo` | `id` | — | `hasMany(History)` | Categorías de consumo de tabaco (`No fumador`, `Exfumador`, `Fumador activo`). |
-| `Specialty` | `especialidades` | `id` | SoftDeletes | `hasMany(User)` | Especialidades médicas de los profesionales (`Neumología`, etc.). |
-| `Submodule` | `sub_module` | `id` | SoftDeletes | `belongsTo(Module)` | Submódulos vinculados a la estructura dinámica del menú. |
-| `UbigeoDistrict` | `ubigeo_distrito` | `id` | — | `belongsTo(UbigeoProvince)`, `hasMany(History)` | Distritos de la división político-administrativa del Perú (6 dígitos). |
-| `User` | `users` | `id` | HasApiTokens, HasRoles, SoftDeletes, AuditLogTrait | `hasOne(Specialty)`, `hasOne(UserLastLogin)` | Cuentas de acceso de personal administrativo y facultativos médicos. |
-| `UserLastLogin` | `user_last_login` | `id` | — | `belongsTo(User)` | Registro de auditoría con la última fecha de login e IP por usuario. |
+| # | Modelo | Tabla | Clave Primaria | Rasgos (Traits) | Relaciones Principales | Descripción Funcional |
+| :-: | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | `Appointment` | `controles` | `id` | SoftDeletes, AuditLogTrait | `belongsTo(History)`, `hasMany(DiagnosticAppointment)`, `hasMany(MedicationAppointment)` | Consultas y controles médicos clínicos, anamnesis y prescripción. |
+| 2 | `AppointmentStatus` | `estado_cita` | `id` | — | `hasMany(Cita)` | Catálogo de estados de citas (`Pendiente`, `Atendido`, `Cancelado`, `En Espera`, `Reagendado`). |
+| 3 | `AuditLog` | `audit_logs` | `id` | — | `belongsTo(User)` | Bitácora de accesos y modificaciones con JSON diff (`old_data`, `new_data`). |
+| 4 | `BloodGroups` | `grupo_sanguineo` | `id` | — | `hasMany(History)` | Grupos sanguíneos y factores Rh (A+, O+, B-, etc.). |
+| 5 | `Category` | `droga_categoria` | `id` | SoftDeletes | `hasMany(Drug)` | Familias y categorías farmacológicas de medicamentos. |
+| 6 | `Cita` | `citas` | `id` | SoftDeletes, AuditLogTrait | `belongsTo(History)`, `belongsTo(AppointmentStatus)`, `belongsTo(TipoAtencion)` | Turnos del día, cola de atención FIFO, fecha, hora, estado y tipo de atención. |
+| 7 | `DegreesInstruction` | `grado_instruccion` | `id` | — | `hasMany(History)` | Nivel educativo alcanzado por el paciente. |
+| 8 | `Diagnostic` | `diagnosticos` | `id` | SoftDeletes | `hasMany(DiagnosticAppointment)`, `hasMany(DiagnosticExam)` | Catálogo de patologías según la codificación internacional CIE-10. |
+| 9 | `DiagnosticAppointment`| `control_diagnostico`| `id` | SoftDeletes | `belongsTo(Appointment)`, `belongsTo(Diagnostic)` | Diagnósticos CIE-10 asignados en una consulta médica de control. |
+| 10 | `DiagnosticExam` | `examen_diagnostico`| `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(Diagnostic)` | Diagnóstico específico identificado durante un examen auxiliar. |
+| 11 | `DiagnosticReport` | `informe_diagnostico`| `id`| SoftDeletes | `belongsTo(Report)`, `belongsTo(Diagnostic)` | Diagnósticos vinculados a un informe médico formal. |
+| 12 | `DocumentType` | `tipo_documento` | `id` | — | `hasMany(History)` | Documentos de identidad oficiales (DNI, Carné de Extranjería, Pasaporte). |
+| 13 | `Drug` | `drogas` | `id` | SoftDeletes | `belongsTo(Category)`, `belongsTo(Presentation)` | Vademécum de fármacos disponibles para prescripción médica. |
+| 14 | `Enterprise` | `empresa` | `id` | — | — | Datos fiscales e institucionales de Medytarq SAC y 4 activos multimedia. |
+| 15 | `Exam` | `examenes` | `id` | SoftDeletes, AuditLogTrait | `belongsTo(History)`, `belongsTo(ExamType)`, `hasMany(Imagen)` | Pruebas diagnósticas, espirometrías, signos vitales y fluidos pleurales. |
+| 16 | `ExamType` | `tipo_examen` | `id` | — | `hasMany(Exam)` | Clasificación de exámenes auxiliares (Espirometría, TAC, Radiografía, etc.). |
+| 17 | `History` | `historias` | `id` | HasFactory, SoftDeletes, AuditLogTrait | `hasMany(Appointment)`, `hasMany(Cita)`, `hasMany(Exam)`, `hasMany(Report)`, `hasMany(Risk)`, `belongsTo(TipoAtencion)` | Expediente clínico neumológico central, factores de riesgo, IPA y filiación. |
+| 18 | `Imagen` | `imagenes` | `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(History)` | Archivos gráficos de exámenes (radiografías, curvas espirométricas, TAC). |
+| 19 | `MaritalStatus` | `estado_civil` | `id` | — | `hasMany(History)` | Estado civil del paciente. |
+| 20 | `MedicationAppointment`| `control_medicacion`| `id` | SoftDeletes | `belongsTo(Appointment)`, `belongsTo(Drug)` | Medicamentos y posología prescritos en una consulta médica de control. |
+| 21 | `MedicationExam` | `examen_medicacion` | `id` | SoftDeletes | `belongsTo(Exam)`, `belongsTo(Drug)` | Fármacos administrados durante o después de un examen auxiliar. |
+| 22 | `Occupation` | `ocupaciones` | `id` | SoftDeletes | `hasMany(History)` | Oficios y profesiones según la clasificación CIUO. |
+| 23 | `Post` | `post` | `id` | SoftDeletes | `belongsTo(User)`, `belongsTo(PostType)` | Artículos médicos y de salud pública publicados en el blog. |
+| 24 | `PostType` | `post_type` | `id` | — | `hasMany(Post)` | Categorías temáticas de publicaciones informativas. |
+| 25 | `Presentation` | `droga_presentacion`| `id` | SoftDeletes | `hasMany(Drug)` | Formas farmacéuticas (Inhalador MDI, Polvo seco DPI, Tabletas, Jarabes). |
+| 26 | `Profile` | `perfiles` | `id` | — | `belongsTo(User)` | Perfiles complementarios de usuario en el sistema. |
+| 27 | `Report` | `historia_informe` | `id` | SoftDeletes, AuditLogTrait | `belongsTo(History)`, `hasMany(DiagnosticReport)` | Informes médicos oficiales de neumología. |
+| 28 | `Reservation` | `reservations` | `id` | — | — | Solicitudes de reserva de citas registradas desde el portal público. |
+| 29 | `Risk` | `historia_riesgo` | `id` | SoftDeletes, AuditLogTrait | `belongsTo(History)` | Evaluaciones de riesgo quirúrgico pulmonar y cardiovascular. |
+| 30 | `Sex` | `sexo` | `id` | — | `hasMany(History)` | Sexo biológico del paciente (`Masculino`, `Femenino`). |
+| 31 | `Smoking` | `tabaquismo` | `id` | — | `hasMany(History)` | Categorías de consumo de tabaco (`No fumador`, `Exfumador`, `Fumador`). |
+| 32 | `Specialty` | `especialidades` | `id` | SoftDeletes | `hasMany(User)` | Especialidades médicas de los profesionales (`Neumología`, etc.). |
+| 33 | `TipoAtencion` | `tipos_atencion` | `id` | — | `hasMany(Cita)`, `hasMany(History)` | Catálogo de tipos de atención (`1: Nuevo`, `2: Control`, `3: Continuador`). |
+| 34 | `UbigeoDistrict` | `ubigeo_distrito` | `id` | — | `hasMany(History)` | Distritos de la división político-administrativa del Perú (6 dígitos). |
+| 35 | `User` | `users` | `id` | HasApiTokens, HasRoles, SoftDeletes, AuditLogTrait | `hasOne(Specialty)`, `hasOne(UserLastLogin)` | Cuentas de acceso, credenciales CMP/RNE y firma digitalizada. |
+| 36 | `UserLastLogin` | `user_last_login` | `id` | — | `belongsTo(User)` | Registro de auditoría con la última fecha de login e IP por usuario. |
 
 ---
 
@@ -416,7 +586,7 @@ El sistema cuenta con **38 modelos Eloquent** en el directorio [`app/Models/`](f
 
 Para optimizar el rendimiento y evitar sobrecarga de consultas en tablas de gran volumen, la base de datos incorpora **18 Procedimientos Almacenados** y **7 Vistas SQL** nativas.
 
-### 7.1 Procedimientos Almacenados (Stored Procedures)
+### 7.1 Procedimientos Almacenados (18 PA_*)
 
 | Procedimiento Almacenado | Parámetros de Entrada | Conjunto de Datos Retornado | Uso en el Sistema |
 | :--- | :--- | :--- | :--- |
@@ -439,9 +609,8 @@ Para optimizar el rendimiento y evitar sobrecarga de consultas en tablas de gran
 | `PA_getRisksByDni` | `IN p_dni VARCHAR(20)` | Evaluaciones de riesgo quirúrgico vinculadas a un DNI. | Auditoría médica preoperatoria. |
 | `PA_getRisksByMedicalHistory` | `IN p_id_historia INT` | Evaluaciones de riesgo vinculadas a la historia clínica. | `RisksController@listRisks` |
 
-### 7.2 Vistas de Base de Datos
+### 7.2 Vistas de Base de Datos Optimizadas (7 Vistas)
 Definidas en la migración `2026_09_03_090013_create_report_views.php`:
-
 1. `view_active_drugs`: Realiza un `JOIN` entre `drogas`, `droga_categoria` y `droga_presentacion` filtrando registros activos (`deleted_at IS NULL`). Alimenta los listados de vademécum en `DrugsController`.
 2. `view_active_histories`: Proyecta los pacientes activos con su fecha de admisión, DNI, nombres en mayúsculas, cálculo matemático exacto de edad actual en base a la fecha de nacimiento y descripción de sexo. Alimenta el grid de `HistoriesController`.
 3. `view_active_users`: Consolida los usuarios activos con su último inicio de sesión obtenido mediante subconsulta sobre `user_last_login`.
@@ -452,9 +621,9 @@ Definidas en la migración `2026_09_03_090013_create_report_views.php`:
 
 ---
 
-## 8. Matriz Integral de Rutas del Sistema
+## 8. Matriz Integral de Rutas del Sistema (85+ Rutas)
 
-A continuación se documentan las más de 70 rutas registradas en [`routes/web.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/routes/web.php):
+A continuación se documentan las rutas activas registradas en [`routes/web.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/routes/web.php):
 
 | Método HTTP | Patrón de URI | Nombre de Ruta | Controlador y Acción | Middleware Requerido | Permiso / Rol Exigido |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -474,25 +643,38 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/histories/quotes/{hc}` | — | `HistoriesController@addQuotes` | `auth`, `prevent.back` | Autenticado |
 | `GET` | `/admin/qoutes` | — | `HistoriesController@getQuotes` | `auth`, `prevent.back` | Autenticado |
 | `GET` | `/admin/checkStatusPatient/{id}` | — | `HistoriesController@checkStatusPatient` | `auth`, `prevent.back` | Autenticado |
-| `GET` | `/admin/modules` | `security.modules` | `ModulesController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `GET` | `/admin/modules/list` | — | `ModulesController@list` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `POST` | `/admin/modules/storeModule` | — | `ModulesController@storeModule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `POST` | `/admin/modules/storeSubmodule` | — | `ModulesController@storeSubmodule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `GET` | `/admin/modules/module/{id}` | — | `ModulesController@showModule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `GET` | `/admin/modules/submodule/{id}` | — | `ModulesController@showSubmodule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `DELETE` | `/admin/modules/delete/{id}` | — | `ModulesController@destroyModule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
-| `DELETE` | `/admin/submodules/delete/{id}` | — | `ModulesController@destroySubmodule` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:modulos` |
+| `GET` | `/admin/histories/quick-view/{id}`| `hcl.histories.quickView`| `HistoriesController@quickView` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/profile` | `profile.edit` | `UsersController@profile` | `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/profile` | `profile.update` | `UsersController@updateProfile` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/citas` | `citas.index` | `CitasController@index` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/citas/list` | `citas.list` | `CitasController@list` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/citas/stats` | `citas.stats` | `CitasController@stats` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/citas/search-patients` | `citas.searchPatients`| `CitasController@searchPatients`| `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/citas/store` | `citas.store` | `CitasController@store` | `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/citas/quick-patient` | `citas.quickPatient`| `CitasController@quickPatient` | `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/citas/{id}/reschedule` | `citas.reschedule`| `CitasController@reschedule` | `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/citas/{id}/status` | `citas.updateStatus`| `CitasController@updateStatus` | `auth`, `prevent.back` | Autenticado |
+| `POST` | `/admin/citas/{id}/tipo-atencion`| `citas.updateTipoAtencion`| `CitasController@updateTipoAtencion`| `auth`, `prevent.back` | Autenticado |
+| `DELETE`| `/admin/citas/{id}` | `citas.destroy` | `CitasController@destroy` | `auth`, `prevent.back` | Autenticado |
+| `GET` | `/admin/roles` | `security.roles` | `RolesController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `GET` | `/admin/roles/list` | — | `RolesController@list` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `GET` | `/admin/roles/{id}/permissions` | — | `RolesController@getPermissions` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `GET` | `/admin/roles/{id}/users` | — | `RolesController@getUsers` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `GET` | `/admin/roles/{id}` | — | `RolesController@show` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `POST` | `/admin/roles/store` | — | `RolesController@store` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `POST` | `/admin/roles/{id}/syncPermissions`| `security.roles.syncPermissions`| `RolesController@syncPermissions`| `auth`, `prevent.back`| `role:administrador`, `perm:seguridad`, `perm:roles` |
+| `DELETE`| `/admin/roles/delete/{id}` | — | `RolesController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:roles` |
 | `GET` | `/admin/permissions` | `security.permissions` | `PermissionController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `GET` | `/admin/permissions/list` | — | `PermissionController@list` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `GET` | `/admin/permissions/{id}` | — | `PermissionController@show` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `POST` | `/admin/permissions/store` | — | `PermissionController@store` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `POST` | `/admin/permissions/search` | — | `PermissionController@search` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
-| `DELETE` | `/admin/permissions/delete/{id}` | — | `PermissionController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
+| `DELETE`| `/admin/permissions/delete/{id}` | — | `PermissionController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `GET` | `/admin/specialties` | `security.specialties` | `SpecialtiesController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `GET` | `/admin/specialties/list` | — | `SpecialtiesController@list` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `GET` | `/admin/specialties/{id}` | — | `SpecialtiesController@show` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `POST` | `/admin/specialties/store` | — | `SpecialtiesController@store` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
-| `DELETE` | `/admin/specialties/delete/{id}` | — | `SpecialtiesController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
+| `DELETE`| `/admin/specialties/delete/{id}` | — | `SpecialtiesController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `GET` | `/admin/users/home` | `security.users.home` | `UsersController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
 | `GET` | `/admin/users/add` | `security.users.add` | `UsersController@add` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
 | `GET` | `/admin/users/edit/{id}` | `security.users.edit` | `UsersController@edit` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
@@ -501,8 +683,8 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/users/{id}` | — | `UsersController@show` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
 | `POST` | `/admin/users/store` | — | `UsersController@store` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
 | `POST` | `/admin/users/storePassword/{user}` | — | `UsersController@storePassword` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
-| `POST` | `/admin/users/storePermission/{user}` | `securty.users.storePermission`| `UsersController@storePermission` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
-| `DELETE` | `/admin/users/delete/{id}` | — | `UsersController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
+| `POST` | `/admin/users/storePermission/{user}` | `securty.users.storePermission`| `UsersController@storePermission`| `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
+| `DELETE`| `/admin/users/delete/{id}` | — | `UsersController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:usuarios` |
 | `GET` | `/admin/histories/home` | `hcl.histories.home` | `HistoriesController@index` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_acceder` |
 | `GET` | `/admin/histories/add` | `hcl.histories.add` | `HistoriesController@add` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_crear` |
 | `GET` | `/admin/histories/edit/{history}`| `hcl.histories.edit` | `HistoriesController@edit` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_actualizar` |
@@ -511,7 +693,7 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `POST` | `/admin/histories/dni` | — | `HistoriesController@searchDni` | `auth`, `prevent.back` | `permission:historias` |
 | `POST` | `/admin/histories/store` | — | `HistoriesController@store` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_crear` |
 | `POST` | `/admin/histories/list` | — | `HistoriesController@list` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_ver` |
-| `DELETE` | `/admin/histories/{hc}` | — | `HistoriesController@destroy` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_borrar` |
+| `DELETE`| `/admin/histories/{hc}` | — | `HistoriesController@destroy` | `auth`, `prevent.back` | `permission:historias`, `permission:historia_borrar` |
 | `GET` | `/admin/exams/home` | `hcl.exams.home` | `ExamsController@index` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_acceder` |
 | `GET` | `/admin/exams/add/{hc}` | `hcl.exams.add` | `ExamsController@add` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_crear` |
 | `GET` | `/admin/exams/edit/{ex}` | `hcl.exams.edit` | `ExamsController@edit` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_crear` |
@@ -524,10 +706,10 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/exams/listMedication/{ex}`| — | `ExamsController@listOfMedicationByExam`| `auth`, `prevent.back` | `permission:examenes` |
 | `GET` | `/admin/exams/listImg/{ex}` | — | `ExamsController@listOfImagesByExam` | `auth`, `prevent.back` | `permission:examenes` |
 | `GET` | `/admin/exams/print/{ex}/{format}`| `hcl.exams.print` | `ExamsController@printPrescription` | `auth`, `prevent.back` | `permission:examenes` |
-| `DELETE` | `/admin/exams/delete/{ex}` | — | `ExamsController@destroy` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
-| `DELETE` | `/admin/ex-dx/delete/{dx}` | — | `ExamsController@destroyExamDiagnostic` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
-| `DELETE` | `/admin/ex-mx/delete/{mx}` | — | `ExamsController@destroyPrescriptionDrug`| `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
-| `DELETE` | `/admin/ex-img/delete/{ix}` | — | `ExamsController@destroyExamImage` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
+| `DELETE`| `/admin/exams/delete/{ex}` | — | `ExamsController@destroy` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
+| `DELETE`| `/admin/ex-dx/delete/{dx}` | — | `ExamsController@destroyExamDiagnostic` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
+| `DELETE`| `/admin/ex-mx/delete/{mx}` | — | `ExamsController@destroyPrescriptionDrug`| `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
+| `DELETE`| `/admin/ex-img/delete/{ix}` | — | `ExamsController@destroyExamImage` | `auth`, `prevent.back` | `permission:examenes`, `permission:examen_borrar` |
 | `GET` | `/admin/appointments/home` | `hcl.appointments.home`| `AppointmentsController@index` | `auth`, `prevent.back` | `permission:controles`, `permission:control_acceder` |
 | `GET` | `/admin/appointments/add/{hc}` | `hcl.appointments.add` | `AppointmentsController@add` | `auth`, `prevent.back` | `permission:controles`, `permission:control_crear` |
 | `GET` | `/admin/appointments/edit/{ap}`| `hcl.appointments.edit`| `AppointmentsController@edit` | `auth`, `prevent.back` | `permission:controles`, `permission:control_actualizar` |
@@ -540,9 +722,9 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `POST` | `/admin/appointments/view-table`| — | `AppointmentsController@viewTable` | `auth`, `prevent.back` | `permission:controles` |
 | `GET` | `/admin/appointments/print/{ap}/{format}`| `hcl.appointments.print`| `AppointmentsController@printPrescription`| `auth`, `prevent.back` | `permission:controles` |
 | `POST` | `/admin/appointments/store` | — | `AppointmentsController@store` | `auth`, `prevent.back` | `permission:controles`, `permission:control_crear` |
-| `DELETE` | `/admin/appointments/delete/{ap}`| — | `AppointmentsController@destroy` | `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
-| `DELETE` | `/admin/ap-dx/delete/{dx}` | — | `AppointmentsController@destroyDiagnosticAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
-| `DELETE` | `/admin/ap-mx/delete/{mx}` | — | `AppointmentsController@destroyMedicationAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
+| `DELETE`| `/admin/appointments/delete/{ap}`| — | `AppointmentsController@destroy` | `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
+| `DELETE`| `/admin/ap-dx/delete/{dx}` | — | `AppointmentsController@destroyDiagnosticAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
+| `DELETE`| `/admin/ap-mx/delete/{mx}` | — | `AppointmentsController@destroyMedicationAppointment`| `auth`, `prevent.back` | `permission:controles`, `permission:control_borrar` |
 | `GET` | `/admin/reports/home` | `hcl.reports.home` | `ReportsController@index` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_acceder` |
 | `GET` | `/admin/reports/add/{hc}` | `hcl.reports.add` | `ReportsController@add` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_crear` |
 | `GET` | `/admin/reports/edit/{rp}` | `hcl.reports.edit` | `ReportsController@edit` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_actualizar` |
@@ -553,8 +735,8 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/reports/listReports/{hc}`| — | `ReportsController@listReportsByDNI` | `auth`, `prevent.back` | `permission:informes` |
 | `GET` | `/admin/reports/listDiagnostic/{rp}`| — | `ReportsController@listOfDiagnosticsByReport`| `auth`, `prevent.back`| `permission:informes` |
 | `GET` | `/admin/reports/print/{rp}` | `hcl.reports.print` | `ReportsController@printReport` | `auth`, `prevent.back` | `permission:informes` |
-| `DELETE` | `/admin/reports/delete/{rp}` | — | `ReportsController@destroy` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_borrar` |
-| `DELETE` | `/admin/rp-dx/delete/{dx}` | — | `ReportsController@destroyDiagnosticReport`| `auth`, `prevent.back` | `permission:informes`, `permission:informe_borrar` |
+| `DELETE`| `/admin/reports/delete/{rp}` | — | `ReportsController@destroy` | `auth`, `prevent.back` | `permission:informes`, `permission:informe_borrar` |
+| `DELETE`| `/admin/rp-dx/delete/{dx}` | — | `ReportsController@destroyDiagnosticReport`| `auth`, `prevent.back` | `permission:informes`, `permission:informe_borrar` |
 | `GET` | `/admin/risks/home` | `hcl.risks.home` | `RisksController@index` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_acceder` |
 | `GET` | `/admin/risks/add/{hc}` | `hcl.risks.add` | `RisksController@add` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_crear` |
 | `GET` | `/admin/risks/edit/{rk}` | `hcl.risks.edit` | `RisksController@edit` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_actualizar` |
@@ -564,36 +746,36 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/risks/listRisks/{hc}` | — | `RisksController@listRisksByDNI` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_ver` |
 | `GET` | `/admin/risks/print/{rk}` | `hcl.risks.print` | `RisksController@printRiskReport` | `auth`, `prevent.back` | `permission:riesgos` |
 | `POST` | `/admin/risks/store` | — | `RisksController@store` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_crear` |
-| `DELETE` | `/admin/risks/delete/{rk}` | — | `RisksController@destroy` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_borrar` |
+| `DELETE`| `/admin/risks/delete/{rk}` | — | `RisksController@destroy` | `auth`, `prevent.back` | `permission:riesgos`, `permission:riesgo_borrar` |
 | `GET` | `/admin/categories` | `maintenance.categories`| `CategoriesController@index` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_acceder` |
 | `GET` | `/admin/categories/list` | — | `CategoriesController@list` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_ver` |
 | `GET` | `/admin/categories/{cat}` | — | `CategoriesController@show` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_ver` |
 | `POST` | `/admin/categories/store` | — | `CategoriesController@store` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_crear` |
-| `DELETE` | `/admin/categories/delete/{cat}`| — | `CategoriesController@destroy` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_borrar` |
-| `GET` | `/admin/presentations` | `maintenance.presentations`| `DPController@index` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_acceder`|
-| `GET` | `/admin/presentations/list` | — | `DPController@list` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_ver` |
-| `GET` | `/admin/presentations/{pre}` | — | `DPController@show` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_ver` |
-| `POST` | `/admin/presentations/store` | — | `DPController@store` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_crear` |
-| `DELETE` | `/admin/presentations/delete/{pre}`| — | `DPController@destroy` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_borrar`|
+| `DELETE`| `/admin/categories/delete/{cat}`| — | `CategoriesController@destroy` | `auth`, `prevent.back` | `permission:categorias`, `permission:categoria_borrar` |
+| `GET` | `/admin/presentations` | `maintenance.presentations`| `PresentationsController@index` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_acceder`|
+| `GET` | `/admin/presentations/list` | — | `PresentationsController@list` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_ver` |
+| `GET` | `/admin/presentations/{pre}` | — | `PresentationsController@show` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_ver` |
+| `POST` | `/admin/presentations/store` | — | `PresentationsController@store` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_crear` |
+| `DELETE`| `/admin/presentations/delete/{pre}`| — | `PresentationsController@destroy` | `auth`, `prevent.back` | `permission:presentaciones`, `permission:presentacion_borrar`|
 | `GET` | `/admin/drugs` | `maintenance.drugs` | `DrugsController@index` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_acceder` |
 | `GET` | `/admin/drugs/list` | — | `DrugsController@list` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_ver` |
 | `GET` | `/admin/drugs/{drug}` | — | `DrugsController@show` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_ver` |
 | `POST` | `/admin/drugs/store` | — | `DrugsController@store` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_crear` |
 | `POST` | `/admin/drugs/search` | — | `DrugsController@search` | `auth`, `prevent.back` | `permission:farmacos` |
-| `DELETE` | `/admin/drugs/delete/{drug}` | — | `DrugsController@destroy` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_borrar` |
+| `DELETE`| `/admin/drugs/delete/{drug}` | — | `DrugsController@destroy` | `auth`, `prevent.back` | `permission:farmacos`, `permission:farmaco_borrar` |
 | `GET` | `/admin/diagnostics` | `maintenance.diagnostics`| `DiagnosticsController@index` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_acceder`|
 | `GET` | `/admin/diagnostics/list` | — | `DiagnosticsController@list` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_ver` |
 | `GET` | `/admin/diagnostics/{diagnostic}`| — | `DiagnosticsController@show` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_ver` |
 | `GET` | `/admin/diagnostics/autocomplete`| — | `DiagnosticsController@advancedSearch` | `auth`, `prevent.back` | `permission:diagnosticos` |
 | `POST` | `/admin/diagnostics/store` | — | `DiagnosticsController@store` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_crear` |
 | `POST` | `/admin/diagnostics/search` | — | `DiagnosticsController@search` | `auth`, `prevent.back` | `permission:diagnosticos` |
-| `DELETE` | `/admin/diagnostics/delete/{diagnostic}`| —| `DiagnosticsController@destroy` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_borrar` |
+| `DELETE`| `/admin/diagnostics/delete/{diagnostic}`| —| `DiagnosticsController@destroy` | `auth`, `prevent.back` | `permission:diagnosticos`, `permission:diagnostico_borrar` |
 | `POST` | `/admin/occupations/store` | — | `OccupationsController@store` | `auth`, `prevent.back` | `permission:ocupaciones\|historias` |
 | `GET` | `/admin/occupations` | `maintenance.occupations`| `OccupationsController@index` | `auth`, `prevent.back` | `permission:ocupaciones`, `permission:ocupacion_acceder` |
 | `GET` | `/admin/occupations/list` | — | `OccupationsController@list` | `auth`, `prevent.back` | `permission:ocupaciones`, `permission:ocupacion_ver` |
 | `GET` | `/admin/occupations/{oc}` | — | `OccupationsController@show` | `auth`, `prevent.back` | `permission:ocupaciones`, `permission:ocupacion_ver` |
 | `POST` | `/admin/occupations/search` | — | `OccupationsController@search` | `auth`, `prevent.back` | `permission:ocupaciones` |
-| `DELETE` | `/admin/occupations/delete/{oc}` | — | `OccupationsController@destroy` | `auth`, `prevent.back` | `permission:ocupaciones`, `permission:ocupacion_borrar` |
+| `DELETE`| `/admin/occupations/delete/{oc}` | — | `OccupationsController@destroy` | `auth`, `prevent.back` | `permission:ocupaciones`, `permission:ocupacion_borrar` |
 | `GET` | `/admin/enterprise` | `business.enterprise` | `EnterpriseController@index` | `auth`, `prevent.back` | `permission:empresa`, `permission:empresa_acceder` |
 | `POST` | `/admin/enterprise/store` | — | `EnterpriseController@store` | `auth`, `prevent.back` | `permission:empresa`, `permission:empresa_actualizar` |
 | `GET` | `/admin/publications` | `business.posts` | `PostsController@index` | `auth`, `prevent.back` | `permission:posts`, `permission:post_acceder` |
@@ -602,7 +784,7 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 | `GET` | `/admin/publications/list` | — | `PostsController@list` | `auth`, `prevent.back` | `permission:posts`, `permission:post_ver` |
 | `GET` | `/admin/publications/{id}` | — | `PostsController@show` | `auth`, `prevent.back` | `permission:posts` |
 | `POST` | `/admin/publications/store` | — | `PostsController@store` | `auth`, `prevent.back` | `permission:posts`, `permission:post_crear\|post_actualizar` |
-| `DELETE` | `/admin/publications/delete/{id}`| — | `PostsController@destroy` | `auth`, `prevent.back` | `permission:posts`, `permission:post_borrar` |
+| `DELETE`| `/admin/publications/delete/{id}`| — | `PostsController@destroy` | `auth`, `prevent.back` | `permission:posts`, `permission:post_borrar` |
 | `GET` | `/admin/dashboard` | `dashboard` | `StatisticsController@index` | `auth`, `prevent.back` | `permission:reportes`, `permission:dashboard` |
 | `GET` | `/admin/dashboard/hcCount` | — | `StatisticsController@getCountRows` | `auth`, `prevent.back` | `permission:reportes` |
 | `GET` | `/admin/dashboard/hcByMonth` | — | `StatisticsController@HCByMonth` | `auth`, `prevent.back` | `permission:reportes` |
@@ -619,8 +801,8 @@ A continuación se documentan las más de 70 rutas registradas en [`routes/web.p
 
 ## 9. Despliegue, Respaldos y Mantenimiento Operativo
 
-### 9.1 Variables de Entorno Requeridas
-El archivo `.env` debe encontrarse debidamente parametrizado con los siguientes bloques de configuración:
+### 9.1 Parámetros de Configuración del Entorno (.env)
+El archivo `.env` debe encontrarse debidamente parametrizado con los siguientes bloques de configuración para garantizar el funcionamiento pleno de todos los servicios:
 
 ```ini
 APP_NAME=Neumotar
@@ -646,7 +828,7 @@ QUEUE_CONNECTION=database
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
 
-# Configuracion de Correo Transaccional
+# Configuración de Correo Transaccional (CitaSolicitada Mailable)
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.servidor.com
 MAIL_PORT=465
@@ -654,9 +836,9 @@ MAIL_USERNAME=notificaciones@neumotar.com
 MAIL_PASSWORD=clave_correo
 MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS="notificaciones@neumotar.com"
-MAIL_FROM_NAME="Neumotar - Atencion de Citas"
+MAIL_FROM_NAME="Neumotar - Atención de Citas"
 
-# Meta WhatsApp Cloud API
+# Meta WhatsApp Cloud API (netflie/whatsapp-cloud-api)
 WHATSAPP_FROM_PHONE_NUMBER_ID=109283746501928
 WHATSAPP_ACCESS_TOKEN=EAAG...token_larga_duracion
 
@@ -665,8 +847,8 @@ DEEPSEEK_API_KEY=sk-deepseek-...
 KIMI_API_KEY=kimi-...
 ```
 
-### 9.2 Política y Ejecución de Respaldos de Base de Datos
-El paquete `spatie/laravel-backup` permite salvaguardar el estado de la base de datos MySQL y los archivos adjuntos (imágenes radiológicas y espirometrías de pacientes):
+### 9.2 Política y Automatización de Respaldos de Base de Datos
+El paquete `spatie/laravel-backup` permite salvaguardar el estado de la base de datos MySQL y los archivos adjuntos (imágenes radiológicas, firmas digitales y espirometrías):
 
 ```bash
 # Realizar respaldo completo (Base de Datos + Archivos de Storage)
@@ -678,7 +860,7 @@ php artisan backup:run --only-db
 # Monitorear la integridad y tamaño de las copias existentes
 php artisan backup:monitor
 
-# Limpiar respaldos obsoletos segun politica de retencion
+# Limpiar respaldos obsoletos según política de retención
 php artisan backup:clean
 ```
 
@@ -686,3 +868,8 @@ Se recomienda programar en el `crontab` del servidor la ejecución nocturna auto
 ```cron
 0 2 * * * cd /ruta/al/proyecto && php artisan backup:run --only-db >> /dev/null 2>&1
 ```
+
+---
+
+**Documento elaborado para:** Medytarq SAC / Neumotar  
+**Tarapoto, San Martín, Perú**
