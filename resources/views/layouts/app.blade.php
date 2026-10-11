@@ -1,62 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise->logo) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $enterprise->logo) }}">
     <title>@yield('title', $enterprise->nombre_comercial)</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!---->
+
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- JQuery UI -->
+
+    {{-- Fuentes --}}
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    {{-- CSS de plugins --}}
     <link rel="stylesheet" href="{{ asset('jquery-ui/jquery-ui.min.css') }}">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
-    <!-- JTable -->
     <link rel="stylesheet" href="{{ asset('jtable/themes/lightcolor/gray/jtable.min.css') }}">
-    <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="{{ asset('plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}">
-    <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('select2/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slimselect.min.css') }}">
-    <!-- Summernote -->
     <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
-    <!-- Bootstrap Icon -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
-    <!-- Styles -->
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+
+    {{-- Vite --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Estilos extra de las vistas --}}
     @yield('styles')
+    @stack('styles')
+
+    {{-- Variables globales para el legacy JS --}}
     <script>
-        const API_BASE_URL      = "{{ url('/admin/') }}";
-        const API_URL           = "{{ url('/') }}";
-        const NAME_ENTERPRISE   = "{{ $enterprise->nombre_comercial }}";
-        const token             = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const API_BASE_URL = "{{ url('/admin/') }}";
+        const API_URL = "{{ url('/') }}";
+        const NAME_ENTERPRISE = "{{ $enterprise->nombre_comercial }}";
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // Expose to window so Vite-bundled ES modules can access these globals
+        window.API_BASE_URL   = API_BASE_URL;
+        window.API_URL        = API_URL;
+        window.NAME_ENTERPRISE = NAME_ENTERPRISE;
     </script>
-    <!-- Hightcharts -->
+
+    {{-- Highcharts --}}
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/themes/adaptive.js"></script>
-    <!-- jQuery -->
+
+    {{-- jQuery PRIMERO (una sola vez) --}}
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
+
+    {{-- Bootstrap (depende de jQuery) --}}
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- JQuery UI -->
+
+    {{-- jQuery UI --}}
     <script src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/lodash.min.js') }}"></script>
-    <!-- DataTables  & Plugins -->
+
+    {{-- DataTables & plugins --}}
     <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -66,32 +77,39 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-    <!-- JTable -->
+
+    {{-- JTable --}}
     <script src="{{ asset('jtable/jquery.jtable.js') }}"></script>
     <script src="{{ asset('jtable/jquery.jtable.min.js') }}"></script>
     <script src="{{ asset('jtable/localization/jquery.jtable.es.js') }}"></script>
-    <!-- AdminLTE App -->
+
+    {{-- AdminLTE --}}
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-    <!-- Select2 -->
+
+    {{-- Select2 / SlimSelect / Summernote --}}
     <script src="{{ asset('select2/select2.min.js') }}"></script>
-    <!-- SlimSelect -->
     <script src="{{ asset('js/slimselect.min.js') }}"></script>
-    <!-- Summernote -->
     <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
-    <!-- SweetAlert 2 -->
+
+    {{-- SweetAlert2 --}}
     <script src="{{ asset('sweetalert2/sweetalert2@11.js') }}"></script>
-    <!-- Axios -->
+
+    {{-- Axios clásico (por si algún legacy lo usa directo) --}}
     <script src="{{ asset('js/axios.min.js') }}"></script>
-    <!-- CKEditor -->
+
+    {{-- CKEditor --}}
     <script src="{{ asset('plugins/ckeditor5/ckeditor.js') }}"></script>
-    <!-- Funciones JS -->
+
+    {{-- Funciones propias --}}
     <script src="{{ asset('js/forms/funciones.js') }}"></script>
     <script src="{{ asset('js/forms/modalDetails.js') }}"></script>
     <script src="{{ asset('js/forms/deleteHandler.js') }}"></script>
+
     <script>
-        $.widget.bridge('uibutton', $.ui.button)
+        $.widget.bridge('uibutton', $.ui.button);
     </script>
 </head>
+
 <body class="sidebar-mini sidebar-mini-md layout-fixed">
     <div class="wrapper">
         <!-- Navbar -->
@@ -103,7 +121,8 @@
         <!-- Footer -->
         @include('partials.footer', $enterprise)
     </div>
-    <div class="modal fade" id="modal-default" tabindex="-1" aria-modal="true" role="dialog" data-backdrop="static" aria-labelledby="staticBackdropLabel">
+    <div class="modal fade" id="modal-default" tabindex="-1" aria-modal="true" role="dialog" data-backdrop="static"
+        aria-labelledby="staticBackdropLabel">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -140,5 +159,7 @@
             }
         });
     </script>
+    @stack('scripts')
 </body>
+
 </html>
