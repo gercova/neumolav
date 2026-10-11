@@ -10,11 +10,12 @@ use App\Models\History;
 use App\Models\MedicationExam;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class StatisticsController extends Controller {
+    use ApiResponse;
     
     public function __construct() {
         $this->middleware(['auth', 'prevent.back']);
