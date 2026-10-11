@@ -40,14 +40,13 @@
 
     {{-- Variables globales para el legacy JS --}}
     <script>
-        const API_BASE_URL = "{{ url('/admin/') }}";
-        const API_URL = "{{ url('/') }}";
-        const NAME_ENTERPRISE = "{{ $enterprise->nombre_comercial }}";
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        // Expose to window so Vite-bundled ES modules can access these globals
-        window.API_BASE_URL   = API_BASE_URL;
-        window.API_URL        = API_URL;
-        window.NAME_ENTERPRISE = NAME_ENTERPRISE;
+        const API_BASE_URL      = "{{ url('/admin/') }}";
+        const API_URL           = "{{ url('/') }}";
+        const NAME_ENTERPRISE   = "{{ $enterprise->nombre_comercial }}";
+        const token             = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        window.API_BASE_URL     = API_BASE_URL;
+        window.API_URL          = API_URL;
+        window.NAME_ENTERPRISE  = NAME_ENTERPRISE;
     </script>
 
     {{-- Highcharts --}}

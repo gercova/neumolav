@@ -1,7 +1,35 @@
 @extends('layouts.app')
-@section('title', config('global.site_name') . ' - Actualizar historia') <!-- Título dinámico -->
-@section('content')
+
+@section('title', config('global.site_name') . ' - Actualizar historia')
+
+@section('styles')
     <link rel="stylesheet" href="{{ asset('css/vanilla-datepicker.css') }}">
+@endsection
+
+@php
+    $formState = [
+        'isEdit' => true,
+        'canSeeClinical' => auth()
+            ->user()
+            ->hasAnyRole(['administrador', 'especialista']),
+        'form' => array_merge($history->toArray(), [
+            'fecha_nacimiento' => $history->fecha_nacimiento?->format('Y-m-d'),
+            'ubigeo_nacimiento' => $unacimiento[0]['nacimiento'] ?? '',
+            'ubigeo_residencia' => $uresidencia[0]['residencia'] ?? '',
+            'id_ocupacion' => $occupation[0]['occupation'] ?? '',
+        ]),
+        'catalog' => [
+            'documentTypes' => $dt,
+            'sexes' => $sx,
+            'bloodGroups' => $bg,
+            'degrees' => $di,
+            'maritalStatuses' => $ms,
+            'smokingTypes' => $tb,
+        ],
+    ];
+@endphp
+
+@section('content')
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -18,28 +46,26 @@
                 </div>
             </div>
         </div>
-        <!-- Main content -->
+
         <section class="content">
             <div class="container-fluid">
                 <div class="card card-warning card-outline shadow-sm">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-user-edit mr-1"></i> Filiación y Datos del Paciente</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
                     </div>
-                    <form method="post" id="formHC" novalidate>
-                        @method('POST')
-                        @csrf
-                        @include('hcl.histories.partials.form')
-                    </form>
+                    <div id="vue-history-form">
+                        {{-- Vue montará aquí --}}
+                    </div>
                 </div>
             </div>
         </section>
     </div>
-    @include('hcl.histories.partials.modal_occupation')
-    <script src="{{ asset('js/vanilla-datepicker.js') }}"></script>
-    <script src="{{ asset('js/forms/histories.js') }}"></script>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/vanilla-datepicker.js') }}"></script>
+    <script>
+        window.__HISTORY_FORM_STATE__ = @json($formState);
+    </script>
+    @vite(['resources/js/modules/history-form.js'])
+@endpush

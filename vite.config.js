@@ -10,10 +10,9 @@ export default defineConfig({
                 'resources/js/app.js',
                 // Entry points por módulo (permite cargar Vue solo donde se usa)
                 'resources/js/modules/home.js',
-                'resources/js/modules/dashboard.js'
-                // 'resources/js/modules/citas.js',
-                // 'resources/js/modules/dashboard.js',
-                // 'resources/js/modules/histories.js',
+                'resources/js/modules/dashboard.js',
+                'resources/js/modules/histories.js',
+                'resources/js/modules/history-form.js',
             ],
             refresh: true,
         }),

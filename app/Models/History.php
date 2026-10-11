@@ -94,15 +94,22 @@ class History extends Model {
 		return History::selectRaw('dni, UPPER(nombres) nombres, id')->where('dni', $dni)->get();
 	}
 
-    public function getAllHistories($startIndex, $pageSize, $itemSearch) {
-        // Construir la consulta base
-        $query = DB::table($this->tableVha)->where('dni', 'LIKE', "%{$itemSearch}%")->orWhere('nombres', 'LIKE', "%{$itemSearch}%");
-        // Contar solo los registros que coinciden con el filtro
-        $count = $query->count();
-        // Obtener los resultados paginados
+    public function getAllHistories($startIndex, $pageSize, $itemSearch): array {
+        $query = DB::table($this->tableVha)
+            ->when(!empty($itemSearch), function ($q) use ($itemSearch) {
+                $q->where(function ($inner) use ($itemSearch) {
+                    $inner->where('dni', 'LIKE', "%{$itemSearch}%")
+                        ->orWhere('nombres', 'LIKE', "%{$itemSearch}%");
+                });
+            });
+
+        // Clonar la consulta base antes de aplicar offset/limit
+        $count   = (clone $query)->count();
         $results = $query->offset($startIndex)->limit($pageSize)->get();
+
         return [$results, $count];
     }
+
 
     public function getLocation($value) {
         return DB::table($this->t_udis.' as ud')->selectRaw('ud.id as id, CONCAT(ud.id, " | ", udp.name, " | ", up.nombre_provincia, " | ", ud.nombre_distrito) as ubigeo')
