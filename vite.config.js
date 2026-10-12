@@ -13,6 +13,10 @@ export default defineConfig({
                 'resources/js/modules/dashboard.js',
                 'resources/js/modules/histories.js',
                 'resources/js/modules/history-form.js',
+                'resources/js/modules/exams-see.js',
+                'resources/js/modules/exam-form.js',
+                'resources/js/modules/exams.js',
+
             ],
             refresh: true,
         }),
