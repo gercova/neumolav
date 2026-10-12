@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\AuditLogTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,12 +12,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
-class History extends Model {
+class History extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'historias';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    protected $table = 'historias';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_td',
         'dni',
         'nombres',
@@ -67,36 +71,46 @@ class History extends Model {
         'c',
         'relatocronologico',
         'id_tipo_atencion',
-        'estado'
+        'estado',
     ];
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
-        'id_tipo_atencion'  => 'integer',
-        'fecha_nacimiento'  => 'date',
-        'estado'            => 'boolean',
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime',
-        'deleted_at'        => 'datetime',
+        'id_tipo_atencion' => 'integer',
+        'fecha_nacimiento' => 'date',
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    protected $tableVha, $t_udis, $t_upro, $t_udep = '';
-    public function __construct() {
+    protected $tableVha;
+
+    protected $t_udis;
+
+    protected $t_upro;
+
+    protected $t_udep = '';
+
+    public function __construct()
+    {
         parent::__construct();
         $this->tableVha = 'view_active_histories';
-        $this->t_udis 	= 'ubigeo_distrito';
-		$this->t_upro 	= 'ubigeo_provincia';
-		$this->t_udep 	= 'ubigeo_departamento';
+        $this->t_udis = 'ubigeo_distrito';
+        $this->t_upro = 'ubigeo_provincia';
+        $this->t_udep = 'ubigeo_departamento';
     }
 
-    public static function addPatient($dni){
-		return History::selectRaw('dni, UPPER(nombres) nombres, id')->where('dni', $dni)->get();
-	}
+    public static function addPatient($dni)
+    {
+        return History::selectRaw('dni, UPPER(nombres) nombres, id')->where('dni', $dni)->get();
+    }
 
-    public function getAllHistories($startIndex, $pageSize, $itemSearch): array {
+    public function getAllHistories($startIndex, $pageSize, $itemSearch): array
+    {
         $query = DB::table($this->tableVha)
-            ->when(!empty($itemSearch), function ($q) use ($itemSearch) {
+            ->when(! empty($itemSearch), function ($q) use ($itemSearch) {
                 $q->where(function ($inner) use ($itemSearch) {
                     $inner->where('dni', 'LIKE', "%{$itemSearch}%")
                         ->orWhere('nombres', 'LIKE', "%{$itemSearch}%");
@@ -104,14 +118,14 @@ class History extends Model {
             });
 
         // Clonar la consulta base antes de aplicar offset/limit
-        $count   = (clone $query)->count();
+        $count = (clone $query)->count();
         $results = $query->offset($startIndex)->limit($pageSize)->get();
 
         return [$results, $count];
     }
 
-
-    public function getLocation($value) {
+    public function getLocation($value)
+    {
         return DB::table($this->t_udis.' as ud')->selectRaw('ud.id as id, CONCAT(ud.id, " | ", udp.name, " | ", up.nombre_provincia, " | ", ud.nombre_distrito) as ubigeo')
             ->join($this->t_upro.' as up', 'ud.province_id', '=', 'up.id')
             ->join($this->t_udep.' as udp', 'ud.department_id', '=', 'udp.id')
@@ -123,129 +137,156 @@ class History extends Model {
             ->toArray();
     }
 
-    public static function getOccupation($value) {
+    public static function getOccupation($value)
+    {
         return Occupation::selectRaw('CONCAT(id, " | ", descripcion) ocupacion, id')
             ->where('descripcion', 'LIKE', "%$value%")
             ->get()
             ->toArray();
     }
 
-    public static function getOccupationByHistoryId($id){
-		return History::selectRaw('(YEAR(CURRENT_DATE) - YEAR(historias.fecha_nacimiento)) - (RIGHT(CURRENT_DATE,5) < RIGHT(historias.fecha_nacimiento, 5)) AS age, CONCAT(o.id, " | ", o.descripcion) occupation')
-			->join('ocupaciones as o', 'historias.id_ocupacion', '=', 'o.id')
-			->where('historias.id', $id)
-			->get()
-			->toArray();
-	}
+    public static function getOccupationByHistoryId($id)
+    {
+        return History::selectRaw('(YEAR(CURRENT_DATE) - YEAR(historias.fecha_nacimiento)) - (RIGHT(CURRENT_DATE,5) < RIGHT(historias.fecha_nacimiento, 5)) AS age, CONCAT(o.id, " | ", o.descripcion) occupation')
+            ->join('ocupaciones as o', 'historias.id_ocupacion', '=', 'o.id')
+            ->where('historias.id', $id)
+            ->get()
+            ->toArray();
+    }
 
-    public static function getUBirthByHistoryId($id){
-		return History::selectRaw('CONCAT(historias.ubigeo_nacimiento, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as nacimiento')
-			->join('ubigeo_distrito as udi', 'historias.ubigeo_nacimiento', '=', 'udi.id')
-			->join('ubigeo_departamento as udep', 'udi.department_id', '=', 'udep.id')
-			->join('ubigeo_provincia as upro', 'udi.province_id', '=', 'upro.id')
-			->where('historias.id', $id)
-			->get()
-			->toArray();
-	}
+    public static function getUBirthByHistoryId($id)
+    {
+        return History::selectRaw('CONCAT(historias.ubigeo_nacimiento, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as nacimiento')
+            ->join('ubigeo_distrito as udi', 'historias.ubigeo_nacimiento', '=', 'udi.id')
+            ->join('ubigeo_departamento as udep', 'udi.department_id', '=', 'udep.id')
+            ->join('ubigeo_provincia as upro', 'udi.province_id', '=', 'upro.id')
+            ->where('historias.id', $id)
+            ->get()
+            ->toArray();
+    }
 
-	public static function getUResidenceByHistoryId($id){
-		return History::selectRaw('CONCAT(historias.ubigeo_residencia, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as residencia')
-			->join('ubigeo_distrito as udi', 'historias.ubigeo_residencia', '=', 'udi.id')
-			->join('ubigeo_departamento as udep', 'udi.department_id', '=', 'udep.id')
-			->join('ubigeo_provincia as upro', 'udi.province_id', '=', 'upro.id')
-			->where('historias.id', $id)
-			->get()
-			->toArray();
-	}
+    public static function getUResidenceByHistoryId($id)
+    {
+        return History::selectRaw('CONCAT(historias.ubigeo_residencia, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as residencia')
+            ->join('ubigeo_distrito as udi', 'historias.ubigeo_residencia', '=', 'udi.id')
+            ->join('ubigeo_departamento as udep', 'udi.department_id', '=', 'udep.id')
+            ->join('ubigeo_provincia as upro', 'udi.province_id', '=', 'upro.id')
+            ->where('historias.id', $id)
+            ->get()
+            ->toArray();
+    }
 
-    public function documentType(): BelongsTo {
+    public function documentType(): BelongsTo
+    {
         return $this->belongsTo(DocumentType::class, 'id_td', 'id');
     }
 
-    public function appointments(): HasMany {
+    public function appointments(): HasMany
+    {
         return $this->hasMany(Appointment::class, 'id_historia', 'id');
     }
 
-    public function citas(): HasMany {
+    public function citas(): HasMany
+    {
         return $this->hasMany(Cita::class, 'id_historia', 'id');
     }
 
-    public function exams(): HasMany {
+    public function exams(): HasMany
+    {
         return $this->hasMany(Exam::class, 'id_historia', 'id');
     }
 
-    public function reports(): HasMany {
+    public function reports(): HasMany
+    {
         return $this->hasMany(Report::class, 'id_historia', 'id');
     }
 
-    public function risks(): HasMany {
+    public function risks(): HasMany
+    {
         return $this->hasMany(Risk::class, 'id_historia', 'id');
     }
 
-    public function history(): HasOne {
+    public function history(): HasOne
+    {
         return $this->hasOne(History::class, 'id', 'id');
     }
 
-    public function diagnosticAppointment(): HasMany {
+    public function diagnosticAppointment(): HasMany
+    {
         return $this->hasMany(DiagnosticAppointment::class, 'id_historia', 'id');
     }
 
-    public function diagnosticExam(): HasMany {
+    public function diagnosticExam(): HasMany
+    {
         return $this->hasMany(DiagnosticExam::class, 'id_historia', 'id');
     }
 
-    public function medicationExam(): HasMany {
+    public function medicationExam(): HasMany
+    {
         return $this->hasMany(MedicationExam::class, 'id_historia', 'id');
     }
 
-    public function medication_appointment(): HasMany {
+    public function medication_appointment(): HasMany
+    {
         return $this->hasMany(MedicationAppointment::class, 'id_historia', 'id');
     }
 
-    public  function imagen(): HasMany {
+    public function imagen(): HasMany
+    {
         return $this->hasMany(Imagen::class, 'id_historia', 'id');
     }
 
-    public function locationBirth(): BelongsTo {
+    public function locationBirth(): BelongsTo
+    {
         return $this->belongsTo(UbigeoDistrict::class, 'ubigeo_nacimiento', 'id');
     }
 
-    public function locationResidence(): BelongsTo {
+    public function locationResidence(): BelongsTo
+    {
         return $this->belongsTo(UbigeoDistrict::class, 'ubigeo_residencia', 'id');
     }
 
-    public function occupation(): BelongsTo {
+    public function occupation(): BelongsTo
+    {
         return $this->belongsTo(Occupation::class, 'id_ocupacion', 'id');
     }
 
-    public function sex(): BelongsTo {
+    public function sex(): BelongsTo
+    {
         return $this->belongsTo(Sex::class, 'id_sexo', 'id');
     }
 
-    public function maritalStatus(): BelongsTo {
+    public function maritalStatus(): BelongsTo
+    {
         return $this->belongsTo(MaritalStatus::class, 'id_estado', 'id');
     }
 
-    public function degreesInstruction(): BelongsTo {
+    public function degreesInstruction(): BelongsTo
+    {
         return $this->belongsTo(DegreesInstruction::class, 'id_gi', 'id');
     }
 
-    public function bloodGroup(): BelongsTo {
+    public function bloodGroup(): BelongsTo
+    {
         return $this->belongsTo(BloodGroups::class, 'id_gs', 'id');
     }
 
-    public function smoking(): BelongsTo {
+    public function smoking(): BelongsTo
+    {
         return $this->belongsTo(Smoking::class, 'id_ct', 'id');
     }
 
-    public function tipoAtencion(): BelongsTo {
+    public function tipoAtencion(): BelongsTo
+    {
         return $this->belongsTo(TipoAtencion::class, 'id_tipo_atencion', 'id');
     }
 
-    public function getCalculatedAgeAttribute(): ?int {
-        if (!$this->fecha_nacimiento) {
+    public function getCalculatedAgeAttribute(): ?int
+    {
+        if (! $this->fecha_nacimiento) {
             return null;
         }
-        return \Carbon\Carbon::parse($this->fecha_nacimiento)->age;
+
+        return Carbon::parse($this->fecha_nacimiento)->age;
     }
 }
