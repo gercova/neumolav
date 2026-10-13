@@ -19,6 +19,9 @@ export default defineConfig({
                 'resources/js/modules/appointments.js',
                 'resources/js/modules/appointments-see.js',
                 'resources/js/modules/appointment-form.js',
+                'resources/js/modules/reports.js',
+                'resources/js/modules/reports-see.js',
+                'resources/js/modules/report-form.js',
             ],
             refresh: true,
         }),
@@ -37,4 +40,4 @@ export default defineConfig({
             'vue': 'vue/dist/vue.esm-bundler.js',
         },
     },
-});
+})

@@ -172,6 +172,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE INFORMES CLÍNICOS
         Route::middleware(['permission:informes'])->group(function () {
             Route::get('/reports/home', [ReportsController::class, 'index'])->name('hcl.reports.home');
+            Route::post('/reports/list-histories', [ReportsController::class, 'listHistories']);
             Route::get('/reports/add/{hc}', [ReportsController::class, 'add'])->name('hcl.reports.add');
             Route::get('/reports/edit/{rp}', [ReportsController::class, 'edit'])->name('hcl.reports.edit');
             Route::get('/reports/see/{hc}', [ReportsController::class, 'see'])->name('hcl.reports.see');

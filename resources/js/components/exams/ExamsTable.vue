@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useExamsStore } from '@/stores/examsStore';
+import ExamRowActions from './ExamRowActions.vue';
 
 const store = useExamsStore();
 const { items, loading, page, pageSize, total, totalPages, visiblePages } = storeToRefs(store);
@@ -57,26 +58,7 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                     <td><span class="badge badge-info">{{ h.edad }}</span></td>
                     <td class="text-muted small">{{ h.sexo }}</td>
                     <td class="text-center">
-                        <div class="btn-group">
-                            <!-- Ver exámenes del paciente -->
-                            <a
-                                v-if="h.Permissions?.view_exm"
-                                :href="h.see_url"
-                                class="btn btn-info btn-xs"
-                                title="Ver exámenes del paciente"
-                            >
-                                <i class="bi bi-eye"></i> Ver
-                            </a>
-                            <!-- Nuevo examen para el paciente -->
-                            <a
-                                v-if="h.Permissions?.add_exm"
-                                :href="h.add_url"
-                                class="btn btn-success btn-xs"
-                                title="Registrar nuevo examen"
-                            >
-                                <i class="bi bi-plus-circle"></i> Nuevo
-                            </a>
-                        </div>
+                        <ExamRowActions :record="h" />
                     </td>
                 </tr>
             </tbody>
