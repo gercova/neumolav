@@ -14,135 +14,194 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
-class AppointmentsController extends Controller {
+class AppointmentsController extends Controller
+{
+    protected $tableViewService;
 
-	protected $tableViewService;
-	public function __construct(TableViewService $tableViewService) {
-		$this->tableViewService = $tableViewService;
+    public function __construct(TableViewService $tableViewService)
+    {
+        $this->tableViewService = $tableViewService;
         $this->middleware(['auth', 'prevent.back']);
-		$this->middleware('permission:control_acceder')->only('index');
-		$this->middleware('permission:control_ver')->only('seeAppointments', 'listAppointments', 'viewDetail');
-		$this->middleware('permission:control_crear')->only('add', 'store');
-		$this->middleware('permission:control_actualizar')->only('edit', 'store');
-		$this->middleware('permission:control_borrar')->only('destroy', 'destroyDiagnosticAppointment', 'destroyMedicationAppointment');
+        $this->middleware('permission:control_acceder')->only('index', 'listHistories');
+        $this->middleware('permission:control_ver')->only('seeAppointments', 'listAppointments', 'viewDetail');
+        $this->middleware('permission:control_crear')->only('add', 'store');
+        $this->middleware('permission:control_actualizar')->only('edit', 'store');
+        $this->middleware('permission:control_borrar')->only('destroy', 'destroyDiagnosticAppointment', 'destroyMedicationAppointment');
     }
 
-    public function index(): View {
+    public function index(): View
+    {
         return view('hcl.appointments.index');
     }
 
-    public function add(History $hc): View {
+    public function listHistories(Request $request): JsonResponse
+    {
+        $startIndex = $request->input('jtStartIndex', 0);
+        $pageSize = $request->input('jtPageSize', 10);
+        $search = $request->input('search');
+
+        $query = DB::table('view_active_histories')
+            ->when(! empty($search), function ($q) use ($search) {
+                $q->where(function ($inner) use ($search) {
+                    $inner->where('dni', 'LIKE', "%{$search}%")
+                        ->orWhere('nombres', 'LIKE', "%{$search}%");
+                });
+            });
+
+        $count = (clone $query)->count();
+        $records = $query->offset($startIndex)->limit($pageSize)->get();
+        $user = auth()->user();
+        $permissions = [
+            'view_app' => $user->can('control_ver'),
+            'add_app' => $user->can('control_crear'),
+            'view_control' => $user->can('control_ver'),
+            'add_control' => $user->can('control_crear'),
+        ];
+
+        $records = $records->map(function ($row) use ($permissions) {
+            $row->Permissions = $permissions;
+            $row->see_url = route('hcl.appointments.see', ['hc' => $row->id]);
+            $row->add_url = route('hcl.appointments.add', ['hc' => $row->id]);
+
+            return $row;
+        });
+
+        return response()->json([
+            'Result' => 'OK',
+            'Records' => $records,
+            'TotalRecordCount' => $count,
+        ]);
+    }
+
+    public function add(History $hc): View
+    {
         return view('hcl.appointments.add', compact('hc'));
     }
 
-    public function edit(Appointment $ap): View {
-        $hc	= History::where('id', $ap->id_historia)->first();
-		return view('hcl.appointments.edit', compact('hc', 'ap'));
+    public function edit(Appointment $ap): View
+    {
+        $hc = History::where('id', $ap->id_historia)->first();
+
+        return view('hcl.appointments.edit', compact('hc', 'ap'));
     }
 
-	public function see(History $hc): View {
-		return view('hcl.appointments.see', compact('hc'));
-	}
+    public function see(History $hc): View
+    {
+        return view('hcl.appointments.see', compact('hc'));
+    }
 
-	public function viewTable(Request $request){
+    public function viewTable(Request $request)
+    {
         $request->validate([
             'table' => 'nullable|string|in:controles,examenes',
-            'dni' 	=> 'required|string'
+            'dni' => 'required|string',
         ]);
 
-        $table 	= $request->input('table');
-        $dni 	= $request->input('dni');
+        $table = $request->input('table');
+        $dni = $request->input('dni');
 
         return $this->tableViewService->generateTableView($table, $dni);
     }
 
-    public function viewDetail(Appointment $ap): JsonResponse {
-		$hc			= History::where('id', $ap->id_historia)->get();
-		$diagnostic = DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
-		$medication = DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
-		return response()->json(compact('ap', 'hc', 'diagnostic', 'medication'), 200);
-	}
+    public function viewDetail(Appointment $ap): JsonResponse
+    {
+        $hc = History::where('id', $ap->id_historia)->get();
+        $diagnostic = DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
+        $medication = DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
 
-    public function store(AppointmentValidate $request): JsonResponse {
-        $validated      = $request->validated();
-        $id             = $request->input('appointmentId');
-        $diagnostics    = $request->input('diagnostic_id');
-        $drugs          = $request->input('drug_id');
-        $descriptions   = $request->input('description');
+        return response()->json(compact('ap', 'hc', 'diagnostic', 'medication'), 200);
+    }
+
+    public function store(AppointmentValidate $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $id = $request->input('appointmentId');
+        $diagnostics = $request->input('diagnostic_id');
+        $drugs = $request->input('drug_id');
+        $descriptions = $request->input('description');
         // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
-            $appointment    = Appointment::updateOrCreate(['id' => $id], $validated);
-            $id 	        = $appointment->id;
-            $historia       = $appointment->id_historia;
-            $dni 	        = $appointment->dni;
+            $appointment = Appointment::updateOrCreate(['id' => $id], $validated);
+            $id = $appointment->id;
+            $historia = $appointment->id_historia;
+            $dni = $appointment->dni;
             // Guardar diagnóstico, medicación y subir imagen si existen
-            if ($diagnostics) 	$this->saveDiagnostic($id, $historia, $dni, $diagnostics);
-            if ($drugs) 		$this->saveMedication($id, $historia, $dni, $drugs, $descriptions);
+            if ($diagnostics) {
+                $this->saveDiagnostic($id, $historia, $dni, $diagnostics);
+            }
+            if ($drugs) {
+                $this->saveMedication($id, $historia, $dni, $drugs, $descriptions);
+            }
 
             DB::commit();
+
             return response()->json([
-                'status' 	=> true,
-                'type'		=> 'success',
-                'messages' 	=> empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
-                'route' 	=> route('hcl.appointments.see', $appointment->id_historia),
-                'print_a5' 	=> route('hcl.appointments.print', [$id, 'a5']),
-				'print_a4' 	=> route('hcl.appointments.print', [$id, 'a4']),
+                'status' => true,
+                'type' => 'success',
+                'messages' => empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
+                'route' => route('hcl.appointments.see', $appointment->id_historia),
+                'print_a5' => route('hcl.appointments.print', [$id, 'a5']),
+                'print_a4' => route('hcl.appointments.print', [$id, 'a4']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
-                'status' 	=> false,
-				'type'		=> 'error',
-                'messages' 	=> $e->getMessage(),
+                'status' => false,
+                'type' => 'error',
+                'messages' => $e->getMessage(),
             ], 500);
         }
     }
 
-    protected function saveDiagnostic(int $id, string $historia, string $dni, array $diagnosticId) {
+    protected function saveDiagnostic(int $id, string $historia, string $dni, array $diagnosticId)
+    {
         $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $historia, $dni) {
-			return [
-				'id_control'    	=> $id,
-                'id_historia'       => $historia,
-				'dni' 				=> $dni,
-				'id_diagnostico'	=> $diagnosticId,
-				'created_at' 		=> now(),
-			];
-		})->toArray();
+            return [
+                'id_control' => $id,
+                'id_historia' => $historia,
+                'dni' => $dni,
+                'id_diagnostico' => $diagnosticId,
+                'created_at' => now(),
+            ];
+        })->toArray();
 
-		DiagnosticAppointment::insert($data);
-		return;
+        DiagnosticAppointment::insert($data);
+
     }
 
-    protected function saveMedication(int $id, string $historia, string $dni, array $drugId, array $description) {
+    protected function saveMedication(int $id, string $historia, string $dni, array $drugId, array $description)
+    {
         // Prepara los datos para la inserción
-		$data = [];
-		for ($i = 0; $i < count($drugId); $i++) {
-			$data[] = [
-				'id_control'    => $id,
-                'id_historia'   => $historia,
-				'dni'           => $dni,
-				'id_droga' 		=> $drugId[$i],
-				'descripcion'   => $description[$i],
-				'created_at'	=> now(),
-			];
-		}
-		// Inserta los datos en la base de datos
-		MedicationAppointment::insert($data);
-		return;
+        $data = [];
+        for ($i = 0; $i < count($drugId); $i++) {
+            $data[] = [
+                'id_control' => $id,
+                'id_historia' => $historia,
+                'dni' => $dni,
+                'id_droga' => $drugId[$i],
+                'descripcion' => $description[$i],
+                'created_at' => now(),
+            ];
+        }
+        // Inserta los datos en la base de datos
+        MedicationAppointment::insert($data);
+
     }
 
-    public function listAppointments(History $hc): JsonResponse {
-		$results 	    = DB::select('CALL PA_getAppointmentsByMedicalHistory(?)', [$hc->id]);
-		$data 		    = collect($results)->map(function ($item, $index) {
-			$user   	= auth()->user();
-			$buttons 	= '';
+    public function listAppointments(History $hc): JsonResponse
+    {
+        $results = DB::select('CALL PA_getAppointmentsByMedicalHistory(?)', [$hc->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
+            $buttons = '';
 
-			if($user->can('control_ver')){
+            if ($user->can('control_ver')) {
                 $buttons .= sprintf(
                     '<button type="button" class="btn btn-info view-appointment btn-xs" value="%s">
                         <i class="bi bi-eye"></i> Ver receta
@@ -151,7 +210,7 @@ class AppointmentsController extends Controller {
                 );
             }
 
-			if($user->can('control_actualizar')){
+            if ($user->can('control_actualizar')) {
                 $buttons .= sprintf(
                     '<a type="button" class="btn btn-warning btn-xs" href="%s">
                         <i class="bi bi-pencil-square"></i> Editar
@@ -160,7 +219,7 @@ class AppointmentsController extends Controller {
                 );
             }
 
-			if($user->can('control_borrar')){
+            if ($user->can('control_borrar')) {
                 $buttons .= sprintf(
                     '<button type="button" class="btn btn-danger delete-appointment btn-xs" value="%s">
                         <i class="bi bi-trash"></i> Eliminar
@@ -168,23 +227,25 @@ class AppointmentsController extends Controller {
                     htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
-			return [
-				$index + 1,
+
+            return [
+                $index + 1,
                 $item->created_at,
                 $item->dni,
-                $buttons ?: '<span class="text-muted">No autorizado</span>'
-			];
-		});
+                $buttons ?: '<span class="text-muted">No autorizado</span>',
+            ];
+        });
 
         return response()->json([
- 			"sEcho"					=> 1,
- 			"iTotalRecords"			=> $data->count(),
- 			"iTotalDisplayRecords"	=> $data->count(),
- 			"aaData"				=> $data ?? [],
- 		], 200);
-	}
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
+        ], 200);
+    }
 
-	public function listAppointmentsByHC(int|string $id): JsonResponse {
+    public function listAppointmentsByHC(int|string $id): JsonResponse
+    {
         // Soporta recibir tanto ID de Historia como ID de Appointment o DNI (para pacientes inactivos hasta 5+ años)
         $historyId = $id;
         $history = History::withTrashed()->find($id);
@@ -230,118 +291,133 @@ class AppointmentsController extends Controller {
             return [
                 $index + 1,
                 $item->created_at ? Carbon::parse($item->created_at)->format('d/m/Y H:i') : '--',
-                $buttons
+                $buttons,
             ];
         });
 
         return response()->json([
-            "sEcho"					=> 1,
-            "iTotalRecords"			=> $data->count(),
-            "iTotalDisplayRecords"	=> $data->count(),
-            "aaData"				=> $data ?? [],
-            "appointments"          => $appointments,
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
+            'appointments' => $appointments,
         ], 200);
     }
 
-    public function listOfDiagnosticsByApp(Appointment $ap): JsonResponse {
-		$results    	= DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
-		$data       	= collect($results)->map(function ($item, $index) {
-			$user 		= auth()->user();
-			$buttons 	= '';
-			if($user->can('control_borrar')){
-				$buttons .= sprintf(
-					'<button type="button" class="btn btn-danger delete-diagnostic btn-xs" value="%s">
+    public function listOfDiagnosticsByApp(Appointment $ap): JsonResponse
+    {
+        $results = DB::select('CALL PA_getDiagnosticByAppointment(?)', [$ap->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
+            $buttons = '';
+            if ($user->can('control_borrar')) {
+                $buttons .= sprintf(
+                    '<button type="button" class="btn btn-danger delete-diagnostic btn-xs" value="%s">
                         <i class="bi bi-trash"></i> Eliminar
                     </button>',
-					$item->id,
-				);
-			}
-			return [
-				$index + 1,
-				$item->diagnostic,
-				$buttons ?: '<span class="text-muted">No autorizado</span>',
-			];
-		});
+                    $item->id,
+                );
+            }
 
-		return response()->json([
-			"sEcho"					=> 1,
-			"iTotalRecords"			=> $data->count(),
-			"iTotalDisplayRecords"	=> $data->count(),
-			"aaData"				=> $data ?? [],
-		], 200);
-	}
+            return [
+                $index + 1,
+                $item->diagnostic,
+                $buttons ?: '<span class="text-muted">No autorizado</span>',
+            ];
+        });
 
-	public function listOfMedicationByApp(Appointment $ap): JsonResponse {
-		$results 		= DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
-		$data 			= collect($results)->map(function ($item, $index) {
-			$user 		= auth()->user();
-			$buttons 	= '';
-			if($user->can('control_borrar')){
-				$buttons .= sprintf(
-					'<button type="button" class="btn btn-danger delete-medication btn-xs" value="%s">
+        return response()->json([
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
+        ], 200);
+    }
+
+    public function listOfMedicationByApp(Appointment $ap): JsonResponse
+    {
+        $results = DB::select('CALL PA_getMedicationByAppointment(?)', [$ap->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
+            $buttons = '';
+            if ($user->can('control_borrar')) {
+                $buttons .= sprintf(
+                    '<button type="button" class="btn btn-danger delete-medication btn-xs" value="%s">
                         <i class="bi bi-trash"></i> Eliminar
                     </button>',
-					$item->id
-				);
-			}
-			return [
-				$index + 1,
-				$item->drug,
-				$item->rp,
-				$buttons ?: '<span class="text-muted">No autorizado</span>',
-			];
-		});
+                    $item->id
+                );
+            }
 
-		return response()->json([
-			"sEcho"					=> 1,
-			"iTotalRecords"			=> $data->count(),
-			"iTotalDisplayRecords"	=> $data->count(),
-			"aaData"				=> $data ?? [],
-		], 200);
-	}
+            return [
+                $index + 1,
+                $item->drug,
+                $item->rp,
+                $buttons ?: '<span class="text-muted">No autorizado</span>',
+            ];
+        });
 
-	public function seeAppointmentsByMedicalHistory(string $dni): JsonResponse {
-		$results['exams'] = DB::select('CALL getExamsByMedicalHistory(?)', [$dni]);
-		return response()->json($results, 200);
-	}
+        return response()->json([
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
+        ], 200);
+    }
 
-	public function seeRecipeByAppointment(int $id): JsonResponse {
-		$data['app'] 		= Appointment::findOrFail($id);
-		$data['medicacion'] = MedicationAppointment::where('id_control', $id)->get();
-		$data['diagnostic'] = DiagnosticAppointment::where('id_control', $id)->get();
-		return response()->json($data, 200);
-	}
+    public function seeAppointmentsByMedicalHistory(string $dni): JsonResponse
+    {
+        $results['exams'] = DB::select('CALL getExamsByMedicalHistory(?)', [$dni]);
 
-    public function destroy(Appointment $ap): JsonResponse {
+        return response()->json($results, 200);
+    }
+
+    public function seeRecipeByAppointment(int $id): JsonResponse
+    {
+        $data['app'] = Appointment::findOrFail($id);
+        $data['medicacion'] = MedicationAppointment::where('id_control', $id)->get();
+        $data['diagnostic'] = DiagnosticAppointment::where('id_control', $id)->get();
+
+        return response()->json($data, 200);
+    }
+
+    public function destroy(Appointment $ap): JsonResponse
+    {
         $ap->delete();
+
         return response()->json([
-            'status'    => (bool) $ap,
-            'type'      => $ap ? 'success' : 'error',
-            'messages'  => $ap ? 'El control fue eliminado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $ap,
+            'type' => $ap ? 'success' : 'error',
+            'messages' => $ap ? 'El control fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyDiagnosticAppointment(DiagnosticAppointment $dx): JsonResponse {
+    public function destroyDiagnosticAppointment(DiagnosticAppointment $dx): JsonResponse
+    {
         $deleted = $dx->delete();
+
         return response()->json([
-            'status'    => (bool) $deleted,
-            'type'      => $deleted ? 'success' : 'error',
-            'messages'  => $deleted ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $deleted,
+            'type' => $deleted ? 'success' : 'error',
+            'messages' => $deleted ? 'El diagnóstico fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyMedicationAppointment(MedicationAppointment $mx): JsonResponse {
+    public function destroyMedicationAppointment(MedicationAppointment $mx): JsonResponse
+    {
         $deleted = $mx->delete();
+
         return response()->json([
-            'status'    => (bool) $deleted,
-            'type'      => $deleted ? 'success' : 'error',
-            'messages'  => $deleted ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $deleted,
+            'type' => $deleted ? 'success' : 'error',
+            'messages' => $deleted ? 'El medicamento fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-	public function printPrescription(Appointment $ap, string $format = 'a5') {
+    public function printPrescription(Appointment $ap, string $format = 'a5')
+    {
         // Validar formato
-        if (!in_array($format, ['a4', 'a5'])) {
+        if (! in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
         }
         // Obtener datos
@@ -352,36 +428,37 @@ class AppointmentsController extends Controller {
         $en = Enterprise::findOrFail(1);
         // Configurar PDF según formato
         if ($format === 'a4') {
-			$pdf = PDF::loadView('hcl.appointments.pdf-a4', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf = PDF::loadView('hcl.appointments.pdf-a4', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
             $pdf->setPaper('a4', 'portrait')
                 ->setOptions([
-                    'margin_top' 	        => 10,
-                    'margin_bottom'         => 10,
-                    'margin_left' 	        => 15,
-                    'margin_right' 	        => 15,
-                    'fontDefault'           => 'sans-serif',
-                    'isHtml5ParserEnabled'  => true,
-                    'isRemoteEnabled'       => false,
-                    'isPhpEnabled'          => false,
-                    'chroot'                => realpath(base_path()),
+                    'margin_top' => 10,
+                    'margin_bottom' => 10,
+                    'margin_left' => 15,
+                    'margin_right' => 15,
+                    'fontDefault' => 'sans-serif',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => false,
+                    'isPhpEnabled' => false,
+                    'chroot' => realpath(base_path()),
                 ]);
         } else {
-			$pdf = PDF::loadView('hcl.appointments.pdf-a5', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
+            $pdf = PDF::loadView('hcl.appointments.pdf-a5', compact('hc', 'ap', 'dx', 'mx', 'us', 'en', 'format'));
             $pdf->setPaper('a5', 'portrait')
                 ->setOptions([
-                    'margin_top' 			=> 0.5,
-                    'margin_bottom' 		=> 0.5,
-                    'margin_left' 			=> 0.5,
-                    'margin_right' 			=> 0.5,
-                    'fontDefault'           => 'sans-serif',
-                    'isHtml5ParserEnabled'  => true,
-                    'isRemoteEnabled'       => false,
-                    'isPhpEnabled'          => false,
-                    'chroot'                => realpath(base_path()),
+                    'margin_top' => 0.5,
+                    'margin_bottom' => 0.5,
+                    'margin_left' => 0.5,
+                    'margin_right' => 0.5,
+                    'fontDefault' => 'sans-serif',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => false,
+                    'isPhpEnabled' => false,
+                    'chroot' => realpath(base_path()),
                 ]);
         }
 
-        $filename = "receta-medica-control-{$ap->id}-" . strtoupper($format) . ".pdf";
+        $filename = "receta-medica-control-{$ap->id}-".strtoupper($format).'.pdf';
+
         return $pdf->stream($filename);
     }
 }

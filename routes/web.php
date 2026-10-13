@@ -167,6 +167,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::delete('/appointments/delete/{ap}', [AppointmentsController::class, 'destroy']);
             Route::delete('/ap-dx/delete/{dx}', [AppointmentsController::class, 'destroyDiagnosticAppointment']);
             Route::delete('/ap-mx/delete/{mx}', [AppointmentsController::class, 'destroyMedicationAppointment']);
+            Route::post('/appointments/list-histories', [AppointmentsController::class, 'listHistories']);
         });
         // MÓDULO DE INFORMES CLÍNICOS
         Route::middleware(['permission:informes'])->group(function () {

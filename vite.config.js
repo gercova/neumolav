@@ -16,7 +16,9 @@ export default defineConfig({
                 'resources/js/modules/exams-see.js',
                 'resources/js/modules/exam-form.js',
                 'resources/js/modules/exams.js',
-
+                'resources/js/modules/appointments.js',
+                'resources/js/modules/appointments-see.js',
+                'resources/js/modules/appointment-form.js',
             ],
             refresh: true,
         }),

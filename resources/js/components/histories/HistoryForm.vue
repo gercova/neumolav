@@ -101,12 +101,14 @@ const submit = async () => {
                     <div class="form-group">
                         <label class="font-weight-bold">Edad</label>
                         <div class="input-group">
-                            <input :value="store.ipa && form.fecha_nacimiento ? '' : ''" type="text"
-                                   class="form-control bg-light text-center font-weight-bold" readonly>
+                            <input :value="store.calculatedAge ?? ''" type="text"
+                                   class="form-control bg-light text-center font-weight-bold" readonly
+                                   placeholder="—">
                             <div class="input-group-append"><span class="input-group-text">años</span></div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-2 col-sm-6">
                     <div class="form-group">

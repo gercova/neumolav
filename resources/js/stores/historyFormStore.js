@@ -83,13 +83,29 @@ export const useHistoryFormStore = defineStore('historyForm', {
     }),
 
     getters: {
-        // IPA calculado reactivamente
+        // IPA (Índice Paquete-Año) calculado reactivamente
         ipa: (s) => {
             const cig = parseFloat(s.form.cig) || 0;
             const af = parseFloat(s.form.aniosfum) || 0;
             if (cig <= 0 || af <= 0) return 0;
             return +((cig * af) / 20).toFixed(2);
         },
+
+        // Edad calculada a partir de fecha_nacimiento (ISO yyyy-mm-dd)
+        calculatedAge: (s) => {
+            const dob = s.form.fecha_nacimiento;
+            if (!dob) return null;
+            const [y, m, d] = dob.split('-').map(Number);
+            if (!y || !m || !d) return null;
+            const today = new Date();
+            let age = today.getFullYear() - y;
+            const notYetHadBirthday =
+                today.getMonth() + 1 < m ||
+                (today.getMonth() + 1 === m && today.getDate() < d);
+            if (notYetHadBirthday) age--;
+            return age >= 0 ? age : null;
+        },
+
         isNew: (s) => !s.form.id,
     },
 
