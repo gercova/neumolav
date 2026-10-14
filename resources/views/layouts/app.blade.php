@@ -40,13 +40,13 @@
 
     {{-- Variables globales para el legacy JS --}}
     <script>
-        const API_BASE_URL      = "{{ url('/admin/') }}";
-        const API_URL           = "{{ url('/') }}";
-        const NAME_ENTERPRISE   = "{{ $enterprise->nombre_comercial }}";
-        const token             = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        window.API_BASE_URL     = API_BASE_URL;
-        window.API_URL          = API_URL;
-        window.NAME_ENTERPRISE  = NAME_ENTERPRISE;
+        const API_BASE_URL = "{{ url('/admin/') }}";
+        const API_URL = "{{ url('/') }}";
+        const NAME_ENTERPRISE = "{{ $enterprise->nombre_comercial }}";
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        window.API_BASE_URL = API_BASE_URL;
+        window.API_URL = API_URL;
+        window.NAME_ENTERPRISE = NAME_ENTERPRISE;
     </script>
 
     {{-- Highcharts --}}
@@ -139,6 +139,7 @@
         </div>
     </div>
     <!-- ./wrapper -->
+    <div id="vue-quickview-modal"></div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleMenuIcon = document.getElementById('toggleMenuIcon');
@@ -158,6 +159,7 @@
             }
         });
     </script>
+    @vite(['resources/js/modules/quickview.js'])
     @stack('scripts')
 </body>
 

@@ -17,19 +17,15 @@ use Illuminate\Support\Facades\Validator;
 
 class CitasController extends Controller
 {
-    public function index(Request $request): RedirectResponse
-    {
+    public function index(Request $request): RedirectResponse {
         return redirect()->route('home', $request->query());
     }
 
-    public function list(Request $request): JsonResponse
-    {
-        $date = $request->query('date', Carbon::today()->format('Y-m-d'));
+    public function list(Request $request): JsonResponse {
+        $date   = $request->query('date', Carbon::today()->format('Y-m-d'));
         $status = $request->query('status');
         $search = $request->query('search');
-
-        $query = Cita::with(['history', 'status', 'tipoAtencion'])
-            ->whereDate('fecha_cita', $date);
+        $query  = Cita::with(['history', 'status', 'tipoAtencion'])->whereDate('fecha_cita', $date);
 
         if (! empty($status)) {
             $query->where('id_estado', $status);
@@ -47,7 +43,7 @@ class CitasController extends Controller
             ->get();
 
         $data = $appointments->map(function ($item, $index) {
-            $patient = $item->history;
+            $patient    = $item->history;
             $turnNumber = $item->numero_turno ?: ($index + 1);
 
             $buttons = sprintf(
@@ -75,21 +71,21 @@ class CitasController extends Controller
 
             // Badge del tipo de atención (verde = Nuevo, azul = Control, amarillo = Continuador)
             $badgeColor = match ((int) ($item->id_tipo_atencion ?? 1)) {
-                1 => 'badge-success',
-                2 => 'badge-primary',
-                3 => 'badge-warning text-dark',
+                1       => 'badge-success',
+                2       => 'badge-primary',
+                3       => 'badge-warning text-dark',
                 default => 'badge-secondary'
             };
             $badgeDesc = $item->tipoAtencion ? $item->tipoAtencion->descripcion : match ((int) ($item->id_tipo_atencion ?? 1)) {
-                1 => 'Nuevo',
-                2 => 'Control',
-                3 => 'Continuador',
+                1       => 'Nuevo',
+                2       => 'Control',
+                3       => 'Continuador',
                 default => 'Nuevo'
             };
             $icon = match ((int) ($item->id_tipo_atencion ?? 1)) {
-                1 => 'bi-person-plus-fill',
-                2 => 'bi-arrow-repeat',
-                3 => 'bi-person-check-fill',
+                1       => 'bi-person-plus-fill',
+                2       => 'bi-arrow-repeat',
+                3       => 'bi-person-check-fill',
                 default => 'bi-tag'
             };
             $badgeHtml = sprintf(
@@ -103,91 +99,89 @@ class CitasController extends Controller
             );
 
             return [
-                'id' => $item->id,
-                'turn_number' => $turnNumber,
-                'history_id' => $patient ? $patient->id : null,
-                'dni' => $patient ? $patient->dni : '--',
-                'nombres' => $patient ? strtoupper($patient->nombres) : 'PACIENTE NO ENCONTRADO',
-                'telefono' => $patient ? ($patient->telefono ?: '--') : '--',
-                'fecha_cita' => Carbon::parse($item->fecha_cita)->format('Y-m-d'),
-                'fecha_formato' => Carbon::parse($item->fecha_cita)->format('d/m/Y'),
-                'hora_cita' => $item->hora_cita ? Carbon::parse($item->hora_cita)->format('h:i A') : 'Orden de llegada',
-                'hora_raw' => $item->hora_cita ? Carbon::parse($item->hora_cita)->format('H:i') : '',
-                'motivo' => $item->motivo ?: ($item->descripcion ?: 'Consulta general'),
-                'id_tipo_atencion' => $item->id_tipo_atencion,
-                'tipo_atencion_desc' => $badgeDesc,
+                'id'                => $item->id,
+                'turn_number'       => $turnNumber,
+                'history_id'        => $patient ? $patient->id : null,
+                'dni'               => $patient ? $patient->dni : '--',
+                'nombres'           => $patient ? strtoupper($patient->nombres) : 'PACIENTE NO ENCONTRADO',
+                'telefono'          => $patient ? ($patient->telefono ?: '--') : '--',
+                'fecha_cita'        => Carbon::parse($item->fecha_cita)->format('Y-m-d'),
+                'fecha_formato'     => Carbon::parse($item->fecha_cita)->format('d/m/Y'),
+                'hora_cita'         => $item->hora_cita ? Carbon::parse($item->hora_cita)->format('h:i A') : 'Orden de llegada',
+                'hora_raw'          => $item->hora_cita ? Carbon::parse($item->hora_cita)->format('H:i') : '',
+                'motivo'            => $item->motivo ?: ($item->descripcion ?: 'Consulta general'),
+                'id_tipo_atencion'  => $item->id_tipo_atencion,
+                'tipo_atencion_desc'=> $badgeDesc,
                 'tipo_atencion_color' => $badgeColor,
                 'tipo_atencion_badge' => $badgeHtml,
-                'status_id' => $item->id_estado,
-                'status_desc' => $item->status ? $item->status->descripcion : 'DESCONOCIDO',
-                'created_at' => Carbon::parse($item->created_at)->format('d/m/Y H:i'),
-                'created_at_raw' => Carbon::parse($item->created_at)->format('Y-m-d H:i:s'),
+                'status_id'         => $item->id_estado,
+                'status_desc'       => $item->status ? $item->status->descripcion : 'DESCONOCIDO',
+                'created_at'        => Carbon::parse($item->created_at)->format('d/m/Y H:i'),
+                'created_at_raw'    => Carbon::parse($item->created_at)->format('Y-m-d H:i:s'),
                 'routes' => [
-                    'history_edit' => $patient ? route('hcl.histories.edit', ['history' => $patient->id]) : '#',
-                    'control_add' => $patient ? route('hcl.appointments.add', ['hc' => $patient->id]) : '#',
-                    'exam_add' => $patient ? route('hcl.exams.add', ['hc' => $patient->id]) : '#',
-                    'report_add' => $patient ? route('hcl.reports.add', ['hc' => $patient->id]) : '#',
+                    'history_edit'  => $patient ? route('hcl.histories.edit', ['history' => $patient->id]) : '#',
+                    'control_add'   => $patient ? route('hcl.appointments.add', ['hc' => $patient->id]) : '#',
+                    'exam_add'      => $patient ? route('hcl.exams.add', ['hc' => $patient->id]) : '#',
+                    'report_add'    => $patient ? route('hcl.reports.add', ['hc' => $patient->id]) : '#',
                 ],
-                'buttons' => $buttons,
+                'buttons'           => $buttons,
             ];
         });
 
         return response()->json([
-            'status' => true,
-            'date' => $date,
-            'count' => $data->count(),
-            'data' => $data,
+            'status'    => true,
+            'date'      => $date,
+            'count'     => $data->count(),
+            'data'      => $data,
         ]);
     }
 
-    public function stats(Request $request): JsonResponse
-    {
-        $date = $request->query('date', Carbon::today()->format('Y-m-d'));
-        $total = Cita::whereDate('fecha_cita', $date)->count();
-        $enEspera = Cita::whereDate('fecha_cita', $date)->where('id_estado', 7)->count();
-        $atendidos = Cita::whereDate('fecha_cita', $date)->where('id_estado', 6)->count();
+    public function stats(Request $request): JsonResponse {
+        $date       = $request->query('date', Carbon::today()->format('Y-m-d'));
+        $total      = Cita::whereDate('fecha_cita', $date)->count();
+        $enEspera   = Cita::whereDate('fecha_cita', $date)->where('id_estado', 7)->count();
+        $atendidos  = Cita::whereDate('fecha_cita', $date)->where('id_estado', 6)->count();
         $pendientes = Cita::whereDate('fecha_cita', $date)->whereIn('id_estado', [1, 2])->count();
         $cancelados = Cita::whereDate('fecha_cita', $date)->where('id_estado', 3)->count();
 
         return response()->json([
-            'status' => true,
-            'date' => $date,
-            'total' => $total,
-            'en_espera' => $enEspera,
-            'atendidos' => $atendidos,
-            'pendientes' => $pendientes,
-            'cancelados' => $cancelados,
+            'status'        => true,
+            'date'          => $date,
+            'total'         => $total,
+            'en_espera'     => $enEspera,
+            'atendidos'     => $atendidos,
+            'pendientes'    => $pendientes,
+            'cancelados'    => $cancelados,
         ]);
     }
 
-    public function store(Request $request): JsonResponse
-    {
+    public function store(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-            'id_historia' => 'required|exists:historias,id',
-            'fecha_cita' => 'required|date',
-            'hora_cita' => 'nullable',
-            'motivo' => 'nullable|string|max:255',
-            'id_tipo_atencion' => 'nullable|integer|exists:tipos_atencion,id',
+            'id_historia'       => 'required|exists:historias,id',
+            'fecha_cita'        => 'required|date',
+            'hora_cita'         => 'nullable',
+            'motivo'            => 'nullable|string|max:255',
+            'id_tipo_atencion'  => 'nullable|integer|exists:tipos_atencion,id',
         ], [
-            'id_historia.required' => 'Debe seleccionar un paciente.',
-            'id_historia.exists' => 'El paciente seleccionado no existe.',
-            'fecha_cita.required' => 'La fecha de la cita es obligatoria.',
-            'fecha_cita.date' => 'La fecha de la cita no es válida.',
+            'id_historia.required'  => 'Debe seleccionar un paciente.',
+            'id_historia.exists'    => 'El paciente seleccionado no existe.',
+            'fecha_cita.required'   => 'La fecha de la cita es obligatoria.',
+            'fecha_cita.date'       => 'La fecha de la cita no es válida.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => $validator->errors()->first(),
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => $validator->errors()->first(),
             ], 422);
         }
 
-        $patientId = $request->id_historia;
-        $fechaCita = Carbon::parse($request->fecha_cita)->format('Y-m-d');
+        $patientId      = $request->id_historia;
+        $fechaCita      = Carbon::parse($request->fecha_cita)->format('Y-m-d');
         $tipoAtencionId = $request->input('id_tipo_atencion', 2); // Control por defecto para existentes
         // Verificar si el paciente ya cuenta con cita activa para esa fecha (excluyendo canceladas)
-        $existingCita = Cita::where('id_historia', $patientId)
+        $existingCita   = Cita::where('id_historia', $patientId)
             ->whereDate('fecha_cita', $fechaCita)
             ->whereNotIn('id_estado', [3]) // 3 is CANCELADO
             ->whereNull('deleted_at')
@@ -195,83 +189,79 @@ class CitasController extends Controller
 
         try {
             DB::beginTransaction();
-
             if ($existingCita) {
                 // Reutilizar registro de cita existente actualizando tipo de atención
                 $existingCita->update([
-                    'id_tipo_atencion' => $tipoAtencionId,
-                    'hora_cita' => $request->filled('hora_cita') ? $request->hora_cita : $existingCita->hora_cita,
-                    'motivo' => $request->motivo ?: $existingCita->motivo,
+                    'id_tipo_atencion'  => $tipoAtencionId,
+                    'hora_cita'         => $request->filled('hora_cita') ? $request->hora_cita : $existingCita->hora_cita,
+                    'motivo'            => $request->motivo ?: $existingCita->motivo,
                 ]);
 
                 DB::commit();
 
                 return response()->json([
-                    'status' => true,
-                    'type' => 'success',
-                    'messages' => 'Cita existente actualizada para el día '.Carbon::parse($fechaCita)->format('d/m/Y').". Turno: #{$existingCita->numero_turno}.",
-                    'numero_turno' => $existingCita->numero_turno,
-                    'data' => $existingCita,
+                    'status'        => true,
+                    'type'          => 'success',
+                    'messages'      => 'Cita existente actualizada para el día '.Carbon::parse($fechaCita)->format('d/m/Y').". Turno: #{$existingCita->numero_turno}.",
+                    'numero_turno'  => $existingCita->numero_turno,
+                    'data'          => $existingCita,
                 ]);
             }
 
             // Nuevo turno secuencial para la fecha (FIFO)
-            $maxTurno = Cita::whereDate('fecha_cita', $fechaCita)->max('numero_turno');
-            $numeroTurno = ($maxTurno ?? 0) + 1;
+            $maxTurno       = Cita::whereDate('fecha_cita', $fechaCita)->max('numero_turno');
+            $numeroTurno    = ($maxTurno ?? 0) + 1;
 
             $cita = Cita::create([
-                'id_historia' => $patientId,
-                'id_tipo_atencion' => $tipoAtencionId,
-                'fecha_cita' => $fechaCita,
-                'hora_cita' => $request->filled('hora_cita') ? $request->hora_cita : null,
-                'numero_turno' => $numeroTurno,
-                'motivo' => $request->motivo ?: 'Consulta general',
-                'id_estado' => 1, // PENDIENTE
+                'id_historia'       => $patientId,
+                'id_tipo_atencion'  => $tipoAtencionId,
+                'fecha_cita'        => $fechaCita,
+                'hora_cita'         => $request->filled('hora_cita') ? $request->hora_cita : null,
+                'numero_turno'      => $numeroTurno,
+                'motivo'            => $request->motivo ?: 'Consulta general',
+                'id_estado'         => 1, // PENDIENTE
             ]);
 
             DB::commit();
 
             return response()->json([
-                'status' => true,
-                'type' => 'success',
-                'messages' => "Cita agendada exitosamente. Turno asignado: #{$numeroTurno}.",
-                'numero_turno' => $numeroTurno,
-                'data' => $cita,
+                'status'        => true,
+                'type'          => 'success',
+                'messages'      => "Cita agendada exitosamente. Turno asignado: #{$numeroTurno}.",
+                'numero_turno'  => $numeroTurno,
+                'data'          => $cita,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Ocurrió un error al agendar la cita: '.$e->getMessage(),
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Ocurrió un error al agendar la cita: '.$e->getMessage(),
             ], 500);
         }
     }
 
-    public function reschedule(RescheduleValidate $request, int $id): JsonResponse
-    {
+    public function reschedule(RescheduleValidate $request, int $id): JsonResponse{
         $validated = $request->validated();
 
         if (! $validated) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => $validated->errors()->first(),
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => $validated->errors()->first(),
             ], 422);
         }
 
         $cita = Cita::find($id);
         if (! $cita) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'No se encontró la cita a reagendar.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'No se encontró la cita a reagendar.',
             ], 404);
         }
 
         $newDate = Carbon::parse($request->fecha_cita)->format('Y-m-d');
-
         // Verificar si el paciente ya tiene otra cita activa en la fecha destino
         $exists = Cita::where('id_historia', $cita->id_historia)
             ->whereDate('fecha_cita', $newDate)
@@ -282,101 +272,93 @@ class CitasController extends Controller
 
         if ($exists) {
             return response()->json([
-                'status' => false,
-                'type' => 'warning',
-                'messages' => 'El paciente ya cuenta con otra cita activa en la fecha destino ('.Carbon::parse($newDate)->format('d/m/Y').').',
+                'status'    => false,
+                'type'      => 'warning',
+                'messages'  => 'El paciente ya cuenta con otra cita activa en la fecha destino ('.Carbon::parse($newDate)->format('d/m/Y').').',
             ], 422);
         }
 
         try {
             DB::beginTransaction();
-
             // Next sequential turn for the target date
             $maxTurno = Cita::whereDate('fecha_cita', $newDate)->max('numero_turno');
             $newTurno = ($maxTurno ?? 0) + 1;
-
             $cita->update([
-                'fecha_cita' => $newDate,
-                'hora_cita' => $request->filled('hora_cita') ? $request->hora_cita : null,
-                'numero_turno' => $newTurno,
-                'motivo' => $request->motivo ?: $cita->motivo,
-                'id_estado' => 4, // REAGENDADO
+                'fecha_cita'    => $newDate,
+                'hora_cita'     => $request->filled('hora_cita') ? $request->hora_cita : null,
+                'numero_turno'  => $newTurno,
+                'motivo'        => $request->motivo ?: $cita->motivo,
+                'id_estado'     => 4, // REAGENDADO
             ]);
 
             DB::commit();
-
             return response()->json([
-                'status' => true,
-                'type' => 'success',
-                'messages' => 'Cita reagendada para el '.Carbon::parse($newDate)->format('d/m/Y').". Nuevo turno: #{$newTurno}.",
+                'status'    => true,
+                'type'      => 'success',
+                'messages'  => 'Cita reagendada para el '.Carbon::parse($newDate)->format('d/m/Y').". Nuevo turno: #{$newTurno}.",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Error al reagendar la cita: '.$e->getMessage(),
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Error al reagendar la cita: '.$e->getMessage(),
             ], 500);
         }
     }
 
     // actualizar estado de la cita
-    public function updateStatus(Request $request, int $id): JsonResponse
-    {
+    public function updateStatus(Request $request, int $id): JsonResponse {
         $validator = Validator::make($request->all(), [
             'id_estado' => 'required|exists:estado_cita,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Estado no válido.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Estado no válido.',
             ], 422);
         }
 
         $cita = Cita::find($id);
         if (! $cita) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Cita no encontrada.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Cita no encontrada.',
             ], 404);
         }
 
         $cita->update(['id_estado' => $request->id_estado]);
-
         $statusName = AppointmentStatus::where('id', $request->id_estado)->value('descripcion');
-
         return response()->json([
-            'status' => true,
-            'type' => 'success',
-            'messages' => "Estado actualizado a '{$statusName}'.",
+            'status'    => true,
+            'type'      => 'success',
+            'messages'  => "Estado actualizado a '{$statusName}'.",
         ]);
     }
 
     // actualizar tipo de atención de la cita y del paciente
-    public function updateTipoAtencion(Request $request, int $id): JsonResponse
-    {
+    public function updateTipoAtencion(Request $request, int $id): JsonResponse {
         $validator = Validator::make($request->all(), [
             'id_tipo_atencion' => 'required|integer|exists:tipos_atencion,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Tipo de atención no válido.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Tipo de atención no válido.',
             ], 422);
         }
 
         $cita = Cita::with('history')->find($id);
         if (! $cita) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Cita no encontrada.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Cita no encontrada.',
             ], 404);
         }
 
@@ -389,43 +371,40 @@ class CitasController extends Controller
         }
 
         $tipoDesc = TipoAtencion::where('id', $request->id_tipo_atencion)->value('descripcion') ?? 'Actualizado';
-
         return response()->json([
-            'status' => true,
-            'type' => 'success',
-            'messages' => "Tipo de atención cambiado a '{$tipoDesc}' exitosamente.",
-            'data' => [
-                'id' => $cita->id,
-                'id_tipo_atencion' => $cita->id_tipo_atencion,
-                'tipo_desc' => $tipoDesc,
+            'status'    => true,
+            'type'      => 'success',
+            'messages'  => "Tipo de atención cambiado a '{$tipoDesc}' exitosamente.",
+            'data'      => [
+                'id'                => $cita->id,
+                'id_tipo_atencion'  => $cita->id_tipo_atencion,
+                'tipo_desc'         => $tipoDesc,
             ],
         ]);
     }
 
     // eliminar cita
-    public function destroy(int $id): JsonResponse
-    {
+    public function destroy(int $id): JsonResponse {
         $cita = Cita::find($id);
         if (! $cita) {
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Cita no encontrada.',
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Cita no encontrada.',
             ], 404);
         }
 
         $cita->delete();
 
         return response()->json([
-            'status' => true,
-            'type' => 'success',
-            'messages' => 'Cita eliminada correctamente.',
+            'status'    => true,
+            'type'      => 'success',
+            'messages'  => 'Cita eliminada correctamente.',
         ]);
     }
 
     // buscar paciente existente para añadir cita
-    public function searchPatients(Request $request): JsonResponse
-    {
+    public function searchPatients(Request $request): JsonResponse {
         $q = trim($request->query('q', ''));
         if (empty($q) || strlen($q) < 2) {
             return response()->json([]);
@@ -443,15 +422,14 @@ class CitasController extends Controller
 
         $results = $patients->map(function ($p) {
             $age = $p->fecha_nacimiento ? Carbon::parse($p->fecha_nacimiento)->age : null;
-
             return [
-                'id' => $p->id,
-                'dni' => $p->dni,
-                'nombres' => strtoupper($p->nombres),
-                'telefono' => $p->telefono ?: '--',
-                'edad' => $age !== null ? "{$age} años" : 'Sin edad',
-                'sexo' => $p->id_sexo === 'M' ? 'Masc' : 'Fem',
-                'label' => "{$p->dni} - ".strtoupper($p->nombres),
+                'id'        => $p->id,
+                'dni'       => $p->dni,
+                'nombres'   => strtoupper($p->nombres),
+                'telefono'  => $p->telefono ?: '--',
+                'edad'      => $age !== null ? "{$age} años" : 'Sin edad',
+                'sexo'      => $p->id_sexo === 'M' ? 'Masc' : 'Fem',
+                'label'     => "{$p->dni} - ".strtoupper($p->nombres),
             ];
         });
 
@@ -459,66 +437,63 @@ class CitasController extends Controller
     }
 
     // registrar historia clínica de forma rápida para nueva atención
-    public function quickPatient(QuickPatientValidate $request): JsonResponse
-    {
-        $validated = $request->validated();
+    public function quickPatient(QuickPatientValidate $request): JsonResponse {
+        $validated      = $request->validated();
         $tipoAtencionId = $request->input('id_tipo_atencion', 1);
 
         try {
             DB::beginTransaction();
             // 1. Create Patient with safe defaults for required database fields
             $patient = History::create([
-                'id_td' => $request->id_td,
-                'dni' => trim($request->dni),
-                'nombres' => strtoupper(trim($request->nombres)),
-                'fecha_nacimiento' => $request->fecha_nacimiento,
-                'id_sexo' => $request->id_sexo,
-                'telefono' => trim($request->telefono),
-                'email' => $request->filled('email') ? trim($request->email) : null,
-                'id_gs' => 9,        // Sin datos
+                'id_td'             => $request->id_td,
+                'dni'               => trim($request->dni),
+                'nombres'           => strtoupper(trim($request->nombres)),
+                'fecha_nacimiento'  => $request->fecha_nacimiento,
+                'id_sexo'           => $request->id_sexo,
+                'telefono'          => trim($request->telefono),
+                'email'             => $request->filled('email') ? trim($request->email) : null,
+                'id_gs'             => 9,        // Sin datos
                 'ubigeo_nacimiento' => '220901', // Tarapoto default
                 'ubigeo_residencia' => '220901', // Tarapoto default
-                'id_gi' => 9,        // Sin grado
-                'ocupacion' => 'TRABAJADOR INDEPENDIENTE',
-                'id_ocupacion' => 2,        // Trabajador independiente
-                'id_estado' => 1,        // Soltero(a)
-                'id_ct' => 4,        // No fumador
-                'id_tipo_atencion' => $tipoAtencionId,
-                'estado' => true,
+                'id_gi'             => 9,        // Sin grado
+                'ocupacion'         => 'TRABAJADOR INDEPENDIENTE',
+                'id_ocupacion'      => 2,        // Trabajador independiente
+                'id_estado'         => 1,        // Soltero(a)
+                'id_ct'             => 4,        // No fumador
+                'id_tipo_atencion'  => $tipoAtencionId,
+                'estado'            => true,
             ]);
 
             // 2. Schedule Appointment immediately (FIFO turn)
-            $fechaCita = Carbon::parse($request->fecha_cita)->format('Y-m-d');
-            $maxTurno = Cita::whereDate('fecha_cita', $fechaCita)->max('numero_turno');
-            $numeroTurno = ($maxTurno ?? 0) + 1;
+            $fechaCita      = Carbon::parse($request->fecha_cita)->format('Y-m-d');
+            $maxTurno       = Cita::whereDate('fecha_cita', $fechaCita)->max('numero_turno');
+            $numeroTurno    = ($maxTurno ?? 0) + 1;
 
-            $cita = Cita::create([
-                'id_historia' => $patient->id,
-                'id_tipo_atencion' => $tipoAtencionId,
-                'fecha_cita' => $fechaCita,
-                'hora_cita' => $request->filled('hora_cita') ? $request->hora_cita : null,
-                'numero_turno' => $numeroTurno,
-                'motivo' => $request->motivo ?: 'Registro rápido y primera consulta',
-                'id_estado' => 1, // PENDIENTE
+            $cita           = Cita::create([
+                'id_historia'       => $patient->id,
+                'id_tipo_atencion'  => $tipoAtencionId,
+                'fecha_cita'        => $fechaCita,
+                'hora_cita'         => $request->filled('hora_cita') ? $request->hora_cita : null,
+                'numero_turno'      => $numeroTurno,
+                'motivo'            => $request->motivo ?: 'Registro rápido y primera consulta',
+                'id_estado'         => 1, // PENDIENTE
             ]);
 
             DB::commit();
-
             return response()->json([
-                'status' => true,
-                'type' => 'success',
-                'messages' => "Paciente registrado y agendado con éxito. Turno asignado: #{$numeroTurno}.",
-                'patient_id' => $patient->id,
-                'numero_turno' => $numeroTurno,
-                'cita' => $cita,
+                'status'        => true,
+                'type'          => 'success',
+                'messages'      => "Paciente registrado y agendado con éxito. Turno asignado: #{$numeroTurno}.",
+                'patient_id'    => $patient->id,
+                'numero_turno'  => $numeroTurno,
+                'cita'          => $cita,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
-                'status' => false,
-                'type' => 'error',
-                'messages' => 'Error al registrar paciente y cita: '.$e->getMessage(),
+                'status'    => false,
+                'type'      => 'error',
+                'messages'  => 'Error al registrar paciente y cita: '.$e->getMessage(),
             ], 500);
         }
     }

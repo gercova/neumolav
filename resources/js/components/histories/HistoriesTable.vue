@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useHistoriesStore } from '@/stores/historiesStore';
 import HistoryRowActions from './HistoryRowActions.vue';
+import { useQuickViewStore } from '@/stores/quickViewStore';
 
 const props = defineProps({ editUrl: String });
 const store = useHistoriesStore();
@@ -11,6 +12,17 @@ const rangeStart = () => total.value === 0 ? 0 : (page.value - 1) * pageSize.val
 const rangeEnd   = () => Math.min(page.value * pageSize.value, total.value);
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+
+
+const quickView = useQuickViewStore();
+
+const openQuickView = (record) => {
+    if (!record?.id) {
+        window.Swal?.fire({ icon: 'warning', title: 'Historia no encontrada' });
+        return;
+    }
+    quickView.open(record.id);
+};
 </script>
 
 <template>

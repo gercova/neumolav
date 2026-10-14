@@ -1,9 +1,11 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useCitasStore } from '@/stores/citasStore';
+import { useQuickViewStore } from '@/stores/quickViewStore';
 import AppointmentActions from './AppointmentActions.vue';
 
 const store = useCitasStore();
+const quickView = useQuickViewStore();
 const { citas, loading } = storeToRefs(store);
 
 const escapeHtml = (t) => !t ? '' : String(t)
@@ -31,7 +33,7 @@ const openQuickView = (historyId, patientName) => {
         return;
     }
     // Puente al modal jQuery existente
-    window.__neumoEvents.dispatchEvent(new CustomEvent('open-quickview', { detail: { historyId } }));
+    quickView.open(historyId); 
 };
 
 const openScheduleFromEmpty = () => {
