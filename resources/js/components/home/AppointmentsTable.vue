@@ -3,11 +3,12 @@ import { storeToRefs } from 'pinia';
 import { useCitasStore } from '@/stores/citasStore';
 import { useQuickViewStore } from '@/stores/quickViewStore';
 import { useCitasModalsStore } from '@/stores/citasModalsStore';
+import { openChangeTipoAtencionModal } from '@/composables/useTipoAtencionModal';
 import AppointmentActions from './AppointmentActions.vue';
 
 const store     = useCitasStore();
 const quickView = useQuickViewStore();
-const modals    = useCitasModalsStore(); 
+const modals    = useCitasModalsStore();
 const { citas, loading } = storeToRefs(store);
 
 const escapeHtml = (t) => !t ? '' : String(t)
@@ -28,14 +29,42 @@ const statusBadge = (id, desc) => {
     return { cls, ico, txt };
 };
 
+const tipoAtencionIcon = (id) => {
+    switch (parseInt(id)) {
+        case 1: return 'bi-person-plus-fill';
+        case 2: return 'bi-arrow-repeat';
+        case 3: return 'bi-person-check-fill';
+        default: return 'bi-tag';
+    }
+};
+
+const openChangeTipo = (cita) => {
+    openChangeTipoAtencionModal(cita, () => store.refresh(false));
+};
+
+const handleTableClick = (e) => {
+    const btn = e.target.closest('.btn-change-tipo-atencion');
+    if (btn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const id = parseInt(btn.dataset.id);
+        const cita = citas.value.find(item => item.id === id);
+        if (cita) {
+            openChangeTipo(cita);
+        }
+    }
+};
+
 const openQuickView = (historyId, patientName) => {
     if (!historyId) {
-        window.Swal?.fire({ icon: 'warning', title: 'Historia no encontrada',
-            text: `El paciente ${patientName || ''} no tiene historia vinculada.` });
+        window.Swal?.fire({
+            icon: 'warning',
+            title: 'Historia no encontrada',
+            text: `El paciente ${patientName || ''} no tiene historia vinculada.`,
+        });
         return;
     }
-    // Puente al modal jQuery existente
-    quickView.open(historyId); 
+    quickView.open(historyId);
 };
 
 const openScheduleFromEmpty = () => modals.openSchedule(store.currentDate);
@@ -47,13 +76,13 @@ const openScheduleFromEmpty = () => modals.openSchedule(store.currentDate);
             <h5 class="card-title m-0 text-dark font-weight-bold">
                 <i class="bi bi-list-ol text-primary"></i> Cola de Citas y Turnos
             </h5>
-            <button class="btn btn-outline-secondary btn-sm" @click="store.refresh()">
+            <button class="btn btn-outline-secondary btn-sm" @click="store.refresh(false)">
                 <i class="bi bi-arrow-clockwise" :class="{ 'fa-spin': loading }"></i> Actualizar
             </button>
         </div>
 
         <div class="card-body p-0">
-            <div class="table-responsive">
+            <div class="table-responsive" @click="handleTableClick">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="thead-light">
                         <tr>
@@ -93,8 +122,19 @@ const openScheduleFromEmpty = () => modals.openSchedule(store.currentDate);
                                 <span class="badge badge-turno shadow-xs">#{{ c.turn_number }}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="font-weight-bold text-primary">{{ c.nombres }}</span>
-                                <span v-html="c.tipo_atencion_badge"></span>
+                                <span class="font-weight-bold text-primary mr-1">{{ c.nombres }}</span>
+                                <span class="badge py-1 px-2 btn-change-tipo-atencion"
+                                      :class="c.tipo_atencion_color || 'badge-secondary'"
+                                      style="cursor: pointer;"
+                                      :data-id="c.id"
+                                      :data-patient="c.nombres"
+                                      :data-current="c.id_tipo_atencion || 1"
+                                      @click.stop="openChangeTipo(c)"
+                                      title="Haga clic para cambiar tipo de atención">
+                                    <i class="bi mr-1" :class="tipoAtencionIcon(c.id_tipo_atencion)"></i>
+                                    {{ c.tipo_atencion_desc || 'Nuevo' }}
+                                    <i class="bi bi-pencil-square ml-1" style="font-size:0.75rem; opacity:0.8;"></i>
+                                </span>
                             </td>
                             <td class="align-middle"><span class="badge badge-light border">{{ c.dni }}</span></td>
                             <td class="align-middle text-muted">

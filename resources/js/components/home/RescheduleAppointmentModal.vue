@@ -25,6 +25,7 @@ const submit = async () => {
         modals.closeReschedule();
         window.alertNotify?.('success', result.messages);
         await citas.refresh();
+        window.__neumoEvents?.dispatchEvent(new CustomEvent('citas:refresh'));
     } else {
         window.Swal.fire('Aviso', result?.messages || 'No se pudo reagendar.', 'warning');
     }

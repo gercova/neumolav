@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
 import { useCitasStore } from '@/stores/citasStore';
+import { openChangeTipoAtencionModal } from '@/composables/useTipoAtencionModal';
 import GlobalStats from './GlobalStats.vue';
 import DailyStats from './DailyStats.vue';
 import DateNavigator from './DateNavigator.vue';
@@ -17,10 +18,45 @@ const props = defineProps({
 });
 
 const citasStore = useCitasStore();
+let pollInterval = null;
+
+const onRefreshEvent = () => {
+    citasStore.refresh(true);
+};
+
+const onVisibilityChange = () => {
+    if (!document.hidden) {
+        citasStore.refresh(true);
+    }
+};
+
+const onOpenChangeTipo = (event) => {
+    if (event?.detail) {
+        openChangeTipoAtencionModal(event.detail, () => citasStore.refresh(false));
+    }
+};
 
 onMounted(() => {
     citasStore.currentDate = props.initialDate;
-    citasStore.refresh();
+    citasStore.refresh(false);
+
+    // Actualización automática periódica (cada 15s) en segundo plano
+    pollInterval = setInterval(() => {
+        if (!document.hidden && !citasStore.loading) {
+            citasStore.refresh(true);
+        }
+    }, 15000);
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.__neumoEvents?.addEventListener('citas:refresh', onRefreshEvent);
+    window.__neumoEvents?.addEventListener('open-change-tipo', onOpenChangeTipo);
+});
+
+onBeforeUnmount(() => {
+    if (pollInterval) clearInterval(pollInterval);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.__neumoEvents?.removeEventListener('citas:refresh', onRefreshEvent);
+    window.__neumoEvents?.removeEventListener('open-change-tipo', onOpenChangeTipo);
 });
 </script>
 

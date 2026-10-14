@@ -33,19 +33,19 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/',                 [HomePageController::class, 'index']);
-Route::get('/post/{url}',       [HomePageController::class, 'show'])->name('post.show');
-Route::get('/posts/{tags?}',    [HomePageController::class, 'posts'])->name('posts');
-Route::get('/nosotros',         [HomePageController::class, 'aboutus'])->name('nosotros');
-Route::get('/contacto',         [HomePageController::class, 'contact'])->name('contact');
-Route::post('/contacto',        [HomePageController::class, 'sendContact'])->name('send-contact');
-Route::post('/sendmail',        [HomePageController::class, 'storeMail'])->name('sendmail');
+Route::get('/', [HomePageController::class, 'index']);
+Route::get('/post/{url}', [HomePageController::class, 'show'])->name('post.show');
+Route::get('/posts/{tags?}', [HomePageController::class, 'posts'])->name('posts');
+Route::get('/nosotros', [HomePageController::class, 'aboutus'])->name('nosotros');
+Route::get('/contacto', [HomePageController::class, 'contact'])->name('contact');
+Route::post('/contacto', [HomePageController::class, 'sendContact'])->name('send-contact');
+Route::post('/sendmail', [HomePageController::class, 'storeMail'])->name('sendmail');
 /**
  * LOGIN
  */
-Route::get('/login',            [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
-Route::post('/login',           [AuthController::class, 'login'])->middleware('guest');
-Route::post('/logout',          [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 /**
  * RUTAS PROTEGIDAS

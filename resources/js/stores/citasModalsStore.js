@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API = () => window.API_BASE_URL;
+const API = () => (window.API_BASE_URL || '/admin').replace(/\/+$/, '');
 
 const defaultQuick = () => ({
     id_td: 1,

@@ -41,12 +41,14 @@ const tipos = [
 
 // ── Submit existente ────────────────────────────────
 const submitExisting = async () => {
+    const targetDate = existingDate.value;
     const result = await modals.submitExisting();
     if (result?.status) {
         modals.closeSchedule();
         window.alertNotify?.('success', result.messages);
         await citas.refresh();
-        await handleDateChanged(result);
+        window.__neumoEvents?.dispatchEvent(new CustomEvent('citas:refresh'));
+        await handleDateChanged(result, targetDate);
     } else if (result?.messages) {
         window.Swal.fire('Aviso', result.messages, 'warning');
     }
@@ -54,20 +56,21 @@ const submitExisting = async () => {
 
 // ── Submit quick patient ────────────────────────────
 const submitQuick = async () => {
+    const targetDate = quick.value.fecha_cita;
     const result = await modals.submitQuick();
     if (result?.status) {
         modals.closeSchedule();
         window.alertNotify?.('success', result.messages);
         await citas.refresh();
-        await handleDateChanged(result);
+        window.__neumoEvents?.dispatchEvent(new CustomEvent('citas:refresh'));
+        await handleDateChanged(result, targetDate);
     } else if (result?.messages) {
         window.Swal.fire('Aviso', result.messages, 'warning');
     }
 };
 
 // Después de crear la cita, si es para otra fecha, ofrecer navegar
-const handleDateChanged = async (result) => {
-    const targetDate = scheduleTab.value === 'search' ? existingDate.value : quick.value.fecha_cita;
+const handleDateChanged = async (result, targetDate) => {
     if (!targetDate || targetDate === citas.currentDate) return;
 
     const r = await window.Swal.fire({
