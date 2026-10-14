@@ -25,7 +25,6 @@ class HomeController extends Controller {
         $examenes      = Exam::whereNull('deleted_at')->count();
         $controles     = Appointment::whereNull('deleted_at')->count();
         $users         = User::whereNull('deleted_at')->count();
-
         $selectedDate  = $request->query('date', Carbon::today()->format('Y-m-d'));
         $documentTypes = DocumentType::where('id', '!=', 2)->get();
         $sexes         = Sex::get();

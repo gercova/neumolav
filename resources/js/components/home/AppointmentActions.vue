@@ -2,17 +2,19 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useCitasStore } from '@/stores/citasStore';
+import { useCitasModalsStore } from '@/stores/citasModalsStore';
 
-const props = defineProps({ cita: Object });
-const store = useCitasStore();
-const busy = ref(false);
+const props     = defineProps({ cita: Object });
+const store     = useCitasStore();
+const modals    = useCitasModalsStore();
+const busy      = ref(false);
 
-const API = window.API_BASE_URL;
+const API       = window.API_BASE_URL;
 
 const emitChange = () => store.refresh();
 
-const changeStatus = async (statusId) => {
-    busy.value = true;
+const changeStatus  = async (statusId) => {
+    busy.value      = true;
     try {
         await axios.post(`${API}/citas/${props.cita.id}/status`, { id_estado: statusId, _token: window.token });
         window.alertNotify?.('success', 'Estado actualizado');
@@ -22,10 +24,7 @@ const changeStatus = async (statusId) => {
     } finally { busy.value = false; }
 };
 
-const reschedule = () => {
-    // Dispara el modal jQuery existente
-    window.__neumoEvents.dispatchEvent(new CustomEvent('open-reschedule', { detail: props.cita }));
-};
+const reschedule = () => modals.openReschedule(props.cita);
 
 const changeTipo = () => {
     window.__neumoEvents.dispatchEvent(new CustomEvent('open-change-tipo', { detail: props.cita }));

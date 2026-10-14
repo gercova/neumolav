@@ -2,10 +2,12 @@
 import { storeToRefs } from 'pinia';
 import { useCitasStore } from '@/stores/citasStore';
 import { useQuickViewStore } from '@/stores/quickViewStore';
+import { useCitasModalsStore } from '@/stores/citasModalsStore';
 import AppointmentActions from './AppointmentActions.vue';
 
-const store = useCitasStore();
+const store     = useCitasStore();
 const quickView = useQuickViewStore();
+const modals    = useCitasModalsStore(); 
 const { citas, loading } = storeToRefs(store);
 
 const escapeHtml = (t) => !t ? '' : String(t)
@@ -36,9 +38,7 @@ const openQuickView = (historyId, patientName) => {
     quickView.open(historyId); 
 };
 
-const openScheduleFromEmpty = () => {
-    window.$('#modal_schedule_appointment').modal('show');
-};
+const openScheduleFromEmpty = () => modals.openSchedule(store.currentDate);
 </script>
 
 <template>

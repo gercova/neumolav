@@ -3,28 +3,32 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
 @endsection
+
 @php
     $homeState = [
-        'initialDate'   => $selectedDate,
-        'globalStats'   => [
+        'initialDate' => $selectedDate,
+        'globalStats' => [
             'historias' => $historias,
-            'examenes'  => $examenes,
+            'examenes' => $examenes,
             'controles' => $controles,
-            'users'     => $users,
+            'users' => $users,
         ],
-        'statuses'      => $statuses,
+        'statuses' => $statuses,
+        'documentTypes' => $documentTypes,
+        'sexes' => $sexes,
     ];
 @endphp
+
 @section('content')
     <div id="vue-home">
         {{-- Vue monta aquí --}}
     </div>
-    @include('home.partials.modals')
+    {{-- ⚠️ YA NO se incluye home.partials.modals --}}
 @endsection
+
 @push('scripts')
     <script>
         window.__HOME_STATE__ = @json($homeState);
     </script>
     @vite(['resources/js/modules/home.js'])
-    <script src="{{ asset('js/forms/citas.js') }}"></script>
 @endpush

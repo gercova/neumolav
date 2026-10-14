@@ -35,11 +35,11 @@ const antecedenteBadge = (val) => {
 <template>
     <Teleport to="body">
         <div v-if="visible" class="modal fade show d-block" tabindex="-1"
-             style="background: rgba(0,0,0,.5);"
-             @click="onBackdrop" @keydown.esc="store.close()">
+            style="background: rgba(0,0,0,.5);"
+            @click="onBackdrop" @keydown.esc="store.close()"
+        >
             <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
                 <div class="modal-content border-0 shadow-lg">
-
                     <!-- ══════════════ HEADER ══════════════ -->
                     <div class="modal-header bg-light py-3 border-bottom">
                         <div class="d-flex align-items-center flex-wrap">
@@ -70,7 +70,6 @@ const antecedenteBadge = (val) => {
                             <span>&times;</span>
                         </button>
                     </div>
-
                     <!-- ══════════════ BODY ══════════════ -->
                     <div class="modal-body p-4">
                         <!-- LOADING -->
@@ -87,7 +86,6 @@ const antecedenteBadge = (val) => {
                             <p class="small text-muted mb-3">{{ error }}</p>
                             <button class="btn btn-secondary btn-sm" @click="store.close()">Cerrar</button>
                         </div>
-
                         <!-- CONTENT -->
                         <template v-else-if="history">
                             <!-- Resumen rápido -->
@@ -125,7 +123,6 @@ const antecedenteBadge = (val) => {
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Tabs -->
                             <ul class="nav nav-tabs font-weight-bold mb-3">
                                 <li class="nav-item">
@@ -152,7 +149,6 @@ const antecedenteBadge = (val) => {
                                     </a>
                                 </li>
                             </ul>
-
                             <!-- ═════ TAB CONTROLES ═════ -->
                             <div v-show="activeTab === 'controles'">
                                 <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -236,7 +232,6 @@ const antecedenteBadge = (val) => {
                                         </tbody>
                                     </table>
                                 </div>
-
                                 <div v-else class="text-center py-5 border rounded bg-white mt-2">
                                     <i class="bi bi-clipboard-x text-muted" style="font-size:2.5rem; opacity:.6;"></i>
                                     <h6 class="font-weight-bold text-dark mt-2 mb-1">No registra controles clínicos previos</h6>
@@ -246,7 +241,6 @@ const antecedenteBadge = (val) => {
                                     </button>
                                 </div>
                             </div>
-
                             <!-- ═════ TAB EXÁMENES ═════ -->
                             <div v-show="activeTab === 'examenes'">
                                 <div class="d-flex justify-content-between align-items-center mb-2 px-1">
@@ -259,7 +253,6 @@ const antecedenteBadge = (val) => {
                                         <i class="bi bi-plus-circle mr-1"></i> Nuevo Examen
                                     </button>
                                 </div>
-
                                 <div v-if="examsCount > 0" class="table-responsive border rounded bg-white">
                                     <table class="table table-hover align-middle mb-0">
                                         <thead class="bg-light text-muted small text-uppercase">
@@ -319,7 +312,6 @@ const antecedenteBadge = (val) => {
                                         </tbody>
                                     </table>
                                 </div>
-
                                 <div v-else class="text-center py-5 border rounded bg-white mt-2">
                                     <i class="bi bi-file-earmark-x text-muted" style="font-size:2.5rem; opacity:.6;"></i>
                                     <h6 class="font-weight-bold text-dark mt-2 mb-1">No registra exámenes clínicos</h6>
@@ -329,7 +321,6 @@ const antecedenteBadge = (val) => {
                                     </button>
                                 </div>
                             </div>
-
                             <!-- ═════ TAB ANTECEDENTES ═════ -->
                             <div v-show="activeTab === 'antecedentes'">
                                 <div class="row">
@@ -399,7 +390,6 @@ const antecedenteBadge = (val) => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <!-- Tabaquismo y Exposición -->
                                     <div class="col-md-6 col-12 mb-3">
                                         <div class="card card-outline card-warning h-100 mb-0">
@@ -452,7 +442,6 @@ const antecedenteBadge = (val) => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <!-- Hospitalizaciones y Otros -->
                                     <div class="col-12 mb-3">
                                         <div class="card card-outline card-secondary mb-0">
@@ -491,7 +480,6 @@ const antecedenteBadge = (val) => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <!-- Motivo y Relato -->
                                     <div class="col-12">
                                         <div class="card card-outline card-primary mb-0">
@@ -520,7 +508,6 @@ const antecedenteBadge = (val) => {
                             </div>
                         </template>
                     </div>
-
                     <!-- ══════════════ FOOTER ══════════════ -->
                     <div class="modal-footer bg-light py-2 justify-content-between">
                         <div>

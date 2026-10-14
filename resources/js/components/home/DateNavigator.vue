@@ -2,9 +2,11 @@
 import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useCitasStore } from '@/stores/citasStore';
+import { useCitasModalsStore } from '@/stores/citasModalsStore';
 
-const props = defineProps({ statuses: Array });
-const store = useCitasStore();
+const props     = defineProps({ statuses: Array });
+const store     = useCitasStore();
+const modals    = useCitasModalsStore();
 const { currentDate, filterStatus } = storeToRefs(store);
 
 const fmt = (d) => {
@@ -38,8 +40,8 @@ watch(currentDate, (v) => window.__neumoEvents.dispatchEvent(new CustomEvent('ci
 
 // Expone para Blade/legacy
 defineExpose({ labelCurrent });
+const openSchedule = () => modals.openSchedule(currentDate.value);
 </script>
-
 <template>
     <div class="date-navigation-bar">
         <div class="row align-items-center">
@@ -70,13 +72,23 @@ defineExpose({ labelCurrent });
                 </div>
             </div>
 
-            <div class="col-lg-4 col-12 text-lg-right text-left">
+            <!-- <div class="col-lg-4 col-12 text-lg-right text-left">
                 <div class="btn-group flex-wrap">
                     <a href="/admin/histories/add" class="btn btn-primary btn-sm mr-2 mb-1">
                         <i class="bi bi-plus-circle"></i> Agregar nueva historia
                     </a>
                     <button type="button" class="btn btn-success btn-sm mb-1" id="btn_open_schedule_modal"
                             data-toggle="modal" data-target="#modal_schedule_appointment">
+                        <i class="bi bi-calendar-plus"></i> Agendar Cita
+                    </button>
+                </div>
+            </div> -->
+            <div class="col-lg-4 col-12 text-lg-right text-left">
+                <div class="btn-group flex-wrap">
+                    <a href="/admin/histories/add" class="btn btn-primary btn-sm mr-2 mb-1">
+                        <i class="bi bi-plus-circle"></i> Agregar nueva historia
+                    </a>
+                    <button type="button" class="btn btn-success btn-sm mb-1" @click="openSchedule">
                         <i class="bi bi-calendar-plus"></i> Agendar Cita
                     </button>
                 </div>

@@ -5,11 +5,15 @@ import GlobalStats from './GlobalStats.vue';
 import DailyStats from './DailyStats.vue';
 import DateNavigator from './DateNavigator.vue';
 import AppointmentsTable from './AppointmentsTable.vue';
+import ScheduleAppointmentModal from './ScheduleAppointmentModal.vue';
+import RescheduleAppointmentModal from './RescheduleAppointmentModal.vue';
 
 const props = defineProps({
     initialDate:  { type: String, required: true },
     globalStats:  { type: Object, required: true },
     statuses:     { type: Array, default: () => [] },
+    documentTypes: { type: Array, default: () => [] },
+    sexes:         { type: Array, default: () => [] },
 });
 
 const citasStore = useCitasStore();
@@ -48,5 +52,9 @@ onMounted(() => {
                 <AppointmentsTable />
             </div>
         </section>
+
+        <!-- Modales Vue (fuera del content-wrapper) -->
+        <ScheduleAppointmentModal :document-types="documentTypes" :sexes="sexes" />
+        <RescheduleAppointmentModal />
     </div>
 </template>
