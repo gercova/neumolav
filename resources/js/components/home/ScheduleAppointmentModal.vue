@@ -183,7 +183,7 @@ const onDniEnter = (e) => {
 
                                 <!-- Tarjeta paciente seleccionado -->
                                 <div v-if="selectedPatient"
-                                     class="alert alert-success d-flex justify-content-between align-items-center">
+                                     class="selected-patient-card d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="font-weight-bold text-success mb-1">{{ selectedPatient.nombres }}</h6>
                                         <div class="small text-muted">
@@ -368,3 +368,13 @@ const onDniEnter = (e) => {
         </div>
     </Teleport>
 </template>
+
+<style scoped>
+.selected-patient-card {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 15px;
+}
+</style>
