@@ -33,247 +33,245 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [HomePageController::class, 'index']);
-Route::get('/post/{url}', [HomePageController::class, 'show'])->name('post.show');
-Route::get('/posts/{tags?}', [HomePageController::class, 'posts'])->name('posts');
-Route::get('/nosotros', [HomePageController::class, 'aboutus'])->name('nosotros');
-Route::get('/contacto', [HomePageController::class, 'contact'])->name('contact');
-Route::post('/contacto', [HomePageController::class, 'sendContact'])->name('send-contact');
-Route::post('/sendmail', [HomePageController::class, 'storeMail'])->name('sendmail');
+Route::get('/',                 [HomePageController::class, 'index']);
+Route::get('/post/{url}',       [HomePageController::class, 'show'])->name('post.show');
+Route::get('/posts/{tags?}',    [HomePageController::class, 'posts'])->name('posts');
+Route::get('/nosotros',         [HomePageController::class, 'aboutus'])->name('nosotros');
+Route::get('/contacto',         [HomePageController::class, 'contact'])->name('contact');
+Route::post('/contacto',        [HomePageController::class, 'sendContact'])->name('send-contact');
+Route::post('/sendmail',        [HomePageController::class, 'storeMail'])->name('sendmail');
 
 /**
  * LOGIN
  */
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
-Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/login',            [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login',           [AuthController::class, 'login'])->middleware('guest');
+Route::post('/logout',          [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 /**
  * RUTAS PROTEGIDAS
  */
 Route::middleware(['auth', 'prevent.back'])->group(function () {
     Route::prefix('admin')->group(function () {
-        Route::get('/home', [HomeController::class, 'index'])->name('home');
-        Route::get('/entreprise/dataEnterprise', [EnterpriseController::class, 'getEnterprise']);
-        Route::get('/enterprise/images', [EnterpriseController::class, 'getImages']);
-        Route::get('/histories/quotes/{hc}', [HistoriesController::class, 'addQuotes']);
-        Route::get('/qoutes', [HistoriesController::class, 'getQuotes']);
-        Route::get('/checkStatusPatient/{id}', [HistoriesController::class, 'checkStatusPatient']);
-        Route::get('/histories/quick-view/{id}', [HistoriesController::class, 'quickView'])->name('hcl.histories.quickView');
+        Route::get('/home',                         [HomeController::class, 'index'])->name('home');
+        Route::get('/entreprise/dataEnterprise',    [EnterpriseController::class, 'getEnterprise']);
+        Route::get('/enterprise/images',            [EnterpriseController::class, 'getImages']);
+        Route::get('/histories/quotes/{hc}',        [HistoriesController::class, 'addQuotes']);
+        Route::get('/qoutes',                       [HistoriesController::class, 'getQuotes']);
+        Route::get('/checkStatusPatient/{id}',      [HistoriesController::class, 'checkStatusPatient']);
+        Route::get('/histories/quick-view/{id}',    [HistoriesController::class, 'quickView'])->name('hcl.histories.quickView');
         // MÓDULO DE PERFIL DEL USUARIO / ESPECIALISTA
-        Route::get('/profile', [UsersController::class, 'profile'])->name('profile.edit');
-        Route::post('/profile', [UsersController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/profile',                      [UsersController::class, 'profile'])->name('profile.edit');
+        Route::post('/profile',                     [UsersController::class, 'updateProfile'])->name('profile.update');
         // MÓDULO DE CITAS Y TURNOS (ACCESIBLE A TODOS LOS USUARIOS)
-        Route::get('/citas', [CitasController::class, 'index'])->name('citas.index');
-        Route::get('/citas/list', [CitasController::class, 'list'])->name('citas.list');
-        Route::get('/citas/stats', [CitasController::class, 'stats'])->name('citas.stats');
-        Route::get('/citas/search-patients', [CitasController::class, 'searchPatients'])->name('citas.searchPatients');
-        Route::post('/citas/store', [CitasController::class, 'store'])->name('citas.store');
-        Route::post('/citas/quick-patient', [CitasController::class, 'quickPatient'])->name('citas.quickPatient');
-        Route::post('/citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
-        Route::post('/citas/{id}/status', [CitasController::class, 'updateStatus'])->name('citas.updateStatus');
-        Route::post('/citas/{id}/tipo-atencion', [CitasController::class, 'updateTipoAtencion'])->name('citas.updateTipoAtencion');
-        Route::delete('/citas/{id}', [CitasController::class, 'destroy'])->name('citas.destroy');
+        Route::get('/citas',                        [CitasController::class, 'index'])->name('citas.index');
+        Route::get('/citas/list',                   [CitasController::class, 'list'])->name('citas.list');
+        Route::get('/citas/stats',                  [CitasController::class, 'stats'])->name('citas.stats');
+        Route::get('/citas/search-patients',        [CitasController::class, 'searchPatients'])->name('citas.searchPatients');
+        Route::post('/citas/store',                 [CitasController::class, 'store'])->name('citas.store');
+        Route::post('/citas/quick-patient',         [CitasController::class, 'quickPatient'])->name('citas.quickPatient');
+        Route::post('/citas/{id}/reschedule',       [CitasController::class, 'reschedule'])->name('citas.reschedule');
+        Route::post('/citas/{id}/status',           [CitasController::class, 'updateStatus'])->name('citas.updateStatus');
+        Route::post('/citas/{id}/tipo-atencion',    [CitasController::class, 'updateTipoAtencion'])->name('citas.updateTipoAtencion');
+        Route::delete('/citas/{id}',                [CitasController::class, 'destroy'])->name('citas.destroy');
         Route::middleware(['role:administrador', 'permission:seguridad'])->group(function () {
             // MÓDULO DE PERMISOS
             Route::middleware(['permission:permisos'])->group(function () {
-                Route::get('/permissions', [PermissionController::class, 'index'])->name('security.permissions');
-                Route::get('/permissions/list', [PermissionController::class, 'list']);
-                Route::get('/permissions/{id}', [PermissionController::class, 'show']);
-                Route::post('/permissions/store', [PermissionController::class, 'store']);
-                Route::post('/permissions/search', [PermissionController::class, 'search']);
-                Route::delete('/permissions/delete/{id}', [PermissionController::class, 'destroy']);
+                Route::get('/permissions',                  [PermissionController::class, 'index'])->name('security.permissions');
+                Route::get('/permissions/list',             [PermissionController::class, 'list']);
+                Route::get('/permissions/{id}',             [PermissionController::class, 'show']);
+                Route::post('/permissions/store',           [PermissionController::class, 'store']);
+                Route::post('/permissions/search',          [PermissionController::class, 'search']);
+                Route::delete('/permissions/delete/{id}',   [PermissionController::class, 'destroy']);
             });
             // MÓDULO DE ROLES
             Route::middleware(['permission:roles'])->group(function () {
-                Route::get('/roles', [RolesController::class, 'index'])->name('security.roles');
-                Route::get('/roles/list', [RolesController::class, 'list']);
-                Route::get('/roles/{id}/permissions', [RolesController::class, 'getPermissions']);
-                Route::get('/roles/{id}/users', [RolesController::class, 'getUsers']);
-                Route::get('/roles/{id}', [RolesController::class, 'show']);
-                Route::post('/roles/store', [RolesController::class, 'store']);
-                Route::post('/roles/{id}/syncPermissions', [RolesController::class, 'syncPermissions'])->name('security.roles.syncPermissions');
-                Route::delete('/roles/delete/{id}', [RolesController::class, 'destroy']);
+                Route::get('/roles',                        [RolesController::class, 'index'])->name('security.roles');
+                Route::get('/roles/list',                   [RolesController::class, 'list']);
+                Route::get('/roles/{id}/permissions',       [RolesController::class, 'getPermissions']);
+                Route::get('/roles/{id}/users',             [RolesController::class, 'getUsers']);
+                Route::get('/roles/{id}',                   [RolesController::class, 'show']);
+                Route::post('/roles/store',                 [RolesController::class, 'store']);
+                Route::post('/roles/{id}/syncPermissions',  [RolesController::class, 'syncPermissions'])->name('security.roles.syncPermissions');
+                Route::delete('/roles/delete/{id}',         [RolesController::class, 'destroy']);
             });
             // MÓDULO DE ESPECIALIDADES
             Route::middleware(['permission:especialidades'])->group(function () {
-                Route::get('/specialties', [SpecialtiesController::class, 'index'])->name('security.specialties');
-                Route::get('/specialties/list', [SpecialtiesController::class, 'list']);
-                Route::get('/specialties/{id}', [SpecialtiesController::class, 'show']);
-                Route::post('/specialties/store', [SpecialtiesController::class, 'store']);
-                Route::delete('/specialties/delete/{id}', [SpecialtiesController::class, 'destroy']);
+                Route::get('/specialties',                  [SpecialtiesController::class, 'index'])->name('security.specialties');
+                Route::get('/specialties/list',             [SpecialtiesController::class, 'list']);
+                Route::get('/specialties/{id}',             [SpecialtiesController::class, 'show']);
+                Route::post('/specialties/store',           [SpecialtiesController::class, 'store']);
+                Route::delete('/specialties/delete/{id}',   [SpecialtiesController::class, 'destroy']);
             });
             // MÓDULO DE USUARIOS
             Route::middleware(['permission:usuarios'])->group(function () {
-                Route::get('/users/home', [UsersController::class, 'index'])->name('security.users.home');
-                Route::get('/users/add', [UsersController::class, 'add'])->name('security.users.add');
-                Route::get('/users/edit/{id}', [UsersController::class, 'edit'])->name('security.users.edit');
-                Route::get('/users/role/{id}', [UsersController::class, 'permissions'])->name('security.users.role');
-                Route::get('/users/list', [UsersController::class, 'list']);
-                Route::get('/users/{id}', [UsersController::class, 'show']);
-                Route::post('/users/store', [UsersController::class, 'store']);
-                Route::post('/users/storePassword/{user}', [UsersController::class, 'storePassword']);
-                Route::post('/users/storePermission/{user}', [UsersController::class, 'storePermission'])->name('securty.users.storePermission');
-                Route::delete('/users/delete/{id}', [UsersController::class, 'destroy']);
+                Route::get('/users/home',                       [UsersController::class, 'index'])->name('security.users.home');
+                Route::get('/users/add',                        [UsersController::class, 'add'])->name('security.users.add');
+                Route::get('/users/edit/{id}',                  [UsersController::class, 'edit'])->name('security.users.edit');
+                Route::get('/users/role/{id}',                  [UsersController::class, 'permissions'])->name('security.users.role');
+                Route::get('/users/list',                       [UsersController::class, 'list']);
+                Route::get('/users/{id}',                       [UsersController::class, 'show']);
+                Route::post('/users/store',                     [UsersController::class, 'store']);
+                Route::post('/users/storePassword/{user}',      [UsersController::class, 'storePassword']);
+                Route::post('/users/storePermission/{user}',    [UsersController::class, 'storePermission'])->name('securty.users.storePermission');
+                Route::delete('/users/delete/{id}',             [UsersController::class, 'destroy']);
             });
         });
         // MÓDULO DE HISTORIAS
         Route::middleware(['permission:historias'])->group(function () {
-            Route::get('/histories/home', [HistoriesController::class, 'index'])->name('hcl.histories.home');
-            Route::get('/histories/add', [HistoriesController::class, 'add'])->name('hcl.histories.add');
+            Route::get('/histories/home',           [HistoriesController::class, 'index'])->name('hcl.histories.home');
+            Route::get('/histories/add',            [HistoriesController::class, 'add'])->name('hcl.histories.add');
             Route::get('/histories/edit/{history}', [HistoriesController::class, 'edit'])->name('hcl.histories.edit');
-            Route::post('/histories/location', [HistoriesController::class, 'searchLocation']);
-            Route::post('/histories/occupation', [HistoriesController::class, 'searchOccupation']);
-            Route::post('/histories/dni', [HistoriesController::class, 'searchDni']);
-            Route::post('/histories/store', [HistoriesController::class, 'store']);
-            Route::post('/histories/list', [HistoriesController::class, 'list']);
-            Route::delete('/histories/{hc}', [HistoriesController::class, 'destroy']);
+            Route::post('/histories/location',      [HistoriesController::class, 'searchLocation']);
+            Route::post('/histories/occupation',    [HistoriesController::class, 'searchOccupation']);
+            Route::post('/histories/dni',           [HistoriesController::class, 'searchDni']);
+            Route::post('/histories/store',         [HistoriesController::class, 'store']);
+            Route::post('/histories/list',          [HistoriesController::class, 'list']);
+            Route::delete('/histories/{hc}',        [HistoriesController::class, 'destroy']);
         });
         // MÓDULO DE EXÁMENES
         Route::middleware(['permission:examenes'])->group(function () {
-            Route::get('/exams/home', [ExamsController::class, 'index'])->name('hcl.exams.home');
-            Route::get('/exams/add/{hc}', [ExamsController::class, 'add'])->name('hcl.exams.add');
-            Route::get('/exams/edit/{ex}', [ExamsController::class, 'edit'])->name('hcl.exams.edit');
-            Route::get('/exams/see/{hc}', [ExamsController::class, 'see'])->name('hcl.exams.see');
-            Route::post('/exams/store', [ExamsController::class, 'store']);
-            Route::get('/exams/viewDetail/{ex}', [ExamsController::class, 'viewDetail']);
-            Route::get('/exams/viewImg/{image}', [ExamsController::class, 'viewExamImage']);
-            Route::get('/exams/list/{hc}', [ExamsController::class, 'listExams']);
-            Route::get('/exams/listDiagnostic/{ex}', [ExamsController::class, 'listOfDiagnosticsByExam']);
-            Route::get('/exams/listMedication/{ex}', [ExamsController::class, 'listOfMedicationByExam']);
-            Route::get('/exams/listImg/{ex}', [ExamsController::class, 'listOfImagesByExam']);
-            Route::get('/exams/print/{ex}/{format}', [ExamsController::class, 'printPrescription'])->name('hcl.exams.print');
-            Route::delete('/exams/delete/{ex}', [ExamsController::class, 'destroy']);
-            Route::post('/exams/list-histories', [ExamsController::class, 'listHistories']);
+            Route::get('/exams/home',                   [ExamsController::class, 'index'])->name('hcl.exams.home');
+            Route::get('/exams/add/{hc}',               [ExamsController::class, 'add'])->name('hcl.exams.add');
+            Route::get('/exams/edit/{ex}',              [ExamsController::class, 'edit'])->name('hcl.exams.edit');
+            Route::get('/exams/see/{hc}',               [ExamsController::class, 'see'])->name('hcl.exams.see');
+            Route::post('/exams/store',                 [ExamsController::class, 'store']);
+            Route::get('/exams/viewDetail/{ex}',        [ExamsController::class, 'viewDetail']);
+            Route::get('/exams/viewImg/{image}',        [ExamsController::class, 'viewExamImage']);
+            Route::get('/exams/list/{hc}',              [ExamsController::class, 'listExams']);
+            Route::get('/exams/listDiagnostic/{ex}',    [ExamsController::class, 'listOfDiagnosticsByExam']);
+            Route::get('/exams/listMedication/{ex}',    [ExamsController::class, 'listOfMedicationByExam']);
+            Route::get('/exams/listImg/{ex}',           [ExamsController::class, 'listOfImagesByExam']);
+            Route::get('/exams/print/{ex}/{format}',    [ExamsController::class, 'printPrescription'])->name('hcl.exams.print');
+            Route::delete('/exams/delete/{ex}',         [ExamsController::class, 'destroy']);
+            Route::post('/exams/list-histories',        [ExamsController::class, 'listHistories']);
 
-            Route::delete('/ex-dx/delete/{dx}', [ExamsController::class, 'destroyExamDiagnostic']);
-            Route::delete('/ex-mx/delete/{mx}', [ExamsController::class, 'destroyPrescriptionDrug']);
-            Route::delete('/ex-img/delete/{ix}', [ExamsController::class, 'destroyExamImage']);
+            Route::delete('/ex-dx/delete/{dx}',         [ExamsController::class, 'destroyExamDiagnostic']);
+            Route::delete('/ex-mx/delete/{mx}',         [ExamsController::class, 'destroyPrescriptionDrug']);
+            Route::delete('/ex-img/delete/{ix}',        [ExamsController::class, 'destroyExamImage']);
         });
         // MÓDULO DE CONTROLES
         Route::middleware(['permission:controles'])->group(function () {
-            Route::get('/appointments/home', [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
-            Route::get('/appointments/add/{hc}', [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
-            Route::get('/appointments/edit/{ap}', [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
-            Route::get('/appointments/see/{hc}', [AppointmentsController::class, 'see'])->name('hcl.appointments.see');
-            Route::get('/appointments/viewDetail/{ap}', [AppointmentsController::class, 'viewDetail']);
-            Route::get('/appointments/list/{hc}', [AppointmentsController::class, 'listAppointments']);
-            Route::get('/appointments/listAppointments/{id}', [AppointmentsController::class, 'listAppointmentsByHC']);
-            Route::get('/appointments/listDiagnostic/{ap}', [AppointmentsController::class, 'listOfDiagnosticsByApp']);
-            Route::get('/appointments/listMedication/{ap}', [AppointmentsController::class, 'listOfMedicationByApp']);
-            Route::post('/appointments/view-table', [AppointmentsController::class, 'viewTable']);
-            Route::get('/appointments/print/{ap}/{format}', [AppointmentsController::class, 'printPrescription'])->name('hcl.appointments.print');
-            Route::post('/appointments/store', [AppointmentsController::class, 'store']);
-            Route::delete('/appointments/delete/{ap}', [AppointmentsController::class, 'destroy']);
-            Route::delete('/ap-dx/delete/{dx}', [AppointmentsController::class, 'destroyDiagnosticAppointment']);
-            Route::delete('/ap-mx/delete/{mx}', [AppointmentsController::class, 'destroyMedicationAppointment']);
-            Route::post('/appointments/list-histories', [AppointmentsController::class, 'listHistories']);
+            Route::get('/appointments/home',                    [AppointmentsController::class, 'index'])->name('hcl.appointments.home');
+            Route::get('/appointments/add/{hc}',                [AppointmentsController::class, 'add'])->name('hcl.appointments.add');
+            Route::get('/appointments/edit/{ap}',               [AppointmentsController::class, 'edit'])->name('hcl.appointments.edit');
+            Route::get('/appointments/see/{hc}',                [AppointmentsController::class, 'see'])->name('hcl.appointments.see');
+            Route::get('/appointments/viewDetail/{ap}',         [AppointmentsController::class, 'viewDetail']);
+            Route::get('/appointments/list/{hc}',               [AppointmentsController::class, 'listAppointments']);
+            Route::get('/appointments/listAppointments/{id}',   [AppointmentsController::class, 'listAppointmentsByHC']);
+            Route::get('/appointments/listDiagnostic/{ap}',     [AppointmentsController::class, 'listOfDiagnosticsByApp']);
+            Route::get('/appointments/listMedication/{ap}',     [AppointmentsController::class, 'listOfMedicationByApp']);
+            Route::post('/appointments/view-table',             [AppointmentsController::class, 'viewTable']);
+            Route::get('/appointments/print/{ap}/{format}',     [AppointmentsController::class, 'printPrescription'])->name('hcl.appointments.print');
+            Route::post('/appointments/store',                  [AppointmentsController::class, 'store']);
+            Route::delete('/appointments/delete/{ap}',          [AppointmentsController::class, 'destroy']);
+            Route::delete('/ap-dx/delete/{dx}',                 [AppointmentsController::class, 'destroyDiagnosticAppointment']);
+            Route::delete('/ap-mx/delete/{mx}',                 [AppointmentsController::class, 'destroyMedicationAppointment']);
+            Route::post('/appointments/list-histories',         [AppointmentsController::class, 'listHistories']);
         });
         // MÓDULO DE INFORMES CLÍNICOS
         Route::middleware(['permission:informes'])->group(function () {
-            Route::get('/reports/home', [ReportsController::class, 'index'])->name('hcl.reports.home');
-            Route::post('/reports/list-histories', [ReportsController::class, 'listHistories']);
-            Route::get('/reports/add/{hc}', [ReportsController::class, 'add'])->name('hcl.reports.add');
-            Route::get('/reports/edit/{rp}', [ReportsController::class, 'edit'])->name('hcl.reports.edit');
-            Route::get('/reports/see/{hc}', [ReportsController::class, 'see'])->name('hcl.reports.see');
-            Route::post('/reports/store', [ReportsController::class, 'store']);
-            Route::get('/reports/viewDetail/{rp}', [ReportsController::class, 'viewReportDetail']);
-            Route::get('/reports/list/{hc}', [ReportsController::class, 'listReports']);
-            Route::get('/reports/listReports/{hc}', [ReportsController::class, 'listReportsByDNI']);
-            Route::get('/reports/listDiagnostic/{rp}', [ReportsController::class, 'listOfDiagnosticsByReport']);
-            Route::get('/reports/print/{rp}', [ReportsController::class, 'printReport'])->name('hcl.reports.print');
-            Route::delete('/reports/delete/{rp}', [ReportsController::class, 'destroy']);
-            Route::delete('/rp-dx/delete/{dx}', [ReportsController::class, 'destroyDiagnosticReport']);
+            Route::get('/reports/home',                 [ReportsController::class, 'index'])->name('hcl.reports.home');
+            Route::post('/reports/list-histories',      [ReportsController::class, 'listHistories']);
+            Route::get('/reports/add/{hc}',             [ReportsController::class, 'add'])->name('hcl.reports.add');
+            Route::get('/reports/edit/{rp}',            [ReportsController::class, 'edit'])->name('hcl.reports.edit');
+            Route::get('/reports/see/{hc}',             [ReportsController::class, 'see'])->name('hcl.reports.see');
+            Route::post('/reports/store',               [ReportsController::class, 'store']);
+            Route::get('/reports/viewDetail/{rp}',      [ReportsController::class, 'viewReportDetail']);
+            Route::get('/reports/list/{hc}',            [ReportsController::class, 'listReports']);
+            Route::get('/reports/listReports/{hc}',     [ReportsController::class, 'listReportsByDNI']);
+            Route::get('/reports/listDiagnostic/{rp}',  [ReportsController::class, 'listOfDiagnosticsByReport']);
+            Route::get('/reports/print/{rp}',           [ReportsController::class, 'printReport'])->name('hcl.reports.print');
+            Route::delete('/reports/delete/{rp}',       [ReportsController::class, 'destroy']);
+            Route::delete('/rp-dx/delete/{dx}',         [ReportsController::class, 'destroyDiagnosticReport']);
         });
         // MÓDULO DE INFORMES DE RIESGO CLÍNICO
         Route::middleware(['permission:riesgos'])->group(function () {
-            Route::get('/risks/home', [RisksController::class, 'index'])->name('hcl.risks.home');
-            Route::get('/risks/add/{hc}', [RisksController::class, 'add'])->name('hcl.risks.add');
-            Route::get('/risks/edit/{rk}', [RisksController::class, 'edit'])->name('hcl.risks.edit');
-            Route::get('/risks/see/{hc}', [RisksController::class, 'see'])->name('hcl.risks.see');
-            Route::get('/risks/viewDetail/{rk}', [RisksController::class, 'viewRiskDetail']);
-            Route::get('/risks/list/{hc}', [RisksController::class, 'listRisks']);
-            Route::get('/risks/listRisks/{hc}', [RisksController::class, 'listRisksByDNI']);
-            Route::get('/risks/print/{rk}', [RisksController::class, 'printRiskReport'])->name('hcl.risks.print');
-            Route::post('/risks/store', [RisksController::class, 'store']);
-            Route::delete('/risks/delete/{rk}', [RisksController::class, 'destroy']);
+            Route::get('/risks/home',               [RisksController::class, 'index'])->name('hcl.risks.home');
+            Route::get('/risks/add/{hc}',           [RisksController::class, 'add'])->name('hcl.risks.add');
+            Route::get('/risks/edit/{rk}',          [RisksController::class, 'edit'])->name('hcl.risks.edit');
+            Route::get('/risks/see/{hc}',           [RisksController::class, 'see'])->name('hcl.risks.see');
+            Route::get('/risks/viewDetail/{rk}',    [RisksController::class, 'viewRiskDetail']);
+            Route::get('/risks/list/{hc}',          [RisksController::class, 'listRisks']);
+            Route::get('/risks/listRisks/{hc}',     [RisksController::class, 'listRisksByDNI']);
+            Route::get('/risks/print/{rk}',         [RisksController::class, 'printRiskReport'])->name('hcl.risks.print');
+            Route::post('/risks/store',             [RisksController::class, 'store']);
+            Route::delete('/risks/delete/{rk}',     [RisksController::class, 'destroy']);
         });
         // MÓDULO DE CATEGORÍA DROGA
         Route::middleware(['permission:categorias'])->group(function () {
-            Route::get('/categories', [CategoriesController::class, 'index'])->name('maintenance.categories');
-            Route::get('/categories/list', [CategoriesController::class, 'list']);
-            Route::get('/categories/{cat}', [CategoriesController::class, 'show']);
-            Route::post('/categories/store', [CategoriesController::class, 'store']);
-            Route::delete('/categories/delete/{cat}', [CategoriesController::class, 'destroy']);
+            Route::get('/categories',                   [CategoriesController::class, 'index'])->name('maintenance.categories');
+            Route::get('/categories/list',              [CategoriesController::class, 'list']);
+            Route::get('/categories/{cat}',             [CategoriesController::class, 'show']);
+            Route::post('/categories/store',            [CategoriesController::class, 'store']);
+            Route::delete('/categories/delete/{cat}',   [CategoriesController::class, 'destroy']);
         });
         // MÓDULO DE PRESENTACIÓN DROGA
         Route::middleware(['permission:presentaciones'])->group(function () {
-            Route::get('/presentations', [DPController::class, 'index'])->name('maintenance.presentations');
-            Route::get('/presentations/list', [DPController::class, 'list']);
-            Route::get('/presentations/{pre}', [DPController::class, 'show']);
-            Route::post('/presentations/store', [DPController::class, 'store']);
-            Route::delete('/presentations/delete/{pre}', [DPController::class, 'destroy']);
+            Route::get('/presentations',                    [DPController::class, 'index'])->name('maintenance.presentations');
+            Route::get('/presentations/list',               [DPController::class, 'list']);
+            Route::get('/presentations/{pre}',              [DPController::class, 'show']);
+            Route::post('/presentations/store',             [DPController::class, 'store']);
+            Route::delete('/presentations/delete/{pre}',    [DPController::class, 'destroy']);
         });
         // MÓDULO DE DROGA
         Route::middleware(['permission:farmacos'])->group(function () {
-            Route::get('/drugs', [DrugsController::class, 'index'])->name('maintenance.drugs');
-            Route::get('/drugs/list', [DrugsController::class, 'list']);
-            Route::get('/drugs/{drug}', [DrugsController::class, 'show']);
-            Route::post('/drugs/store', [DrugsController::class, 'store']);
-            Route::post('/drugs/search', [DrugsController::class, 'search']);
-            Route::delete('/drugs/delete/{drug}', [DrugsController::class, 'destroy']);
+            Route::get('/drugs',                    [DrugsController::class, 'index'])->name('maintenance.drugs');
+            Route::get('/drugs/list',               [DrugsController::class, 'list']);
+            Route::get('/drugs/{drug}',             [DrugsController::class, 'show']);
+            Route::post('/drugs/store',             [DrugsController::class, 'store']);
+            Route::post('/drugs/search',            [DrugsController::class, 'search']);
+            Route::delete('/drugs/delete/{drug}',   [DrugsController::class, 'destroy']);
         });
         // MÓDULO DE DIAGNOSTÍCO
         Route::middleware(['permission:diagnosticos'])->group(function () {
-            Route::get('/diagnostics', [DiagnosticsController::class, 'index'])->name('maintenance.diagnostics');
-            Route::get('/diagnostics/list', [DiagnosticsController::class, 'list']);
-            Route::get('/diagnostics/{diagnostic}', [DiagnosticsController::class, 'show']);
-            Route::get('/diagnostics/autocomplete', [DiagnosticsController::class, 'advancedSearch']);
-            Route::post('/diagnostics/store', [DiagnosticsController::class, 'store']);
-            Route::post('/diagnostics/search', [DiagnosticsController::class, 'search']);
-            Route::delete('/diagnostics/delete/{diagnostic}', [DiagnosticsController::class, 'destroy']);
+            Route::get('/diagnostics',                          [DiagnosticsController::class, 'index'])->name('maintenance.diagnostics');
+            Route::get('/diagnostics/list',                     [DiagnosticsController::class, 'list']);
+            Route::get('/diagnostics/{diagnostic}',             [DiagnosticsController::class, 'show']);
+            Route::get('/diagnostics/autocomplete',             [DiagnosticsController::class, 'advancedSearch']);
+            Route::post('/diagnostics/store',                   [DiagnosticsController::class, 'store']);
+            Route::post('/diagnostics/search',                  [DiagnosticsController::class, 'search']);
+            Route::delete('/diagnostics/delete/{diagnostic}',   [DiagnosticsController::class, 'destroy']);
         });
         // MÓDULO DE OCUPACIÓN
         Route::post('/occupations/store', [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
         Route::middleware(['permission:ocupaciones'])->group(function () {
-            Route::get('/occupations', [OccupationsController::class, 'index'])->name('maintenance.occupations');
-            Route::get('/occupations/list', [OccupationsController::class, 'list']);
-            Route::get('/occupations/{oc}', [OccupationsController::class, 'show']);
-            Route::post('/occupations/search', [OccupationsController::class, 'search']);
-            Route::delete('/occupations/delete/{oc}', [OccupationsController::class, 'destroy']);
+            Route::get('/occupations',                  [OccupationsController::class, 'index'])->name('maintenance.occupations');
+            Route::get('/occupations/list',             [OccupationsController::class, 'list']);
+            Route::get('/occupations/{oc}',             [OccupationsController::class, 'show']);
+            Route::post('/occupations/search',          [OccupationsController::class, 'search']);
+            Route::delete('/occupations/delete/{oc}',   [OccupationsController::class, 'destroy']);
         });
         // MÓDULO DE EMPRESA
         Route::middleware(['permission:empresa'])->group(function () {
-            Route::post('/enterprise/store', [EnterpriseController::class, 'store']);
-            Route::get('/enterprise', [EnterpriseController::class, 'index'])->name('business.enterprise');
+            Route::post('/enterprise/store',    [EnterpriseController::class, 'store']);
+            Route::get('/enterprise',           [EnterpriseController::class, 'index'])->name('business.enterprise');
         });
         // MÓDULO DE PUBLICACIONES
         Route::middleware(['permission:posts'])->group(function () {
-            Route::get('/publications', [PostsController::class, 'index'])->name('business.posts');
-            Route::get('/publications/add/', [PostsController::class, 'add'])->name('business.posts.add');
-            Route::get('/publications/edit/{id}', [PostsController::class, 'edit'])->name('business.posts.edit');
-            Route::get('/publications/list', [PostsController::class, 'list']);
-            Route::get('/publications/{id}', [PostsController::class, 'show']);
-            Route::post('/publications/store', [PostsController::class, 'store']);
-            Route::delete('/publications/delete/{id}', [PostsController::class, 'destroy']);
+            Route::get('/publications',                 [PostsController::class, 'index'])->name('business.posts');
+            Route::get('/publications/add/',            [PostsController::class, 'add'])->name('business.posts.add');
+            Route::get('/publications/edit/{id}',       [PostsController::class, 'edit'])->name('business.posts.edit');
+            Route::get('/publications/list',            [PostsController::class, 'list']);
+            Route::get('/publications/{id}',            [PostsController::class, 'show']);
+            Route::post('/publications/store',          [PostsController::class, 'store']);
+            Route::delete('/publications/delete/{id}',  [PostsController::class, 'destroy']);
         });
         // MÓDULO DE REPORTES GRAFICOS
         Route::middleware(['permission:reportes'])->group(function () {
             Route::middleware(['permission:dashboard'])->group(function () {
-                Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
+                Route::get('/dashboard',                [StatisticsController::class, 'index'])->name('dashboard');
             });
-            Route::get('/dashboard/hcCount', [StatisticsController::class, 'getCountRows']);
-            Route::get('/dashboard/hcByMonth', [StatisticsController::class, 'HCByMonth']);
-            Route::get('/dashboard/histories/{year}', [StatisticsController::class, 'getAnnualData']);
-            // Route::get('/dashboard/exams/{year}',                   [StatisticsController::class, 'getExamsByYear']);
-            // Route::get('/dashboard/appointments/{year}',            [StatisticsController::class, 'getAppointmentsByYear']);
-            Route::get('/dashboard/diagnosticsByExam', [StatisticsController::class, 'getDiagnosticsByExam']);
-            Route::get('/dashboard/drugsByExam', [StatisticsController::class, 'getDrugsByExam']);
-            Route::get('/dashboard/historiesBySex', [StatisticsController::class, 'getHistoriesBySex']);
-            Route::get('/dashboard/historiesBySmoking', [StatisticsController::class, 'getHistoriesBySmoking']);
-            Route::get('/dashboard/historiesByBloodingGroup', [StatisticsController::class, 'getHistoriesByBloodingGroup']);
-            Route::get('/dashboard/historiesByDegreeIntruction', [StatisticsController::class, 'getHistoriesByDegreeIntruction']);
-            Route::get('/dashboard/historiesByMaritalStatus', [StatisticsController::class, 'getHistoriesByMaritalStatus']);
+            Route::get('/dashboard/hcCount',                        [StatisticsController::class, 'getCountRows']);
+            Route::get('/dashboard/hcByMonth',                      [StatisticsController::class, 'HCByMonth']);
+            Route::get('/dashboard/histories/{year}',               [StatisticsController::class, 'getAnnualData']);
+            Route::get('/dashboard/diagnosticsByExam',              [StatisticsController::class, 'getDiagnosticsByExam']);
+            Route::get('/dashboard/drugsByExam',                    [StatisticsController::class, 'getDrugsByExam']);
+            Route::get('/dashboard/historiesBySex',                 [StatisticsController::class, 'getHistoriesBySex']);
+            Route::get('/dashboard/historiesBySmoking',             [StatisticsController::class, 'getHistoriesBySmoking']);
+            Route::get('/dashboard/historiesByBloodingGroup',       [StatisticsController::class, 'getHistoriesByBloodingGroup']);
+            Route::get('/dashboard/historiesByDegreeIntruction',    [StatisticsController::class, 'getHistoriesByDegreeIntruction']);
+            Route::get('/dashboard/historiesByMaritalStatus',       [StatisticsController::class, 'getHistoriesByMaritalStatus']);
         });
     });
 });
