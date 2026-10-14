@@ -176,8 +176,8 @@ class HistoriesController extends Controller {
 	}
 
 	public function searchDni(Request $request) {
-		$dni = $request->input('dni');
-		$token = 'sk_9811.oyi4O6HZhGzEXQKAyygNmMyfgbXbd4rW';
+		$dni 	= $request->input('dni');
+		$token 	= config('services.decolecta.token'); 
 
 		try {
 			$response = Http::withHeaders([

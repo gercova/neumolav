@@ -43,4 +43,8 @@ return [
         'endpoint'  => 'https://api.kimi.ai/v1/summarize',
         'timeout'   => 15,
     ],
+
+    'decolecta' => [
+        'token' => env('DECOLECTA_TOKEN'),
+    ],
 ];
