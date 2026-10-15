@@ -200,10 +200,11 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE CATEGORÍA DROGA
         Route::middleware(['permission:categorias'])->group(function () {
             Route::get('/categories', [CategoriesController::class, 'index'])->name('maintenance.categories');
-            Route::get('/categories/list', [CategoriesController::class, 'list']);
+            Route::match(['get', 'post'], '/categories/list', [CategoriesController::class, 'list']);
             Route::get('/categories/{cat}', [CategoriesController::class, 'show']);
             Route::post('/categories/store', [CategoriesController::class, 'store']);
             Route::delete('/categories/delete/{cat}', [CategoriesController::class, 'destroy']);
+            Route::delete('/categories/{cat}', [CategoriesController::class, 'destroy']);
         });
         // MÓDULO DE PRESENTACIÓN DROGA
         Route::middleware(['permission:presentaciones'])->group(function () {
