@@ -27,6 +27,7 @@ export default defineConfig({
                 'resources/js/modules/risks-see.js',
                 'resources/js/modules/risk-form.js',
                 'resources/js/modules/categories.js',
+                'resources/js/modules/presentations.js',
             ],
             refresh: true,
         }),

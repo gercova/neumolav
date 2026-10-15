@@ -209,10 +209,11 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE PRESENTACIÓN DROGA
         Route::middleware(['permission:presentaciones'])->group(function () {
             Route::get('/presentations', [DPController::class, 'index'])->name('maintenance.presentations');
-            Route::get('/presentations/list', [DPController::class, 'list']);
+            Route::match(['get', 'post'], '/presentations/list', [DPController::class, 'list']);
             Route::get('/presentations/{pre}', [DPController::class, 'show']);
             Route::post('/presentations/store', [DPController::class, 'store']);
             Route::delete('/presentations/delete/{pre}', [DPController::class, 'destroy']);
+            Route::delete('/presentations/{pre}', [DPController::class, 'destroy']);
         });
         // MÓDULO DE DROGA
         Route::middleware(['permission:farmacos'])->group(function () {
