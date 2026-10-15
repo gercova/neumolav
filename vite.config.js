@@ -28,6 +28,7 @@ export default defineConfig({
                 'resources/js/modules/risk-form.js',
                 'resources/js/modules/categories.js',
                 'resources/js/modules/presentations.js',
+                'resources/js/modules/drugs.js',
             ],
             refresh: true,
         }),

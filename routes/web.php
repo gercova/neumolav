@@ -218,11 +218,13 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE DROGA
         Route::middleware(['permission:farmacos'])->group(function () {
             Route::get('/drugs', [DrugsController::class, 'index'])->name('maintenance.drugs');
-            Route::get('/drugs/list', [DrugsController::class, 'list']);
+            Route::match(['get', 'post'], '/drugs/list', [DrugsController::class, 'list']);
+            Route::get('/drugs/options', [DrugsController::class, 'options']);
             Route::get('/drugs/{drug}', [DrugsController::class, 'show']);
             Route::post('/drugs/store', [DrugsController::class, 'store']);
             Route::post('/drugs/search', [DrugsController::class, 'search']);
             Route::delete('/drugs/delete/{drug}', [DrugsController::class, 'destroy']);
+            Route::delete('/drugs/{drug}', [DrugsController::class, 'destroy']);
         });
         // MÓDULO DE DIAGNOSTÍCO
         Route::middleware(['permission:diagnosticos'])->group(function () {
