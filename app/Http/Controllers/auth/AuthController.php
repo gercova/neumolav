@@ -62,7 +62,6 @@ class AuthController extends Controller
     {
         $this->ensureIsNotRateLimited($request);
         $validated = $request->validated();
-
         $user = User::where('email', $validated['email'])->whereNull('deleted_at')->first();
         if (! $user) {
             RateLimiter::hit($this->throttleKey($request));

@@ -229,12 +229,13 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE DIAGNOSTÍCO
         Route::middleware(['permission:diagnosticos'])->group(function () {
             Route::get('/diagnostics', [DiagnosticsController::class, 'index'])->name('maintenance.diagnostics');
-            Route::get('/diagnostics/list', [DiagnosticsController::class, 'list']);
-            Route::get('/diagnostics/{diagnostic}', [DiagnosticsController::class, 'show']);
+            Route::match(['get', 'post'], '/diagnostics/list', [DiagnosticsController::class, 'list']);
             Route::get('/diagnostics/autocomplete', [DiagnosticsController::class, 'advancedSearch']);
+            Route::get('/diagnostics/{diagnostic}', [DiagnosticsController::class, 'show']);
             Route::post('/diagnostics/store', [DiagnosticsController::class, 'store']);
             Route::post('/diagnostics/search', [DiagnosticsController::class, 'search']);
             Route::delete('/diagnostics/delete/{diagnostic}', [DiagnosticsController::class, 'destroy']);
+            Route::delete('/diagnostics/{diagnostic}', [DiagnosticsController::class, 'destroy']);
         });
         // MÓDULO DE OCUPACIÓN
         Route::post('/occupations/store', [OccupationsController::class, 'store'])->middleware('permission:ocupaciones|historias');
