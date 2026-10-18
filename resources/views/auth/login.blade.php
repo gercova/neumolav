@@ -3,69 +3,52 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$enterprise[0]->logo) }}">
-    <title>Login {{ $enterprise[0]->nombre_comercial }}</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ !empty($enterprise[0]->logo) ? asset('storage/'.$enterprise[0]->logo) : asset('favicon.ico') }}">
+    <title>Login - {{ $enterprise[0]->nombre_comercial ?? config('global.site_name', 'Neumotar') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
-    <!-- Plugins -->
     <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}">
+    <!-- iCheck Bootstrap -->
     <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <!-- AdminLTE Theme -->
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+
+    <!-- Vite CSS & Core App JS -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <script>
-        const API_BASE_URL = "{{ url('/') }}";
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const API_BASE_URL     = "{{ url('/') }}";
+        const API_URL          = "{{ url('/') }}";
+        const NAME_ENTERPRISE  = "{{ $enterprise[0]->nombre_comercial ?? config('global.site_name', 'Neumotar') }}";
+        const token            = "{{ csrf_token() }}";
+        window.API_BASE_URL    = API_BASE_URL;
+        window.API_URL         = API_URL;
+        window.NAME_ENTERPRISE = NAME_ENTERPRISE;
+        window.token           = token;
     </script>
-    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('js/adminlte.min.js') }}"></script>
-    <!-- SweetAlert 2 -->
-    <script src="{{ asset('sweetalert2/sweetalert2@11.js') }}"></script>
-    <!-- Axios -->
-    <script src="{{ asset('js/axios.min.js') }}"></script>
 </head>
 <body class="hold-transition login-page">
-    <div class="login-box">
-        <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
-            <div>
-                <picture>
-                    <source srcset="{{ asset('storage/'.$enterprise[0]->logo_receta) }}" type="image/png">
-                    <img src="{{ asset('storage/'.$enterprise[0]->logo_receta) }}" alt="Logo Neumotar" class="img-fluid" loading="lazy">
-                </picture>
-            </div>
-            <div class="card-header text-center">
-                <p class="login-box-msg">Especialista en enfermedades respiratorias</p>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">Bienvenido, ingrese sus credenciales</p>
-                <div id="message"></div>
-                <form method="post" id="loginForm">
-                    @csrf
-                    <div class="form-group row">
-                        <input type="email" id="email" name="email" class="form-control" placeholder="E-mail">
-                    </div>
-                    <div class="form-group row">
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Clave y/o Contraseña">
-                    </div>
-                    <div class="row">
-                        <!-- /.col -->
-                        <div class="col-12">
-                            <button type="submit" id="loginButton" class="btn btn-primary float-right">Iniciar sesión</button>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </form>
-            </div>
-            <!-- /.card-body -->
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.login-box -->
+    {{-- Montaje SPA Vue 3 --}}
+    <div id="vue-login"></div>
+
+    {{-- Estado inicial provisto por AuthController --}}
+    <script>
+        window.__LOGIN_STATE__ = @json($loginState);
+    </script>
+
+    {{-- Módulo Vue SPA para Auth / Login --}}
+    @vite(['resources/js/modules/auth.js'])
+
+    {{-- Scripts de compatibilidad y dependencias legacy --}}
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('sweetalert2/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('js/forms/login.js') }}"></script>
 </body>
 </html>

@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoginValidate extends FormRequest
 {
-    
     public function authorize(): bool {
         return true;
     }
@@ -15,6 +14,7 @@ class LoginValidate extends FormRequest
         return [
             'email'     => 'required|email',
             'password'  => 'required|min:6',
+            'remember'  => 'nullable|boolean',
         ];
     }
 
@@ -29,8 +29,8 @@ class LoginValidate extends FormRequest
 
     protected function prepareForValidation(): void {
         $this->merge([
-            'email'     => trim(strip_tags($this->email)),
-            'password'  => trim(strip_tags($this->password)),
+            'email'     => is_string($this->email) ? trim(strip_tags($this->email)) : $this->email,
+            'password'  => is_string($this->password) ? trim(strip_tags($this->password)) : $this->password,
         ]);
     }
 }

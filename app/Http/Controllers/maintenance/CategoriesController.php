@@ -12,8 +12,7 @@ use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
         $this->middleware('permission:categoria_acceder')->only('index');
         $this->middleware('permission:categoria_crear|categoria_actualizar')->only('store');
@@ -21,15 +20,13 @@ class CategoriesController extends Controller
         $this->middleware('permission:categoria_borrar')->only('destroy');
     }
 
-    public function index(): View
-    {
+    public function index(): View {
         return view('maintenance.categories.index');
     }
 
-    public function list(Request $request): JsonResponse
-    {
+    public function list(Request $request): JsonResponse {
         $search = $request->input('search');
-        $query = Category::query();
+        $query  = Category::query();
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -54,42 +51,41 @@ class CategoriesController extends Controller
                 $page = (int) floor($request->input('jtStartIndex') / $pageSize) + 1;
             }
 
-            $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
-
+            $paginator      = $query->paginate($pageSize, ['*'], 'page', $page);
             $formattedItems = collect($paginator->items())->map(function ($item) {
                 return [
-                    'id' => $item->id,
-                    'descripcion' => $item->descripcion,
-                    'detalle' => $item->detalle,
-                    'estado' => $item->estado,
-                    'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
-                    'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
+                    'id'            => $item->id,
+                    'descripcion'   => $item->descripcion,
+                    'detalle'       => $item->detalle,
+                    'estado'        => $item->estado,
+                    'created_at'    => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
+                    'updated_at'    => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
                 ];
             });
 
             return response()->json([
-                'status' => true,
-                'data' => $formattedItems,
-                'total' => $paginator->total(),
-                'currentPage' => $paginator->currentPage(),
-                'lastPage' => $paginator->lastPage(),
-                'pageSize' => $paginator->perPage(),
-                'permissions' => $permissions,
-                'Result' => 'OK',
-                'TotalRecordCount' => $paginator->total(),
-                'Records' => $formattedItems,
+                'status'            => true,
+                'data'              => $formattedItems,
+                'total'             => $paginator->total(),
+                'currentPage'       => $paginator->currentPage(),
+                'lastPage'          => $paginator->lastPage(),
+                'pageSize'          => $paginator->perPage(),
+                'permissions'       => $permissions,
+                'Result'            => 'OK',
+                'TotalRecordCount'  => $paginator->total(),
+                'Records'           => $formattedItems,
             ]);
         }
 
-        $results = $query->get();
+        $results        = $query->get();
         $formattedItems = $results->map(function ($item) {
             return [
-                'id' => $item->id,
-                'descripcion' => $item->descripcion,
-                'detalle' => $item->detalle,
-                'estado' => $item->estado,
-                'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
-                'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
+                'id'            => $item->id,
+                'descripcion'   => $item->descripcion,
+                'detalle'       => $item->detalle,
+                'estado'        => $item->estado,
+                'created_at'    => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
+                'updated_at'    => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
             ];
         });
 
@@ -118,56 +114,52 @@ class CategoriesController extends Controller
         });
 
         return response()->json([
-            'status' => true,
-            'data' => $formattedItems,
-            'total' => $results->count(),
-            'permissions' => $permissions,
-            'sEcho' => 1,
-            'iTotalRecords' => $results->count(),
-            'iTotalDisplayRecords' => $results->count(),
-            'aaData' => $aaData,
-            'Result' => 'OK',
-            'TotalRecordCount' => $results->count(),
-            'Records' => $formattedItems,
+            'status'                => true,
+            'data'                  => $formattedItems,
+            'total'                 => $results->count(),
+            'permissions'           => $permissions,
+            'sEcho'                 => 1,
+            'iTotalRecords'         => $results->count(),
+            'iTotalDisplayRecords'  => $results->count(),
+            'aaData'                => $aaData,
+            'Result'                => 'OK',
+            'TotalRecordCount'      => $results->count(),
+            'Records'               => $formattedItems,
         ]);
     }
 
-    public function store(CategoryValidate $request): JsonResponse
-    {
+    public function store(CategoryValidate $request): JsonResponse {
         $validated = $request->validated();
         if ($request->filled('id')) {
             $cat = Category::findOrFail($request->input('id'));
             $cat->update($validated);
 
             return response()->json([
-                'status' => true,
-                'type' => 'success',
-                'messages' => 'La categoría ha sido actualizada',
+                'status'    => true,
+                'type'      => 'success',
+                'messages'  => 'La categoría ha sido actualizada',
             ], 200);
         }
 
         $result = Category::create($validated);
 
         return response()->json([
-            'status' => (bool) $result,
-            'type' => $result ? 'success' : 'error',
-            'messages' => $result ? 'Se ha añadido una nueva categoría' : 'Recargue la página, algo salió mal',
+            'status'    => (bool) $result,
+            'type'      => $result ? 'success' : 'error',
+            'messages'  => $result ? 'Se ha añadido una nueva categoría' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function show(Category $cat): JsonResponse
-    {
+    public function show(Category $cat): JsonResponse {
         return response()->json(CategoryResource::make($cat), 200);
     }
 
-    public function destroy(Category $cat): JsonResponse
-    {
+    public function destroy(Category $cat): JsonResponse {
         $cat->delete();
-
         return response()->json([
-            'status' => true,
-            'type' => 'success',
-            'messages' => 'La categoría fue eliminada',
+            'status'    => true,
+            'type'      => 'success',
+            'messages'  => 'La categoría fue eliminada',
         ], 200);
     }
 }
