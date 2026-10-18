@@ -4,29 +4,38 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OccupationValidate extends FormRequest {
-    
-    public function authorize(): bool {
+class OccupationValidate extends FormRequest
+{
+    public function authorize(): bool
+    {
         return true;
     }
 
-    public function rules(): array {
+    public function rules(): array
+    {
+        $id = $this->input('id');
+
         return [
-            'descripcion'               => 'required|max:100|unique:ocupaciones,descripcion,'.$this->id ?? NULL,
+            'descripcion' => 'required|string|max:100|unique:ocupaciones,descripcion,'.($id ?? 'NULL').',id,deleted_at,NULL',
+            'estado' => 'nullable|boolean',
         ];
     }
 
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
-            'descripcion.required'      => 'El campo descripción es requerido.',
-            'descripcion.max'           => 'El campo descripción no puede tener más de 100 caracteres.',
-            'descripcion.unique'        => 'La descripción ya existe.',
+            'descripcion.required' => 'El campo descripción es requerido.',
+            'descripcion.string' => 'El campo descripción debe ser un texto.',
+            'descripcion.max' => 'El campo descripción no puede tener más de 100 caracteres.',
+            'descripcion.unique' => 'La descripción ya existe.',
+            'estado.boolean' => 'El estado debe ser verdadero o falso.',
         ];
     }
 
-    protected function prepareForValidation(): void {
+    protected function prepareForValidation(): void
+    {
         $this->merge([
-            'descripcion'   => trim(strip_tags($this->descripcion)),
+            'descripcion' => is_string($this->descripcion) ? trim(strip_tags($this->descripcion)) : $this->descripcion,
         ]);
     }
 }

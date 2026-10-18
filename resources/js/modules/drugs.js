@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import DrugsIndex from '@/components/drugs/DrugsIndex.vue';
 
-const el = document.getElementById('vue-drugs');
+const el    = document.getElementById('vue-drugs');
 const state = window.__DRUGS_STATE__ || {};
 
 if (el) {

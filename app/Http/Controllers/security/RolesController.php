@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\security;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
+use Spatie\Permission\PermissionRegistrar;
 
-class RolesController extends Controller {
-
-    public function __construct() {
+class RolesController extends Controller
+{
+    public function __construct()
+    {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:rol_acceder')->only('index');
         $this->middleware('permission:rol_ver')->only('list', 'show', 'getPermissions', 'getUsers');
@@ -24,16 +26,17 @@ class RolesController extends Controller {
     /**
      * Vista principal del submodulo de roles.
      */
-    public function index(): View {
+    public function index(): View
+    {
         return view('security.roles.index');
     }
 
     /**
      * Listado de roles para DataTable.
      */
-    public function list(): JsonResponse {
+    public function list(): JsonResponse
+    {
         $roles = Role::withCount(['permissions', 'users'])->get();
-
         $currentUser = auth()->user();
         $data = $roles->map(function ($role, $index) use ($currentUser) {
             $buttons = '';
@@ -87,35 +90,37 @@ class RolesController extends Controller {
         });
 
         return response()->json([
-            'sEcho'                => 1,
-            'iTotalRecords'        => $data->count(),
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
             'iTotalDisplayRecords' => $data->count(),
-            'aaData'               => $data,
+            'aaData' => $data,
         ]);
     }
 
     /**
      * Retorna datos de un rol (para editar en modal).
      */
-    public function show(int $id): JsonResponse {
+    public function show(int $id): JsonResponse
+    {
         $role = Role::findOrFail($id);
+
         return response()->json($role);
     }
 
     /**
      * Retorna permisos disponibles y asignados al rol (para modal dual-panel).
      */
-    public function getPermissions(int $id): JsonResponse {
-        $role               = Role::findOrFail($id);
-        $assignedIds        = $role->permissions->pluck('id');
-        $allPermissions     = Permission::orderBy('name')->get();
-
-        $assigned   = $allPermissions->whereIn('id', $assignedIds)->values();
-        $available  = $allPermissions->whereNotIn('id', $assignedIds)->values();
+    public function getPermissions(int $id): JsonResponse
+    {
+        $role = Role::findOrFail($id);
+        $assignedIds = $role->permissions->pluck('id');
+        $allPermissions = Permission::orderBy('name')->get();
+        $assigned = $allPermissions->whereIn('id', $assignedIds)->values();
+        $available = $allPermissions->whereNotIn('id', $assignedIds)->values();
 
         return response()->json([
-            'role'      => $role,
-            'assigned'  => $assigned,
+            'role' => $role,
+            'assigned' => $assigned,
             'available' => $available,
         ]);
     }
@@ -123,12 +128,13 @@ class RolesController extends Controller {
     /**
      * Retorna usuarios que tienen el rol (para modal de usuarios).
      */
-    public function getUsers(int $id): JsonResponse {
-        $role  = Role::findOrFail($id);
+    public function getUsers(int $id): JsonResponse
+    {
+        $role = Role::findOrFail($id);
         $users = User::role($role->name)->get(['id', 'name', 'email']);
 
         return response()->json([
-            'role'  => $role->name,
+            'role' => $role->name,
             'users' => $users,
         ]);
     }
@@ -136,9 +142,10 @@ class RolesController extends Controller {
     /**
      * Crear o actualizar un rol.
      */
-    public function store(Request $request): JsonResponse {
+    public function store(Request $request): JsonResponse
+    {
         $request->validate([
-            'name'       => 'required|string|max:125',
+            'name' => 'required|string|max:125',
             'guard_name' => 'required|string|max:125',
         ]);
 
@@ -146,14 +153,14 @@ class RolesController extends Controller {
         $result = Role::updateOrCreate(
             ['id' => $roleId],
             [
-                'name'       => $request->input('name'),
+                'name' => $request->input('name'),
                 'guard_name' => $request->input('guard_name'),
             ]
         );
 
         return response()->json([
-            'status'   => (bool) $result,
-            'type'     => $result ? 'success' : 'error',
+            'status' => (bool) $result,
+            'type' => $result ? 'success' : 'error',
             'messages' => $result
                 ? ($result->wasChanged() ? 'El rol ha sido actualizado' : 'Se ha añadido un nuevo rol')
                 : 'Recargue la página e intente de nuevo',
@@ -163,23 +170,24 @@ class RolesController extends Controller {
     /**
      * Sincroniza los permisos de un rol.
      */
-    public function syncPermissions(Request $request, int $id): JsonResponse {
+    public function syncPermissions(Request $request, int $id): JsonResponse
+    {
         $request->validate([
             'permissions' => 'nullable|string',
         ]);
 
-        $role        = Role::findOrFail($id);
-        $permIds     = $request->permissions ? explode(',', $request->permissions) : [];
+        $role = Role::findOrFail($id);
+        $permIds = $request->permissions ? explode(',', $request->permissions) : [];
         $permissions = Permission::whereIn('id', $permIds)->get();
 
         $role->syncPermissions($permissions);
 
         // Limpiar caché de Spatie
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         return response()->json([
-            'status'   => true,
-            'type'     => 'success',
+            'status' => true,
+            'type' => 'success',
             'messages' => 'Los permisos del rol han sido actualizados correctamente',
         ]);
     }
@@ -187,13 +195,14 @@ class RolesController extends Controller {
     /**
      * Eliminar un rol.
      */
-    public function destroy(int $id): JsonResponse {
+    public function destroy(int $id): JsonResponse
+    {
         $role = Role::findOrFail($id);
         $role->delete();
 
         return response()->json([
-            'status'  => true,
-            'type'    => 'success',
+            'status' => true,
+            'type' => 'success',
             'message' => 'El rol fue eliminado correctamente',
         ]);
     }

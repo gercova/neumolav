@@ -26,7 +26,6 @@ class HomePageController extends Controller
     public function getPosts($quantity = null)
     {
         $query = Post::query();
-
         if ($quantity !== null) {
             $query->join('users', 'post.autor_post', '=', 'users.id')
                 ->join('post_type as pt', 'post.type_id', '=', 'pt.id')

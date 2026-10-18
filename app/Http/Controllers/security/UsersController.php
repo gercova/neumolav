@@ -15,13 +15,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class UsersController extends Controller {
-    
-    public function __construct() {
+class UsersController extends Controller
+{
+    public function __construct()
+    {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:usuario_acceder')->only('index');
         $this->middleware('permission:usuario_ver')->only('show');
@@ -30,23 +30,28 @@ class UsersController extends Controller {
         $this->middleware('permission:usuario_borrar')->only('destroy');
     }
 
-    public function index(): View {
+    public function index(): View
+    {
         return view('security.users.index');
     }
 
-    public function profile(): View {
+    public function profile(): View
+    {
         $user = auth()->user();
         $es = Specialty::all();
+
         return view('security.users.profile', compact('user', 'es'));
     }
 
-    public function updateProfile(ProfileUpdateValidate $request): JsonResponse {
+    public function updateProfile(ProfileUpdateValidate $request): JsonResponse
+    {
         $validated = $request->validated();
         $user = User::findOrFail(auth()->id());
-
         $path = null;
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) Storage::disk('public')->delete($user->avatar);
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
             $image = $request->file('avatar');
             $cleanName = $this->cleanFileName($image->getClientOriginalName());
             $path = $image->storeAs('users', $cleanName, 'public');
@@ -54,19 +59,21 @@ class UsersController extends Controller {
 
         $signaturePath = null;
         if ($request->hasFile('firma_digital')) {
-            if ($user->firma_digital) Storage::disk('public')->delete($user->firma_digital);
+            if ($user->firma_digital) {
+                Storage::disk('public')->delete($user->firma_digital);
+            }
             $sigFile = $request->file('firma_digital');
-            $cleanSigName = time() . '_' . $this->cleanFileName($sigFile->getClientOriginalName());
+            $cleanSigName = time().'_'.$this->cleanFileName($sigFile->getClientOriginalName());
             $signaturePath = $sigFile->storeAs('signatures', $cleanSigName, 'public');
         }
 
         $updateData = [
-            'name'          => $validated['name'],
-            'biografia'     => $validated['biografia'] ?? null,
-            'cmp'           => $validated['cmp'] ?? null,
-            'rne'           => $validated['rne'] ?? null,
+            'name' => $validated['name'],
+            'biografia' => $validated['biografia'] ?? null,
+            'cmp' => $validated['cmp'] ?? null,
+            'rne' => $validated['rne'] ?? null,
         ];
-        if (!empty($validated['specialty'])) {
+        if (! empty($validated['specialty'])) {
             $updateData['specialty'] = $validated['specialty'];
         }
         if ($path) {
@@ -79,46 +86,35 @@ class UsersController extends Controller {
         $user->update($updateData);
 
         return response()->json([
-            'status'        => true,
-            'type'          => 'success',
-            'messages'      => 'Perfil y credenciales actualizados correctamente',
+            'status' => true,
+            'type' => 'success',
+            'messages' => 'Perfil y credenciales actualizados correctamente',
             'signature_url' => $user->digital_signature_url,
-            'avatar_url'    => $user->profile_photo_url,
-            'route'         => route('profile.edit'),
+            'avatar_url' => $user->profile_photo_url,
+            'route' => route('profile.edit'),
         ], 200);
     }
 
-    public function add(): View {
+    public function add(): View
+    {
         $rl = Role::all();
         $es = Specialty::all();
+
         return view('security.users.add', compact('rl', 'es'));
     }
 
-    public function edit(int $id): View {
+    public function edit(int $id): View
+    {
         $rl = Role::all();
         $es = Specialty::all();
         $ur = User::getUserByRole($id);
         $us = User::findOrFail($id);
+
         return view('security.users.edit', compact('rl', 'es', 'ur', 'us'));
     }
 
-    /*public function permissions(int $id): View {
-        $user = User::findOrFail($id);
-        // Permisos que el usuario no tiene (ni directos ni por roles)
-        $availablePermissions = Permission::whereDoesntHave('users', function($query) use ($user) {
-            $query->where('users.id', $user->id);
-        })->whereDoesntHave('roles', function($query) use ($user) {
-            $query->whereIn('roles.id', $user->roles->pluck('id'));
-        })->get();
-        // Permisos asignados directamente al usuario
-        $directPermissions = $user->permissions;
-        // Permisos que el usuario tiene a través de su rol
-        $rolePermissions = $user->getPermissionsViaRoles();
-        
-        return view('security.users.role', compact('user', 'availablePermissions', 'directPermissions', 'rolePermissions'));
-    }*/
-
-    public function permissions(int $id): View {
+    public function permissions(int $id): View
+    {
         $user = User::with(['permissions', 'roles.permissions'])->findOrFail($id);
         // Obtener todos los permisos del sistema
         $allPermissions = Permission::all();
@@ -130,20 +126,25 @@ class UsersController extends Controller {
         $allAssignedPermissions = $directPermissions->merge($rolePermissions)->unique('id');
         // Permisos disponibles (no asignados ni directos ni por roles)
         $availablePermissions = $allPermissions->diff($allAssignedPermissions);
-        
+
         return view('security.users.role', compact('user', 'availablePermissions', 'directPermissions', 'rolePermissions', 'allAssignedPermissions'));
     }
 
-    public function assignRole($userId, $roleName): JsonResponse {
+    public function assignRole($userId, $roleName): JsonResponse
+    {
         $user = User::find($userId);
-        if(!$user) return response()->json(['error' => 'Usuario no encontrado'], 404);
+        if (! $user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
         $user->assignRole($roleName);
+
         return response()->json(['message' => "Rol '{$roleName}' asignado al usuario correctamente"]);
     }
 
-    public function list(): JsonResponse {
-        $results    = DB::table('view_user_roles_last_login')->get();
-        $data       = $results->map(function ($item, $index) {
+    public function list(): JsonResponse
+    {
+        $results = DB::table('view_user_roles_last_login')->get();
+        $data = $results->map(function ($item, $index) {
             $currentUser = auth()->user();
             $buttons = '';
             if ($currentUser->hasRole('administrador')) {
@@ -172,6 +173,7 @@ class UsersController extends Controller {
                     htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
+
             return [
                 $index + 1,
                 $item->name,
@@ -181,32 +183,32 @@ class UsersController extends Controller {
                     $item->rol
                 ),
                 $item->last_login ?: 'Nunca',
-                $buttons ?: '<span class="text-muted">No autorizado</span>'
+                $buttons ?: '<span class="text-muted">No autorizado</span>',
             ];
         });
 
         return response()->json([
-            'sEcho'                 => 1,
-            'iTotalRecords'         => $data->count(),
-            'iTotalDisplayRecords'  => $data->count(),
-            'aaData'                => $data,
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data,
         ]);
     }
 
-    public function store(UserValidate $request): JsonResponse {
-        $validated  = $request->validated();
-        $id         = $request->input('userId');
+    public function store(UserValidate $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $id = $request->input('userId');
         // Procesar la imagen si existe
-        $imagePath  = null;
+        $imagePath = null;
         if ($request->hasFile('avatar')) {
             // Eliminar imagen anterior si estamos actualizando
             if ($id) {
                 $user = User::find($id);
-                if ($user && $user->avatar) Storage::delete($user->avatar);
+                if ($user && $user->avatar) {
+                    Storage::delete($user->avatar);
+                }
             }
-            // Guardar nueva imagen
-            // $imagePath = $request->file('avatar')->store('public/users');
-            // $imagePath = copy($image->getRealPath(), $destinationPath . '/' . $imageName);
             // Obtener el archivo
             $image = $request->file('avatar');
             // Obtener nombre original y extensión
@@ -222,23 +224,25 @@ class UsersController extends Controller {
         if ($request->hasFile('firma_digital')) {
             if ($id) {
                 $user = User::find($id);
-                if ($user && $user->firma_digital) Storage::disk('public')->delete($user->firma_digital);
+                if ($user && $user->firma_digital) {
+                    Storage::disk('public')->delete($user->firma_digital);
+                }
             }
             $sigFile = $request->file('firma_digital');
-            $cleanSigName = time() . '_' . $this->cleanFileName($sigFile->getClientOriginalName());
+            $cleanSigName = time().'_'.$this->cleanFileName($sigFile->getClientOriginalName());
             $signaturePath = $sigFile->storeAs('signatures', $cleanSigName, 'public');
         }
 
-        $existingUser   = $id ? User::find($id) : null;
-        $nickname       = $existingUser ? $existingUser->username : $this->createNickname($validated['name']);
-        $email          = $existingUser ? $existingUser->email : $nickname . '@' . Enterprise::findOrFail(1)->pagina_web;
+        $existingUser = $id ? User::find($id) : null;
+        $nickname = $existingUser ? $existingUser->username : $this->createNickname($validated['name']);
+        $email = $existingUser ? $existingUser->email : $nickname.'@'.Enterprise::findOrFail(1)->pagina_web;
 
-        $data           = array_merge($validated, [
-            'username'      => $nickname,
-            'email'         => $email,
-            'password'      => $request->password ? Hash::make($request->password) : ($existingUser ? $existingUser->password : Hash::make('password')),
-            'avatar'        => $path ? $path : ($existingUser ? $existingUser->avatar : null),
-            'firma_digital' => $signaturePath ? $signaturePath : ($existingUser ? $existingUser->firma_digital : null)
+        $data = array_merge($validated, [
+            'username' => $nickname,
+            'email' => $email,
+            'password' => $request->password ? Hash::make($request->password) : ($existingUser ? $existingUser->password : Hash::make('password')),
+            'avatar' => $path ? $path : ($existingUser ? $existingUser->avatar : null),
+            'firma_digital' => $signaturePath ? $signaturePath : ($existingUser ? $existingUser->firma_digital : null),
         ]);
 
         DB::beginTransaction();
@@ -250,131 +254,134 @@ class UsersController extends Controller {
                 DB::table('model_has_roles')->where('model_id', $result->id)->delete();
                 // Asignar el nuevo rol
                 DB::table('model_has_roles')->insert([
-                    'role_id'       => $request->input('role_id'),
-                    'model_type'    => 'App\Models\User',
-                    'model_id'      => $result->id
+                    'role_id' => $request->input('role_id'),
+                    'model_type' => 'App\Models\User',
+                    'model_id' => $result->id,
                 ]);
             }
-        
+
             DB::commit();
+
             return response()->json([
-                'status'    => (bool) $result,
-                'type'      => $result ? 'success' : 'error',
-                'messages'  => $result ? ($result->wasChanged() ? 'El usuario ha sido actualizado' : 'Se ha añadido un nuevo usuario') : 'Recargue la página y vuelva a intentarlo',
-                'avatar'    => $path ? Storage::url($path) : ($result->avatar ? Storage::url($result->avatar) : null),
-                'route'     => route('security.users.home'),
+                'status' => (bool) $result,
+                'type' => $result ? 'success' : 'error',
+                'messages' => $result ? ($result->wasChanged() ? 'El usuario ha sido actualizado' : 'Se ha añadido un nuevo usuario') : 'Recargue la página y vuelva a intentarlo',
+                'avatar' => $path ? Storage::url($path) : ($result->avatar ? Storage::url($result->avatar) : null),
+                'route' => route('security.users.home'),
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            if ($imagePath) Storage::delete($imagePath);
+            if ($imagePath) {
+                Storage::delete($imagePath);
+            }
+
             return response()->json([
-                'status'    => false,
-                'type'      => 'error',
-                'messages'  => $e->getMessage(),
+                'status' => false,
+                'type' => 'error',
+                'messages' => $e->getMessage(),
             ], 500);
         }
     }
 
-    public function storePassword(ResetPasswordValidate $request, User $user): JsonResponse {
-        $validated      = $request->validated();
+    public function storePassword(ResetPasswordValidate $request, User $user): JsonResponse
+    {
+        $validated = $request->validated();
         $user->password = Hash::make($validated['password']);
         $user->save();
-        
+
         return response()->json([
-            'status'    => true,
-            'type'      => 'success',
-            'message'   => 'La contraseña ha sido actualizada',
-            'route'     => route('security.users.home'),
+            'status' => true,
+            'type' => 'success',
+            'message' => 'La contraseña ha sido actualizada',
+            'route' => route('security.users.home'),
         ], 200);
     }
 
-    private function cleanFileName($filename) {
+    private function cleanFileName($filename)
+    {
         // Remover caracteres especiales y espacios
-        $clean = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename); 
+        $clean = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
         // Limitar longitud del nombre
         $clean = substr($clean, 0, 100);
+
         return $clean;
     }
 
-    public function storePermission(User $user, Request $request): JsonResponse {
+    public function storePermission(User $user, Request $request): JsonResponse
+    {
         DB::beginTransaction();
         try {
             $request->validate([
-                'permissions' => 'nullable|string'
+                'permissions' => 'nullable|string',
             ]);
 
-            $permissionIds  = $request->permissions ? explode(',', $request->permissions) : [];
-            $permissions    = Permission::whereIn('id', $permissionIds)->get();
-            
+            $permissionIds = $request->permissions ? explode(',', $request->permissions) : [];
+            $permissions = Permission::whereIn('id', $permissionIds)->get();
+
             $user->syncPermissions($permissions);
             DB::commit();
 
             return response()->json([
-                'status'    => true,
-                'type'      => 'success',
-                'message'   => 'Los permisos del usuario han sido actualizados',
-                'route'     => route('security.users.home'),
+                'status' => true,
+                'type' => 'success',
+                'message' => 'Los permisos del usuario han sido actualizados',
+                'route' => route('security.users.home'),
             ], 200);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
-                'status'    => false,
-                'type'      => 'error',
-                'message'   => 'Error al actualizar permisos: ' . $e->getMessage(),
+                'status' => false,
+                'type' => 'error',
+                'message' => 'Error al actualizar permisos: '.$e->getMessage(),
             ], 500);
         }
     }
 
-    /*public function assignRolePermission(Request $request): JsonResponse {
-        $user = User::findOrFail($request->id_usuario);
-        // Asignar roles
-        if ($request->has('roles')) $user->syncRoles($request->roles);
-        // Asignar permisos
-        if ($request->has('permissions')) $user->syncPermissions($request->permissions);
+    public function createNickname($name): string
+    {
+        $nickname = '';
+        $count = mb_substr_count($name, ' ');
+        $positionW = explode(' ', $name);
 
-        return response()->json(['message' => 'Roles y permisos asignados correctamente']);
-    }*/
-    
-    public function createNickname($name): string {
-        $nickname   = '';
-        $count      = mb_substr_count($name, ' ');
-        $positionW  = explode(' ', $name);
-    
-        if ($count == 1) { 
-            $w = substr($positionW[0], 0, -3); 
-            $nickname = $w . $positionW[1];
+        if ($count == 1) {
+            $w = substr($positionW[0], 0, -3);
+            $nickname = $w.$positionW[1];
         } elseif ($count == 2) {
-            $nickname = $positionW[0][0] . $positionW[1] . $positionW[2][0];
+            $nickname = $positionW[0][0].$positionW[1].$positionW[2][0];
         } elseif ($count == 3) {
-            $nickname = $positionW[0][0] . $positionW[1] . $positionW[2] . $positionW[3][0];
+            $nickname = $positionW[0][0].$positionW[1].$positionW[2].$positionW[3][0];
         } elseif ($count == 4) {
             $w = substr($positionW[4], 0, -1);
-            $nickname = $positionW[0][0] . $positionW[3] . $w;
+            $nickname = $positionW[0][0].$positionW[3].$w;
         } else {
             // Caso por defecto: usar el primer nombre completo
             $nickname = strtolower(str_replace(' ', '', $name));
         }
         // Eliminar caracteres no alfanuméricos
         $nickname = preg_replace('/[^a-zA-Z0-9]/', '', $nickname);
-        if(User::where('username', $nickname)->count() > 1) {
+        if (User::where('username', $nickname)->count() > 1) {
             $nickname .= rand(1, 99);
         }
-    
+
         return strtolower($nickname);
     }
 
-    public function show($id): JsonResponse {
+    public function show($id): JsonResponse
+    {
         return response()->json(User::findOrFail($id), 200);
     }
 
-    public function destroy($id): JsonResponse {
+    public function destroy($id): JsonResponse
+    {
         $result = User::findOrFail($id);
         $result->delete();
+
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El usuario fue eliminado' : 'No se pudo eliminar el usuario'
+            'status' => (bool) $result,
+            'type' => $result ? 'success' : 'error',
+            'messages' => $result ? 'El usuario fue eliminado' : 'No se pudo eliminar el usuario',
         ], 200);
     }
 }

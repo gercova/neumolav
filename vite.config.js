@@ -31,6 +31,7 @@ export default defineConfig({
                 'resources/js/modules/drugs.js',
                 'resources/js/modules/auth.js',
                 'resources/js/modules/diagnostics.js',
+                'resources/js/modules/occupations.js',
             ],
             refresh: true,
         }),

@@ -1,4 +1,9 @@
 $(document).ready(function(){
+    // Si la aplicación Vue SPA está montada en la vista, se omite la inicialización de DataTables
+    if ($('#vue-occupations').length > 0) {
+        return;
+    }
+
     const tables = {
         occupationsTable: $("#occupation_data").DataTable({ ajax: `${API_BASE_URL}/occupations/list`, processing: true, order: [] })
     };
