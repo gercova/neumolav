@@ -102,7 +102,7 @@ class History extends Model
         $this->t_udep = 'ubigeo_departamento';
     }
 
-    public static function addPatient($dni)
+    public static function addPatient(string $dni)
     {
         return History::selectRaw('dni, UPPER(nombres) nombres, id')->where('dni', $dni)->get();
     }
@@ -124,7 +124,7 @@ class History extends Model
         return [$results, $count];
     }
 
-    public function getLocation($value)
+    public function getLocation(string $value)
     {
         return DB::table($this->t_udis.' as ud')->selectRaw('ud.id as id, CONCAT(ud.id, " | ", udp.name, " | ", up.nombre_provincia, " | ", ud.nombre_distrito) as ubigeo')
             ->join($this->t_upro.' as up', 'ud.province_id', '=', 'up.id')
@@ -137,7 +137,7 @@ class History extends Model
             ->toArray();
     }
 
-    public static function getOccupation($value)
+    public static function getOccupation(string $value)
     {
         return Occupation::selectRaw('CONCAT(id, " | ", descripcion) ocupacion, id')
             ->where('descripcion', 'LIKE', "%$value%")
@@ -145,7 +145,7 @@ class History extends Model
             ->toArray();
     }
 
-    public static function getOccupationByHistoryId($id)
+    public static function getOccupationByHistoryId(int $id)
     {
         return History::selectRaw('(YEAR(CURRENT_DATE) - YEAR(historias.fecha_nacimiento)) - (RIGHT(CURRENT_DATE,5) < RIGHT(historias.fecha_nacimiento, 5)) AS age, CONCAT(o.id, " | ", o.descripcion) occupation')
             ->join('ocupaciones as o', 'historias.id_ocupacion', '=', 'o.id')
@@ -154,7 +154,7 @@ class History extends Model
             ->toArray();
     }
 
-    public static function getUBirthByHistoryId($id)
+    public static function getUBirthByHistoryId(int $id)
     {
         return History::selectRaw('CONCAT(historias.ubigeo_nacimiento, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as nacimiento')
             ->join('ubigeo_distrito as udi', 'historias.ubigeo_nacimiento', '=', 'udi.id')
@@ -165,7 +165,7 @@ class History extends Model
             ->toArray();
     }
 
-    public static function getUResidenceByHistoryId($id)
+    public static function getUResidenceByHistoryId(int $id)
     {
         return History::selectRaw('CONCAT(historias.ubigeo_residencia, " | ", udep.name, " | ", upro.nombre_provincia, " | ", udi.nombre_distrito) as residencia')
             ->join('ubigeo_distrito as udi', 'historias.ubigeo_residencia', '=', 'udi.id')

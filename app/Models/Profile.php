@@ -15,7 +15,7 @@ class Profile extends Model
     protected $primaryKey   = 'id';
     protected $fillable     = ['perfil', 'estado'];
     public $timestamps      = false;
-    protected $casts = [
+    protected $casts    = [
         'id'            => 'integer',
         'perfil'        => 'string',
         'estado'        => 'boolean',

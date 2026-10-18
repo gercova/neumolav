@@ -5,31 +5,28 @@ import { useCitasStore } from '@/stores/citasStore';
 import { useCitasModalsStore } from '@/stores/citasModalsStore';
 import { openChangeTipoAtencionModal } from '@/composables/useTipoAtencionModal';
 
-const props = defineProps({ cita: Object });
-const store = useCitasStore();
-const modals = useCitasModalsStore();
-
-const busy = ref(false);
-const isOpen = ref(false);
+const props     = defineProps({ cita: Object });
+const store     = useCitasStore();
+const modals    = useCitasModalsStore();
+const busy      = ref(false);
+const isOpen    = ref(false);
 const buttonRef = ref(null);
-const menuRef = ref(null);
+const menuRef   = ref(null);
 const menuStyle = ref({});
 
-const getApi = () => (window.API_BASE_URL || '/admin').replace(/\/+$/, '');
-
-const emitChange = () => store.refresh(false);
-
+const getApi        = () => (window.API_BASE_URL || '/admin').replace(/\/+$/, '');
+const emitChange    = () => store.refresh(false);
 const updateMenuPosition = () => {
     if (!buttonRef.value) return;
-    const rect = buttonRef.value.getBoundingClientRect();
+    const rect  = buttonRef.value.getBoundingClientRect();
     const viewH = window.innerHeight;
     const viewW = window.innerWidth;
     const menuW = 224;
-    const gap = 3;
+    const gap   = 3;
 
-    const menuH = menuRef.value ? menuRef.value.offsetHeight : 360;
-    const spaceBelow = viewH - rect.bottom;
-    const spaceAbove = rect.top;
+    const menuH         = menuRef.value ? menuRef.value.offsetHeight : 360;
+    const spaceBelow    = viewH - rect.bottom;
+    const spaceAbove    = rect.top;
 
     let top;
     if (spaceBelow < menuH + gap && spaceAbove > spaceBelow) {
@@ -43,9 +40,9 @@ const updateMenuPosition = () => {
     if (left + menuW > viewW - 8) left = viewW - menuW - 8;
 
     menuStyle.value = {
-        top: `${top}px`,
-        left: `${left}px`,
-        width: `${menuW}px`,
+        top:    `${top}px`,
+        left:   `${left}px`,
+        width:  `${menuW}px`,
     };
 };
 
@@ -64,8 +61,8 @@ const toggleMenu = async (e) => {
     updateMenuPosition();
 };
 
-const closeMenu = () => {
-    isOpen.value = false;
+const closeMenu     = () => {
+    isOpen.value    = false;
 };
 
 const handleDocumentClick = (e) => {
@@ -110,11 +107,12 @@ const changeStatus = async (statusId) => {
     busy.value = true;
     try {
         const token = window.token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        await axios.post(`${getApi()}/citas/${props.cita.id}/status`, { id_estado: statusId, _token: token });
-        window.alertNotify?.('success', 'Estado actualizado');
+        const response = await axios.post(`${getApi()}/citas/${props.cita.id}/status`, { id_estado: statusId, _token: token });
+        window.alertNotify?.('success', response.data?.messages || 'Estado actualizado');
         emitChange();
     } catch (e) {
-        window.Swal?.fire('Error', 'No se pudo cambiar el estado.', 'error');
+        const msg = e.response?.data?.messages || 'No se pudo cambiar el estado.';
+        window.Swal?.fire('Error', msg, 'error');
     } finally {
         busy.value = false;
     }
@@ -153,7 +151,6 @@ const remove = async () => {
     }
 };
 </script>
-
 <template>
     <div class="d-inline-block position-relative">
         <button ref="buttonRef"
@@ -178,6 +175,9 @@ const remove = async () => {
                 </a>
                 <a v-if="cita.status_id !== 1" class="dropdown-item py-2 px-3" href="#" @click.prevent="changeStatus(1)">
                     <i class="bi bi-hourglass-split text-warning mr-2"></i> Marcar 'Pendiente'
+                </a>
+                <a v-if="cita.status_id !== 2" class="dropdown-item py-2 px-3" href="#" @click.prevent="changeStatus(2)">
+                    <i class="bi bi-calendar-check text-primary mr-2"></i> Marcar 'Confirmado'
                 </a>
                 <a v-if="cita.status_id !== 3" class="dropdown-item text-danger py-2 px-3" href="#" @click.prevent="changeStatus(3)">
                     <i class="bi bi-x-circle text-danger mr-2"></i> Cancelar Cita
@@ -218,56 +218,56 @@ const remove = async () => {
 </template>
 
 <style scoped>
-.floating-actions-dropdown {
-    position: fixed;
-    z-index: 1060;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16), 0 3px 8px rgba(0, 0, 0, 0.06);
-    padding: 6px 0;
-    max-height: calc(100vh - 20px);
-    overflow-y: auto;
-    font-size: 0.9rem;
-    animation: fcm-in 0.12s ease-out;
-}
-
-@keyframes fcm-in {
-    from {
-        opacity: 0;
-        transform: scale(0.97);
+    .floating-actions-dropdown {
+        position: fixed;
+        z-index: 1060;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16), 0 3px 8px rgba(0, 0, 0, 0.06);
+        padding: 6px 0;
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+        font-size: 0.9rem;
+        animation: fcm-in 0.12s ease-out;
     }
-    to {
-        opacity: 1;
-        transform: scale(1);
+
+    @keyframes fcm-in {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
-}
 
-.floating-actions-dropdown .dropdown-item {
-    display: flex;
-    align-items: center;
-    color: #212529;
-    text-decoration: none;
-    transition: background-color 0.12s ease, color 0.12s ease;
-    cursor: pointer;
-}
+    .floating-actions-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        color: #212529;
+        text-decoration: none;
+        transition: background-color 0.12s ease, color 0.12s ease;
+        cursor: pointer;
+    }
 
-.floating-actions-dropdown .dropdown-item:hover {
-    background-color: #f3f4f6;
-    color: #111827;
-}
+    .floating-actions-dropdown .dropdown-item:hover {
+        background-color: #f3f4f6;
+        color: #111827;
+    }
 
-.floating-actions-dropdown .dropdown-item.text-danger {
-    color: #dc2626 !important;
-}
+    .floating-actions-dropdown .dropdown-item.text-danger {
+        color: #dc2626 !important;
+    }
 
-.floating-actions-dropdown .dropdown-item.text-danger:hover {
-    background-color: #fef2f2;
-    color: #b91c1c !important;
-}
+    .floating-actions-dropdown .dropdown-item.text-danger:hover {
+        background-color: #fef2f2;
+        color: #b91c1c !important;
+    }
 
-.floating-actions-dropdown .dropdown-divider {
-    height: 0;
-    border-top: 1px solid #e5e7eb;
-}
+    .floating-actions-dropdown .dropdown-divider {
+        height: 0;
+        border-top: 1px solid #e5e7eb;
+    }
 </style>

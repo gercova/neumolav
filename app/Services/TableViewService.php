@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 class TableViewService {
 
     protected $tableC = 'controles'; // Define tu tabla por defecto aquí
-
     public function generateTableView(?string $table, string $dni) {
         if (empty($table)) {
             $query = DB::table($this->tableC)
@@ -34,8 +33,8 @@ class TableViewService {
         if (is_null($table)) {
             return response()->json([
                 'html' => view('components.alert', [
-                    'type' => 'warning',
-                    'message' => 'SELECCIONE TABLA :-)'
+                    'type'      => 'warning',
+                    'message'   => 'SELECCIONE TABLA :-)'
                 ])->render()
             ]);
         }
@@ -43,15 +42,15 @@ class TableViewService {
         if ($query->isEmpty()) {
             return response()->json([
                 'html' => view('components.alert', [
-                    'type' => 'danger',
-                    'message' => 'NO HAY DATOS :('
+                    'type'      => 'danger',
+                    'message'   => 'NO HAY DATOS :('
                 ])->render()
             ]);
         }
 
         return response()->json([
             'html' => view('components.table-view', [
-                'rows' => $query,
+                'rows'  => $query,
                 'table' => $table
             ])->render()
         ]);
