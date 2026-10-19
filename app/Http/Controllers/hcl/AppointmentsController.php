@@ -143,7 +143,7 @@ class AppointmentsController extends Controller
             return response()->json([
                 'status' => true,
                 'type' => 'success',
-                'messages' => empty($id) ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
+                'messages' => empty($request->input('appointmentId')) ? 'Se ha registrado un nuevo control' : 'Actualizado exitosamente',
                 'route' => route('hcl.appointments.see', $appointment->id_historia),
                 'print_a5' => route('hcl.appointments.print', [$id, 'a5']),
                 'print_a4' => route('hcl.appointments.print', [$id, 'a4']),

@@ -65,6 +65,8 @@ export const useExamFormStore = defineStore('examForm', {
         // Listas dinámicas
         diagnostics: [],      // [{ id, descripcion }]
         drugs: [],            // [{ id, descripcion, rp }]
+        existingDiagnostics: [],
+        existingMedications: [],
         images: [],           // [{ id?, file?, date, preview, isNew, removed? }]
         removedImageIds: [],
 
@@ -98,8 +100,15 @@ export const useExamFormStore = defineStore('examForm', {
             if (payload.form) Object.assign(this.form, payload.form);
             if (payload.catalog) Object.assign(this.catalog, payload.catalog);
             if (payload.meta) Object.assign(this.meta, payload.meta);
-            if (payload.diagnostics) this.diagnostics = payload.diagnostics;
-            if (payload.drugs) this.drugs = payload.drugs;
+            if (payload.meta?.isEdit) {
+                if (payload.diagnostics) this.existingDiagnostics = payload.diagnostics;
+                if (payload.drugs) this.existingMedications = payload.drugs;
+                this.diagnostics = [];
+                this.drugs = [];
+            } else {
+                if (payload.diagnostics) this.diagnostics = payload.diagnostics;
+                if (payload.drugs) this.drugs = payload.drugs;
+            }
             if (payload.images) this.images = payload.images;
         },
 
@@ -145,6 +154,33 @@ export const useExamFormStore = defineStore('examForm', {
             if (img?.id) this.removedImageIds.push(img.id);
             if (img?.preview) URL.revokeObjectURL(img.preview);
             this.images.splice(index, 1);
+        },
+
+        async deleteExistingDiagnostic(index) {
+            const item = this.existingDiagnostics[index];
+            if (!item?.id) return;
+            const { data } = await axios.delete(`${API()}/ex-dx/delete/${item.id}`);
+            if (data.status) this.existingDiagnostics.splice(index, 1);
+            return data;
+        },
+
+        async deleteExistingMedication(index) {
+            const item = this.existingMedications[index];
+            if (!item?.id) return;
+            const { data } = await axios.delete(`${API()}/ex-mx/delete/${item.id}`);
+            if (data.status) this.existingMedications.splice(index, 1);
+            return data;
+        },
+
+        async deleteExistingImage(index) {
+            const img = this.images[index];
+            if (!img?.id) return;
+            const { data } = await axios.delete(`${API()}/ex-img/delete/${img.id}`);
+            if (data.status) {
+                if (img.preview) URL.revokeObjectURL(img.preview);
+                this.images.splice(index, 1);
+            }
+            return data;
         },
 
         async searchDiagnostics(query) {

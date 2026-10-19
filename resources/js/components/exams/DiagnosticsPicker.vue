@@ -10,6 +10,39 @@ const onSelected = (item) => {
     store.addDiagnostic(item);
     selected.value = null;
 };
+
+const onRemoveNew = async (i) => {
+    const r = await window.Swal.fire({
+        icon: 'warning',
+        title: '¿Quitar este diagnóstico?',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+    });
+    if (r.isConfirmed) {
+        store.removeDiagnostic(i);
+    }
+};
+
+const onDeleteExisting = async (i) => {
+    const r = await window.Swal.fire({
+        icon: 'warning',
+        title: '¿Quitar este diagnóstico?',
+        text: 'Esta acción no se puede deshacer.',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+    });
+    if (!r.isConfirmed) return;
+    try {
+        const data = await store.deleteExistingDiagnostic(i);
+        window.alertNotify?.('success', data?.messages || 'Diagnóstico eliminado');
+    } catch {
+        window.Swal.fire('Error', 'No se pudo eliminar.', 'error');
+    }
+};
 </script>
 
 <template>
@@ -26,6 +59,8 @@ const onSelected = (item) => {
                         @selected="onSelected"
                     />
                 </div>
+
+                <!-- NUEVOS -->
                 <div class="col-12 mt-3">
                     <table class="table table-hover">
                         <thead>
@@ -35,13 +70,30 @@ const onSelected = (item) => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="!store.diagnostics.length">
+                            <tr v-if="!store.diagnostics.length && !store.existingDiagnostics?.length">
                                 <td colspan="2" class="text-muted text-center py-3">Sin diagnósticos añadidos</td>
                             </tr>
-                            <tr v-for="(d, i) in store.diagnostics" :key="d.id">
+                            <tr v-for="(d, i) in store.diagnostics" :key="`new-${i}`">
                                 <td>{{ d.descripcion }}</td>
                                 <td>
-                                    <button class="btn btn-danger btn-xs" @click="store.removeDiagnostic(i)">
+                                    <button type="button" class="btn btn-danger btn-xs" @click.prevent.stop="onRemoveNew(i)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- EXISTENTES (solo en edit) -->
+                <div v-if="store.existingDiagnostics?.length" class="col-12 mt-2">
+                    <div class="text-muted small mb-1"><i class="bi bi-clock-history"></i> Diagnósticos ya guardados:</div>
+                    <table class="table table-sm table-hover">
+                        <tbody>
+                            <tr v-for="(d, i) in store.existingDiagnostics" :key="`old-${d.id}`">
+                                <td>{{ d.descripcion }}</td>
+                                <td style="width:60px">
+                                    <button type="button" class="btn btn-outline-danger btn-xs" @click.prevent.stop="onDeleteExisting(i)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>

@@ -11,10 +11,29 @@ const onSelected    = (item) => {
     selected.value = null;
 };
 
+const onRemoveNew = async (i) => {
+    const r = await window.Swal.fire({
+        icon: 'warning',
+        title: '¿Quitar este medicamento?',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+    });
+    if (r.isConfirmed) {
+        store.removeDrug(i);
+    }
+};
+
 const onDeleteExisting = async (i) => {
     const r = await window.Swal.fire({
-        icon: 'warning', title: '¿Quitar este medicamento?',
-        showCancelButton: true, confirmButtonText: 'Sí, quitar',
+        icon: 'warning',
+        title: '¿Quitar este medicamento?',
+        text: 'Esta acción no se puede deshacer.',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
     });
     if (!r.isConfirmed) return;
     try {
@@ -62,7 +81,7 @@ const onDeleteExisting = async (i) => {
                                         placeholder="Posología / indicaciones">
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-xs" @click="store.removeDrug(i)">
+                                    <button type="button" class="btn btn-danger btn-xs" @click.prevent.stop="onRemoveNew(i)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -87,7 +106,7 @@ const onDeleteExisting = async (i) => {
                                 <td>{{ m.descripcion }}</td>
                                 <td class="text-muted small">{{ m.rp }}</td>
                                 <td>
-                                    <button class="btn btn-outline-danger btn-xs" @click="onDeleteExisting(i)">
+                                    <button type="button" class="btn btn-outline-danger btn-xs" @click.prevent.stop="onDeleteExisting(i)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>

@@ -11,6 +11,30 @@ const onFiles = (e) => {
     Array.from(e.target.files || []).forEach(f => store.addImage(f));
     e.target.value = '';
 };
+
+const onRemoveImage = async (i) => {
+    const img = store.images[i];
+    const r = await window.Swal.fire({
+        icon: 'warning',
+        title: '¿Eliminar imagen?',
+        text: img?.id ? 'Esta acción no se puede deshacer.' : '',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+    });
+    if (!r.isConfirmed) return;
+    try {
+        if (img?.id) {
+            const data = await store.deleteExistingImage(i);
+            window.alertNotify?.('success', data?.messages || 'Imagen eliminada');
+        } else {
+            store.removeImage(i);
+        }
+    } catch {
+        window.Swal.fire('Error', 'No se pudo eliminar la imagen.', 'error');
+    }
+};
 </script>
 
 <template>
@@ -37,7 +61,7 @@ const onFiles = (e) => {
                             <tr v-if="!store.images.length">
                                 <td colspan="3" class="text-muted text-center py-3">Sin imágenes adjuntas</td>
                             </tr>
-                            <tr v-for="(img, i) in store.images" :key="i">
+                            <tr v-for="(img, i) in store.images" :key="img.id || i">
                                 <td>
                                     <img :src="img.preview" alt="preview" style="max-height:60px" class="border rounded">
                                 </td>
@@ -45,7 +69,7 @@ const onFiles = (e) => {
                                     <input v-model="img.date" type="date" class="form-control form-control-sm">
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-xs" @click="store.removeImage(i)">
+                                    <button type="button" class="btn btn-danger btn-xs" @click.prevent.stop="onRemoveImage(i)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>

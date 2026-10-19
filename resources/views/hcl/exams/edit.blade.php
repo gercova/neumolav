@@ -18,24 +18,22 @@
     $existingDiagnostics = $ex->diagnostics
         ->map(
             fn($d) => [
-                'id'            => $d->diagnostic->id ?? null,
-                'descripcion'   => $d->diagnostic->descripcion ?? '',
+                'id'            => $d->id,
+                'descripcion'   => $d->diagnostic->descripcion ?? '--',
             ],
         )
-        ->filter(fn($d) => $d['id'])
         ->values()
         ->all();
 
     // Medicación existente
     $existingDrugs = $ex->medication
         ->map(
-            fn($m)  => [
-                'id'            => $m->drug->id ?? null,
-                'descripcion'   => $m->drug->descripcion ?? '',
+            fn($m) => [
+                'id'            => $m->id,
+                'descripcion'   => $m->drug->descripcion ?? '--',
                 'rp'            => $m->descripcion ?? '',
             ],
         )
-        ->filter(fn($d) => $d['id'])
         ->values()
         ->all();
 
