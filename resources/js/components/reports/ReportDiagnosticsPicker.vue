@@ -11,12 +11,29 @@ const onSelected = (item) => {
     selected.value = null;
 };
 
-const onDeleteExisting = async (i) => {
+const onRemoveNew = async (i) => {
     const r = await window.Swal.fire({
         icon: 'warning',
         title: '¿Quitar este diagnóstico?',
         showCancelButton: true,
         confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+    });
+    if (r.isConfirmed) {
+        store.removeDiagnostic(i);
+    }
+};
+
+const onDeleteExisting = async (i) => {
+    const r = await window.Swal.fire({
+        icon: 'warning',
+        title: '¿Quitar este diagnóstico?',
+        text: 'Esta acción no se puede deshacer.',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
     });
     if (!r.isConfirmed) return;
     try {
@@ -53,7 +70,7 @@ const onDeleteExisting = async (i) => {
                 <tr v-for="(d, i) in store.diagnostics" :key="`new-${i}`">
                     <td>{{ d.descripcion }}</td>
                     <td>
-                        <button class="btn btn-danger btn-xs" @click="store.removeDiagnostic(i)">
+                        <button type="button" class="btn btn-danger btn-xs" @click.prevent.stop="onRemoveNew(i)">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -70,7 +87,7 @@ const onDeleteExisting = async (i) => {
                     <tr v-for="(d, i) in store.existingDiagnostics" :key="`old-${d.id}`">
                         <td>{{ d.descripcion }}</td>
                         <td style="width:60px">
-                            <button class="btn btn-outline-danger btn-xs" @click="onDeleteExisting(i)">
+                            <button type="button" class="btn btn-outline-danger btn-xs" @click.prevent.stop="onDeleteExisting(i)">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>

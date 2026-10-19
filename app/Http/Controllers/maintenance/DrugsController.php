@@ -191,7 +191,7 @@ class DrugsController extends Controller
     public function search(Request $request): JsonResponse
     {
         $drugs = Drug::where('descripcion', 'like', '%'.$request->input('q').'%')
-            ->selectRaw('id, UPPER(descripcion) text')
+            ->selectRaw('id, descripcion, UPPER(descripcion) text')
             ->limit(5)
             ->get()
             ->toArray();

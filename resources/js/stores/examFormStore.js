@@ -185,11 +185,19 @@ export const useExamFormStore = defineStore('examForm', {
 
         async searchDiagnostics(query) {
             const { data } = await axios.post(`${API()}/diagnostics/search`, { q: query });
-            return (data || []).map(d => ({ value: d.id, label: `${d.codigo || ''} ${d.descripcion}`.trim() }));
+            return (data || []).slice(0, 5).map(d => ({
+                id: d.id,
+                value: d.id,
+                label: `${d.codigo || ''} ${d.descripcion || d.text || ''}`.trim(),
+            }));
         },
         async searchDrugs(query) {
             const { data } = await axios.post(`${API()}/drugs/search`, { q: query });
-            return (data || []).map(d => ({ value: d.id, label: d.descripcion }));
+            return (data || []).slice(0, 5).map(d => ({
+                id: d.id,
+                value: d.id,
+                label: d.descripcion || d.text || '',
+            }));
         },
 
         async submit() {

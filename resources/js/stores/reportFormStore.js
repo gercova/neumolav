@@ -64,9 +64,10 @@ export const useReportFormStore = defineStore('reportForm', {
 
         async searchDiagnostics(query) {
             const { data } = await axios.post(`${API()}/diagnostics/search`, { q: query });
-            return (data || []).map(d => ({
+            return (data || []).slice(0, 5).map(d => ({
+                id: d.id,
                 value: d.id,
-                label: `${d.codigo || ''} ${d.descripcion}`.trim(),
+                label: `${d.codigo || ''} ${d.descripcion || d.text || ''}`.trim(),
             }));
         },
 

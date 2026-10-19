@@ -158,15 +158,23 @@ export const useHistoryFormStore = defineStore('historyForm', {
             }
         },
 
-        // Búsquedas AJAX (reemplazan select2)
+        // Búsquedas AJAX (buscador select2 ligero)
         async searchUbigeo(query) {
             const { data } = await axios.post(`${API()}/histories/location`, { q: query });
-            return data.map(item => ({ value: item.ubigeo, label: item.ubigeo }));
+            return (data || []).slice(0, 5).map(item => ({
+                id: item.id ?? item.ubigeo,
+                value: item.ubigeo,
+                label: item.ubigeo,
+            }));
         },
 
         async searchOccupation(query) {
             const { data } = await axios.post(`${API()}/histories/occupation`, { q: query });
-            return data.map(item => ({ value: item.ocupacion, label: item.ocupacion }));
+            return (data || []).slice(0, 5).map(item => ({
+                id: item.id ?? item.ocupacion,
+                value: item.ocupacion,
+                label: item.ocupacion,
+            }));
         },
 
         async searchDni(dni) {

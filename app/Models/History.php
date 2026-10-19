@@ -129,10 +129,13 @@ class History extends Model
         return DB::table($this->t_udis.' as ud')->selectRaw('ud.id as id, CONCAT(ud.id, " | ", udp.name, " | ", up.nombre_provincia, " | ", ud.nombre_distrito) as ubigeo')
             ->join($this->t_upro.' as up', 'ud.province_id', '=', 'up.id')
             ->join($this->t_udep.' as udp', 'ud.department_id', '=', 'udp.id')
-            ->where('udp.name', 'LIKE', "%$value%")
-            ->orWhere('ud.id', 'LIKE', "%$value%")
-            ->orWhere('up.nombre_provincia', 'LIKE', "%$value%")
-            ->orWhere('ud.nombre_distrito', 'LIKE', "%$value%")
+            ->where(function ($q) use ($value) {
+                $q->where('udp.name', 'LIKE', "%$value%")
+                    ->orWhere('ud.id', 'LIKE', "%$value%")
+                    ->orWhere('up.nombre_provincia', 'LIKE', "%$value%")
+                    ->orWhere('ud.nombre_distrito', 'LIKE', "%$value%");
+            })
+            ->limit(5)
             ->get()
             ->toArray();
     }
@@ -141,6 +144,7 @@ class History extends Model
     {
         return Occupation::selectRaw('CONCAT(id, " | ", descripcion) ocupacion, id')
             ->where('descripcion', 'LIKE', "%$value%")
+            ->limit(5)
             ->get()
             ->toArray();
     }

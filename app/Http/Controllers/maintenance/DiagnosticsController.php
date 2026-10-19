@@ -151,8 +151,10 @@ class DiagnosticsController extends Controller
 
     public function search(Request $request): JsonResponse
     {
-        $results = Diagnostic::selectRaw('id, UPPER(descripcion) text')
-            ->where('descripcion', 'like', '%'.$request->input('q').'%')
+        $term = $request->input('q');
+        $results = Diagnostic::selectRaw('id, descripcion, UPPER(descripcion) text')
+            ->where('descripcion', 'like', "%{$term}%")
+            ->limit(5)
             ->get()
             ->toArray();
 
