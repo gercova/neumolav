@@ -4,20 +4,19 @@ namespace App\Providers;
 
 use App\Models\Enterprise;
 use App\Models\Post;
-//use App\Services\MocSummaryService;
-//use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-//use App\Services\SummaryService;
 
-class AppServiceProvider extends ServiceProvider {
-
-    public function register(): void {
+class AppServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
         //
     }
 
-    public function boot(): void {
+    public function boot(): void
+    {
         setlocale(LC_TIME, 'es_ES.utf8', 'es_ES', 'es');
         // Usar un View Composer para compartir variables
         View::composer('layouts.app', function ($view) {
@@ -27,7 +26,7 @@ class AppServiceProvider extends ServiceProvider {
 
         View::composer('homepage.app', function ($view) {
             $enterprise = Enterprise::findOrFail(1);
-            $recentPost = Post::where('id','<>', 21)->orderBy('id', 'desc')->limit(2)->get();
+            $recentPost = Post::where('id', '<>', 21)->orderBy('id', 'desc')->limit(2)->get();
             $view->with(['enterprise' => $enterprise, 'recentPost' => $recentPost]);
         });
 

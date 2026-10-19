@@ -7,6 +7,7 @@ use App\Http\Requests\RiskValidate;
 use App\Models\Enterprise;
 use App\Models\History;
 use App\Models\Risk;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -37,7 +38,6 @@ class RisksController extends Controller
         $startIndex = $request->input('jtStartIndex', 0);
         $pageSize = $request->input('jtPageSize', 10);
         $search = $request->input('search');
-
         $query = DB::table('view_active_histories')
             ->when(! empty($search), function ($q) use ($search) {
                 $q->where(function ($inner) use ($search) {
@@ -103,7 +103,6 @@ class RisksController extends Controller
     {
         $validated = $request->validated();
         $id = $request->input('riskId');
-        // Si no se proporciona un ID, crear nuevo registro
         DB::beginTransaction();
         try {
             $report = Risk::updateOrCreate(['id' => $id], $validated);

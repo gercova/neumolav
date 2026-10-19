@@ -77,11 +77,12 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             // MÓDULO DE PERMISOS
             Route::middleware(['permission:permisos'])->group(function () {
                 Route::get('/permissions', [PermissionController::class, 'index'])->name('security.permissions');
-                Route::get('/permissions/list', [PermissionController::class, 'list']);
+                Route::match(['get', 'post'], '/permissions/list', [PermissionController::class, 'list']);
                 Route::get('/permissions/{id}', [PermissionController::class, 'show']);
                 Route::post('/permissions/store', [PermissionController::class, 'store']);
                 Route::post('/permissions/search', [PermissionController::class, 'search']);
                 Route::delete('/permissions/delete/{id}', [PermissionController::class, 'destroy']);
+                Route::delete('/permissions/{id}', [PermissionController::class, 'destroy']);
             });
             // MÓDULO DE ROLES
             Route::middleware(['permission:roles'])->group(function () {

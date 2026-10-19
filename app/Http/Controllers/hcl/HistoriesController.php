@@ -132,7 +132,6 @@ class HistoriesController extends Controller
             $isNew = $result->wasRecentlyCreated;
             $today = Carbon::today()->format('Y-m-d');
             $tipoAtencion = ! empty($data['id_tipo_atencion']) ? (int) $data['id_tipo_atencion'] : ($isNew ? 1 : 2);
-
             // Verificar si ya existe cita activa para el paciente hoy
             $existingCita = DB::table('citas')
                 ->where('id_historia', $result->id)

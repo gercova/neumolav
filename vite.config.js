@@ -32,6 +32,7 @@ export default defineConfig({
                 'resources/js/modules/auth.js',
                 'resources/js/modules/diagnostics.js',
                 'resources/js/modules/occupations.js',
+                'resources/js/modules/permissions.js',
             ],
             refresh: true,
         }),

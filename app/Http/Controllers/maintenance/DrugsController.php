@@ -14,7 +14,8 @@ use Illuminate\Http\Request;
 
 class DrugsController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('permission:farmaco_acceder')->only('index');
         $this->middleware('permission:farmaco_ver')->only('list', 'show', 'options');
@@ -22,21 +23,24 @@ class DrugsController extends Controller
         $this->middleware('permission:farmaco_borrar')->only('destroy');
     }
 
-    public function index(): View {
+    public function index(): View
+    {
         $categories = Category::select('id', 'descripcion', 'detalle')->orderBy('descripcion')->get();
         $presentations = Presentation::select('id', 'descripcion', 'aka')->orderBy('descripcion')->get();
 
         return view('maintenance.drugs.index', compact('categories', 'presentations'));
     }
 
-    public function options(): JsonResponse {
+    public function options(): JsonResponse
+    {
         return response()->json([
             'categories' => Category::select('id', 'descripcion', 'detalle')->orderBy('descripcion')->get(),
             'presentations' => Presentation::select('id', 'descripcion', 'aka')->orderBy('descripcion')->get(),
         ]);
     }
 
-    public function list(Request $request): JsonResponse {
+    public function list(Request $request): JsonResponse
+    {
         $search = $request->input('search');
         $query = Drug::with(['category', 'presentation'])->orderBy('id', 'desc');
 
@@ -68,51 +72,51 @@ class DrugsController extends Controller
                 $page = (int) floor($request->input('jtStartIndex') / $pageSize) + 1;
             }
 
-            $paginator      = $query->paginate($pageSize, ['*'], 'page', $page);
+            $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
             $formattedItems = collect($paginator->items())->map(function ($item) {
                 return [
-                    'id'                => $item->id,
-                    'descripcion'       => $item->descripcion,
-                    'detalle'           => $item->detalle,
-                    'id_categoria'      => $item->id_categoria,
-                    'id_presentacion'   => $item->id_presentacion,
-                    'category'          => $item->category?->descripcion ?? '—',
-                    'presentation'      => $item->presentation?->descripcion ?? '—',
-                    'presentation_aka'  => $item->presentation?->aka ?? '',
-                    'estado'            => $item->estado,
-                    'created_at'        => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
-                    'updated_at'        => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
+                    'id' => $item->id,
+                    'descripcion' => $item->descripcion,
+                    'detalle' => $item->detalle,
+                    'id_categoria' => $item->id_categoria,
+                    'id_presentacion' => $item->id_presentacion,
+                    'category' => $item->category?->descripcion ?? '—',
+                    'presentation' => $item->presentation?->descripcion ?? '—',
+                    'presentation_aka' => $item->presentation?->aka ?? '',
+                    'estado' => $item->estado,
+                    'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
+                    'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
                 ];
             });
 
             return response()->json([
-                'status'            => true,
-                'data'              => $formattedItems,
-                'total'             => $paginator->total(),
-                'currentPage'       => $paginator->currentPage(),
-                'lastPage'          => $paginator->lastPage(),
-                'pageSize'          => $paginator->perPage(),
-                'permissions'       => $permissions,
-                'Result'            => 'OK',
-                'TotalRecordCount'  => $paginator->total(),
-                'Records'           => $formattedItems,
+                'status' => true,
+                'data' => $formattedItems,
+                'total' => $paginator->total(),
+                'currentPage' => $paginator->currentPage(),
+                'lastPage' => $paginator->lastPage(),
+                'pageSize' => $paginator->perPage(),
+                'permissions' => $permissions,
+                'Result' => 'OK',
+                'TotalRecordCount' => $paginator->total(),
+                'Records' => $formattedItems,
             ]);
         }
 
-        $results        = $query->get();
+        $results = $query->get();
         $formattedItems = $results->map(function ($item) {
             return [
-                'id'                => $item->id,
-                'descripcion'       => $item->descripcion,
-                'detalle'           => $item->detalle,
-                'id_categoria'      => $item->id_categoria,
-                'id_presentacion'   => $item->id_presentacion,
-                'category'          => $item->category?->descripcion ?? '—',
-                'presentation'      => $item->presentation?->descripcion ?? '—',
-                'presentation_aka'  => $item->presentation?->aka ?? '',
-                'estado'            => $item->estado,
-                'created_at'        => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
-                'updated_at'        => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
+                'id' => $item->id,
+                'descripcion' => $item->descripcion,
+                'detalle' => $item->detalle,
+                'id_categoria' => $item->id_categoria,
+                'id_presentacion' => $item->id_presentacion,
+                'category' => $item->category?->descripcion ?? '—',
+                'presentation' => $item->presentation?->descripcion ?? '—',
+                'presentation_aka' => $item->presentation?->aka ?? '',
+                'estado' => $item->estado,
+                'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : null,
+                'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
             ];
         });
 
@@ -142,47 +146,50 @@ class DrugsController extends Controller
         });
 
         return response()->json([
-            'status'                => true,
-            'data'                  => $formattedItems,
-            'total'                 => $results->count(),
-            'permissions'           => $permissions,
-            'sEcho'                 => 1,
-            'iTotalRecords'         => $results->count(),
-            'iTotalDisplayRecords'  => $results->count(),
-            'aaData'                => $aaData,
-            'Result'                => 'OK',
-            'TotalRecordCount'      => $results->count(),
-            'Records'               => $formattedItems,
+            'status' => true,
+            'data' => $formattedItems,
+            'total' => $results->count(),
+            'permissions' => $permissions,
+            'sEcho' => 1,
+            'iTotalRecords' => $results->count(),
+            'iTotalDisplayRecords' => $results->count(),
+            'aaData' => $aaData,
+            'Result' => 'OK',
+            'TotalRecordCount' => $results->count(),
+            'Records' => $formattedItems,
         ]);
     }
 
-    public function store(DrugValidate $request): JsonResponse {
-        $validated  = $request->validated();
+    public function store(DrugValidate $request): JsonResponse
+    {
+        $validated = $request->validated();
         if ($request->filled('id')) {
-            $drug   = Drug::findOrFail($request->input('id'));
+            $drug = Drug::findOrFail($request->input('id'));
             $drug->update($validated);
 
             return response()->json([
-                'status'    => true,
-                'type'      => 'success',
-                'messages'  => 'El fármaco ha sido actualizado',
+                'status' => true,
+                'type' => 'success',
+                'messages' => 'El fármaco ha sido actualizado',
             ], 200);
         }
 
         $result = Drug::create($validated);
 
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'Se ha añadido un nuevo fármaco' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $result,
+            'type' => $result ? 'success' : 'error',
+            'messages' => $result ? 'Se ha añadido un nuevo fármaco' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function show(Drug $drug): JsonResponse {
+    public function show(Drug $drug): JsonResponse
+    {
         return response()->json(DrugResource::make($drug), 200);
     }
 
-    public function search(Request $request): JsonResponse {
+    public function search(Request $request): JsonResponse
+    {
         $drugs = Drug::where('descripcion', 'like', '%'.$request->input('q').'%')
             ->selectRaw('id, UPPER(descripcion) text')
             ->limit(5)
@@ -192,12 +199,14 @@ class DrugsController extends Controller
         return response()->json($drugs);
     }
 
-    public function destroy(Drug $drug): JsonResponse {
+    public function destroy(Drug $drug): JsonResponse
+    {
         $drug->delete();
+
         return response()->json([
-            'status'    => true,
-            'type'      => 'success',
-            'messages'  => 'El fármaco fue eliminado',
+            'status' => true,
+            'type' => 'success',
+            'messages' => 'El fármaco fue eliminado',
         ], 200);
     }
 }
