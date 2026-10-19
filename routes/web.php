@@ -110,12 +110,13 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::get('/users/add', [UsersController::class, 'add'])->name('security.users.add');
                 Route::get('/users/edit/{id}', [UsersController::class, 'edit'])->name('security.users.edit');
                 Route::get('/users/role/{id}', [UsersController::class, 'permissions'])->name('security.users.role');
-                Route::get('/users/list', [UsersController::class, 'list']);
+                Route::match(['get', 'post'], '/users/list', [UsersController::class, 'list']);
                 Route::get('/users/{id}', [UsersController::class, 'show']);
                 Route::post('/users/store', [UsersController::class, 'store']);
                 Route::post('/users/storePassword/{user}', [UsersController::class, 'storePassword']);
                 Route::post('/users/storePermission/{user}', [UsersController::class, 'storePermission'])->name('securty.users.storePermission');
                 Route::delete('/users/delete/{id}', [UsersController::class, 'destroy']);
+                Route::delete('/users/{id}', [UsersController::class, 'destroy']);
             });
         });
         // MÓDULO DE HISTORIAS

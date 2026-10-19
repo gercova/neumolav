@@ -1,4 +1,9 @@
 $(document).ready(function(){
+    // Si la vista SPA de Vue está presente, evitar inicializar DataTable clásico
+    if ($('#vue-users').length > 0) {
+        return;
+    }
+
     const tables = {
         usersTable: $("#user_data").DataTable({ ajax: `${API_BASE_URL}/users/list`, order: [], processing: true }),
     };

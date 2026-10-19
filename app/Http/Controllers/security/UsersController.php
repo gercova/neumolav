@@ -24,15 +24,19 @@ class UsersController extends Controller
     {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:usuario_acceder')->only('index');
-        $this->middleware('permission:usuario_ver')->only('show');
-        $this->middleware('permission:usuario_crear')->only('add', 'store', 'storePermission');
-        $this->middleware('permission:usuario_actualizar')->only('edit', 'store', 'storePermission');
+        $this->middleware('permission:usuario_ver')->only('show', 'list');
+        $this->middleware('permission:usuario_crear|usuario_actualizar')->only('store');
+        $this->middleware('permission:usuario_crear')->only('add');
+        $this->middleware('permission:usuario_actualizar')->only('edit', 'storePermission', 'storePassword');
         $this->middleware('permission:usuario_borrar')->only('destroy');
     }
 
     public function index(): View
     {
-        return view('security.users.index');
+        $roles = Role::select('id', 'name')->orderBy('name')->get();
+        $specialties = Specialty::select('id', 'descripcion')->orderBy('descripcion')->get();
+
+        return view('security.users.index', compact('roles', 'specialties'));
     }
 
     public function profile(): View
@@ -130,7 +134,7 @@ class UsersController extends Controller
         return view('security.users.role', compact('user', 'availablePermissions', 'directPermissions', 'rolePermissions', 'allAssignedPermissions'));
     }
 
-    public function assignRole($userId, $roleName): JsonResponse
+    public function assignRole(int $userId, string $roleName): JsonResponse
     {
         $user = User::find($userId);
         if (! $user) {
@@ -141,57 +145,142 @@ class UsersController extends Controller
         return response()->json(['message' => "Rol '{$roleName}' asignado al usuario correctamente"]);
     }
 
-    public function list(): JsonResponse
+    public function list(Request $request): JsonResponse
     {
-        $results = DB::table('view_user_roles_last_login')->get();
-        $data = $results->map(function ($item, $index) {
-            $currentUser = auth()->user();
+        $search = $request->input('search');
+        $roleFilter = $request->input('role');
+        $query = User::with(['roles', 'lastLogin'])->orderBy('id', 'desc');
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('username', 'LIKE', "%{$search}%")
+                    ->orWhereHas('roles', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        if (! empty($roleFilter)) {
+            $query->whereHas('roles', function ($rq) use ($roleFilter) {
+                $rq->where('name', $roleFilter);
+            });
+        }
+
+        $currentUser = auth()->user();
+        $permissions = [
+            'create' => $currentUser ? $currentUser->can('usuario_crear') : false,
+            'update' => $currentUser ? $currentUser->can('usuario_actualizar') : false,
+            'delete' => $currentUser ? $currentUser->can('usuario_borrar') : false,
+            'assign_roles' => $currentUser ? $currentUser->hasRole('administrador') : false,
+        ];
+
+        $pageSize = (int) $request->input('pageSize', $request->input('jtPageSize', 0));
+        if ($pageSize > 0) {
+            $page = (int) $request->input('page', 1);
+            if ($request->has('jtStartIndex') && ! $request->has('page')) {
+                $page = (int) floor($request->input('jtStartIndex') / $pageSize) + 1;
+            }
+
+            $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
+            $formattedItems = collect($paginator->items())->map(function ($item) {
+                $primaryRole = $item->roles->first();
+
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'username' => $item->username,
+                    'email' => $item->email,
+                    'role_name' => $primaryRole?->name ?? 'Sin rol',
+                    'role_id' => $primaryRole?->id ?? null,
+                    'avatar_url' => $item->profile_photo_url,
+                    'last_login' => $item->lastLogin?->last_login ?? 'Nunca',
+                    'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i') : null,
+                    'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i') : null,
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'data' => $formattedItems,
+                'total' => $paginator->total(),
+                'currentPage' => $paginator->currentPage(),
+                'lastPage' => $paginator->lastPage(),
+                'pageSize' => $paginator->perPage(),
+                'permissions' => $permissions,
+                'Result' => 'OK',
+                'TotalRecordCount' => $paginator->total(),
+                'Records' => $formattedItems,
+            ]);
+        }
+
+        $results = $query->get();
+        $formattedItems = $results->map(function ($item) {
+            $primaryRole = $item->roles->first();
+
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'username' => $item->username,
+                'email' => $item->email,
+                'role_name' => $primaryRole?->name ?? 'Sin rol',
+                'role_id' => $primaryRole?->id ?? null,
+                'avatar_url' => $item->profile_photo_url,
+                'last_login' => $item->lastLogin?->last_login ?? 'Nunca',
+                'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i') : null,
+                'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i') : null,
+            ];
+        });
+
+        $aaData = $results->map(function ($item, $index) use ($currentUser) {
             $buttons = '';
-            if ($currentUser->hasRole('administrador')) {
+            if ($currentUser && $currentUser->hasRole('administrador')) {
                 $rolesRoute = route('security.users.role', ['id' => $item->id]);
                 $buttons .= sprintf(
-                    '<a href="%s" class="btn btn-sm btn-info assign-roles btn-md" title="Asignar roles">
-                        <i class="bi bi-person-gear"></i>
-                    </a>&nbsp;',
+                    '<a href="%s" class="btn btn-sm btn-info assign-roles btn-md" title="Asignar roles"><i class="bi bi-person-gear"></i></a>&nbsp;',
                     htmlspecialchars($rolesRoute, ENT_QUOTES, 'UTF-8')
                 );
             }
-            if ($currentUser->can('usuario_actualizar')) {
+            if ($currentUser && $currentUser->can('usuario_actualizar')) {
                 $editRoute = route('security.users.edit', ['id' => $item->id]);
                 $buttons .= sprintf(
-                    '<a href="%s" class="btn btn-sm btn-warning update-row btn-md">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>&nbsp;',
+                    '<a href="%s" class="btn btn-sm btn-warning update-row btn-md" title="Editar"><i class="bi bi-pencil-square"></i></a>&nbsp;',
                     htmlspecialchars($editRoute, ENT_QUOTES, 'UTF-8')
                 );
             }
-            if ($currentUser->can('usuario_borrar')) {
+            if ($currentUser && $currentUser->can('usuario_borrar')) {
                 $buttons .= sprintf(
-                    '<button type="button" class="btn btn-sm btn-danger delete-user btn-md" value="%s" title="Eliminar">
-                        <i class="bi bi-trash"></i>
-                    </button>',
-                    htmlspecialchars($item->id, ENT_QUOTES, 'UTF-8')
+                    '<button type="button" class="btn btn-sm btn-danger delete-user btn-md" value="%s" title="Eliminar"><i class="bi bi-trash"></i></button>',
+                    htmlspecialchars((string) $item->id, ENT_QUOTES, 'UTF-8')
                 );
             }
 
+            $primaryRole = $item->roles->first();
+            $lastLoginStr = $item->lastLogin?->last_login ?? 'Nunca';
+
             return [
                 $index + 1,
-                $item->name,
-                $item->email,
-                sprintf(
-                    '<span class="badge badge-success">%s</span>',
-                    $item->rol
-                ),
-                $item->last_login ?: 'Nunca',
+                htmlspecialchars($item->name, ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($item->email, ENT_QUOTES, 'UTF-8'),
+                sprintf('<span class="badge badge-success">%s</span>', htmlspecialchars($primaryRole?->name ?? 'Sin rol', ENT_QUOTES, 'UTF-8')),
+                $lastLoginStr,
                 $buttons ?: '<span class="text-muted">No autorizado</span>',
             ];
         });
 
         return response()->json([
+            'status' => true,
+            'data' => $formattedItems,
+            'total' => $results->count(),
+            'permissions' => $permissions,
             'sEcho' => 1,
-            'iTotalRecords' => $data->count(),
-            'iTotalDisplayRecords' => $data->count(),
-            'aaData' => $data,
+            'iTotalRecords' => $results->count(),
+            'iTotalDisplayRecords' => $results->count(),
+            'aaData' => $aaData,
+            'Result' => 'OK',
+            'TotalRecordCount' => $results->count(),
+            'Records' => $formattedItems,
         ]);
     }
 
@@ -200,6 +289,7 @@ class UsersController extends Controller
         $validated = $request->validated();
         $id = $request->input('userId');
         // Procesar la imagen si existe
+        $path = null;
         $imagePath = null;
         if ($request->hasFile('avatar')) {
             // Eliminar imagen anterior si estamos actualizando
@@ -235,8 +325,9 @@ class UsersController extends Controller
 
         $existingUser = $id ? User::find($id) : null;
         $nickname = $existingUser ? $existingUser->username : $this->createNickname($validated['name']);
-        $email = $existingUser ? $existingUser->email : $nickname.'@'.Enterprise::findOrFail(1)->pagina_web;
-
+        $enterprise = Enterprise::find(1);
+        $domain = $enterprise?->pagina_web ?: 'neumolav.com';
+        $email = $existingUser ? $existingUser->email : $nickname.'@'.$domain;
         $data = array_merge($validated, [
             'username' => $nickname,
             'email' => $email,
@@ -297,7 +388,7 @@ class UsersController extends Controller
         ], 200);
     }
 
-    private function cleanFileName($filename)
+    private function cleanFileName(string $filename): string
     {
         // Remover caracteres especiales y espacios
         $clean = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
@@ -317,7 +408,6 @@ class UsersController extends Controller
 
             $permissionIds = $request->permissions ? explode(',', $request->permissions) : [];
             $permissions = Permission::whereIn('id', $permissionIds)->get();
-
             $user->syncPermissions($permissions);
             DB::commit();
 
@@ -339,7 +429,7 @@ class UsersController extends Controller
         }
     }
 
-    public function createNickname($name): string
+    public function createNickname(string $name): string
     {
         $nickname = '';
         $count = mb_substr_count($name, ' ');
@@ -368,20 +458,46 @@ class UsersController extends Controller
         return strtolower($nickname);
     }
 
-    public function show($id): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        return response()->json(User::findOrFail($id), 200);
+        $user = User::with(['roles', 'lastLogin'])->findOrFail($id);
+        $primaryRole = $user->roles->first();
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'username' => $user->username,
+            'email' => $user->email,
+            'biografia' => $user->biografia,
+            'specialty' => $user->specialty,
+            'cmp' => $user->cmp,
+            'rne' => $user->rne,
+            'role_id' => $primaryRole?->id,
+            'role_name' => $primaryRole?->name ?? 'Sin rol',
+            'avatar_url' => $user->profile_photo_url,
+            'last_login' => $user->lastLogin?->last_login ?? 'Nunca',
+        ], 200);
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
+        if (auth()->id() == $id) {
+            return response()->json([
+                'status' => false,
+                'type' => 'error',
+                'messages' => 'No puede eliminar su propia cuenta de usuario',
+                'message' => 'No puede eliminar su propia cuenta de usuario',
+            ], 422);
+        }
+
         $result = User::findOrFail($id);
         $result->delete();
 
         return response()->json([
-            'status' => (bool) $result,
-            'type' => $result ? 'success' : 'error',
-            'messages' => $result ? 'El usuario fue eliminado' : 'No se pudo eliminar el usuario',
+            'status' => true,
+            'type' => 'success',
+            'messages' => 'El usuario fue eliminado correctamente',
+            'message' => 'El usuario fue eliminado correctamente',
         ], 200);
     }
 }

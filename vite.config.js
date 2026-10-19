@@ -34,6 +34,7 @@ export default defineConfig({
                 'resources/js/modules/occupations.js',
                 'resources/js/modules/permissions.js',
                 'resources/js/modules/roles.js',
+                'resources/js/modules/users.js',
             ],
             refresh: true,
         }),

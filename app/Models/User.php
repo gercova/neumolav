@@ -11,51 +11,63 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, AuditLogTrait;
+class User extends Authenticatable
+{
+    use AuditLogTrait, HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
-    protected $table        = 'users';
-    protected $primaryKey   = 'id';
-    protected $fillable     = ['name', 'email', 'biografia', 'specialty', 'cmp', 'rne', 'firma_digital', 'username', 'avatar', 'id_perfil'];
-    protected $hidden       = ['password', 'remember_token'];
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
-    protected $casts        = [
-        'name'                  => 'string',
-        'email'                 => 'string',
-        'biografia'             => 'string',
-        'specialty'             => 'string',
-        'cmp'                   => 'string',
-        'rne'                   => 'string',
-        'firma_digital'         => 'string',
-        'username'              => 'string',
-        'avatar'                => 'string',
-        'id_perfil'             => 'integer',
-        'email_verified_at'     => 'datetime',
-        'password'              => 'hashed'
+    protected $table = 'users';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = ['name', 'email', 'password', 'biografia', 'specialty', 'cmp', 'rne', 'firma_digital', 'username', 'avatar', 'id_perfil'];
+
+    protected $hidden = ['password', 'remember_token'];
+
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
+    protected $casts = [
+        'name' => 'string',
+        'email' => 'string',
+        'biografia' => 'string',
+        'specialty' => 'string',
+        'cmp' => 'string',
+        'rne' => 'string',
+        'firma_digital' => 'string',
+        'username' => 'string',
+        'avatar' => 'string',
+        'id_perfil' => 'integer',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
     protected $appends = ['formatted_name', 'digital_signature_url'];
 
-    public function getDigitalSignatureUrlAttribute() {
+    public function getDigitalSignatureUrlAttribute()
+    {
         if ($this->firma_digital && Storage::disk('public')->exists($this->firma_digital)) {
             return Storage::url($this->firma_digital);
         }
+
         return null;
     }
 
-    public function getSpecialtyNameAttribute() {
+    public function getSpecialtyNameAttribute()
+    {
         if (is_numeric($this->specialty)) {
             $spec = Specialty::find($this->specialty);
+
             return $spec ? $spec->descripcion : 'Médico Neumólogo';
         }
+
         return $this->specialty ?: 'Médico Neumólogo';
     }
 
-    public function getProfilePhotoUrlAttribute() {
+    public function getProfilePhotoUrlAttribute()
+    {
         // URL externa
         if ($this->avatar && filter_var($this->avatar, FILTER_VALIDATE_URL)) {
             return $this->avatar;
@@ -70,8 +82,11 @@ class User extends Authenticatable {
         return asset('storage/img/usuarios/default/anonymous.png');
     }
 
-    public function getFormattedNameAttribute() {
-        if (empty($this->name)) return '';
+    public function getFormattedNameAttribute()
+    {
+        if (empty($this->name)) {
+            return '';
+        }
 
         $parts = array_filter(explode(' ', $this->name));
 
@@ -84,26 +99,31 @@ class User extends Authenticatable {
             case 3:
                 return $this->name;
             default:
-                $firstName      = $parts[0];
-                $middleInitial  = strlen($parts[1]) > 0 ? substr($parts[1], 0, 1) . '.' : '';
-                $lastName       = $parts[count($parts) - 2];
+                $firstName = $parts[0];
+                $middleInitial = strlen($parts[1]) > 0 ? substr($parts[1], 0, 1).'.' : '';
+                $lastName = $parts[count($parts) - 2];
+
                 return trim("{$firstName} {$middleInitial} {$lastName}");
         }
     }
 
-    public static function getUserByRole($userId) {
+    public static function getUserByRole($userId)
+    {
         return DB::table('model_has_roles')->where('model_id', $userId)->get();
     }
 
-    public function profile(): HasOne {
+    public function profile(): HasOne
+    {
         return $this->hasOne(Profile::class, 'id_perfil', 'id');
     }
 
-    public function lastLogin(): HasOne {
+    public function lastLogin(): HasOne
+    {
         return $this->hasOne(UserLastLogin::class, 'id_user', 'id');
     }
 
-    public function specialty(): HasOne {
+    public function specialty(): HasOne
+    {
         return $this->hasOne(Specialty::class, 'id_especialidad', 'id');
     }
 }
