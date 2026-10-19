@@ -1,4 +1,9 @@
 $(document).ready(function(){
+    // Si la vista SPA de Vue está presente, evitar inicializar DataTable clásico
+    if ($('#vue-specialties').length > 0) {
+        return;
+    }
+
     let slimSelect;
     const tables = {
         specialtiesTable: $("#specialty_data").DataTable({ ajax: `${API_BASE_URL}/specialties/list`, processing: true, order: [] })

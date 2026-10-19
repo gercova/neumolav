@@ -99,10 +99,12 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             // MÓDULO DE ESPECIALIDADES
             Route::middleware(['permission:especialidades'])->group(function () {
                 Route::get('/specialties', [SpecialtiesController::class, 'index'])->name('security.specialties');
-                Route::get('/specialties/list', [SpecialtiesController::class, 'list']);
+                Route::match(['get', 'post'], '/specialties/list', [SpecialtiesController::class, 'list']);
+                Route::get('/specialties/options', [SpecialtiesController::class, 'options']);
                 Route::get('/specialties/{id}', [SpecialtiesController::class, 'show']);
                 Route::post('/specialties/store', [SpecialtiesController::class, 'store']);
                 Route::delete('/specialties/delete/{id}', [SpecialtiesController::class, 'destroy']);
+                Route::delete('/specialties/{id}', [SpecialtiesController::class, 'destroy']);
             });
             // MÓDULO DE USUARIOS
             Route::middleware(['permission:usuarios'])->group(function () {
