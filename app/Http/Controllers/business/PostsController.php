@@ -4,23 +4,19 @@ namespace App\Http\Controllers\business;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostValidate;
-use GuzzleHttp\Client;
 use App\Models\Post;
 use App\Models\PostType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-#use App\Services\SummaryService;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Exception;
 use Throwable;
 
-class PostsController extends Controller {
-
-    public function __construct() {
+class PostsController extends Controller
+{
+    public function __construct()
+    {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:post_acceder')->only('index');
         $this->middleware('permission:post_crear')->only('add', 'store');
@@ -28,27 +24,34 @@ class PostsController extends Controller {
         $this->middleware('permission:post_ver')->only('list');
         $this->middleware('permission:post_borrar')->only('destroy');
     }
-    public function index(): View {
+
+    public function index(): View
+    {
         return view('business.posts.index');
     }
 
-    public function add(): View {
+    public function add(): View
+    {
         $tipo_post = PostType::get();
+
         return view('business.posts.add', compact('tipo_post'));
     }
 
-    public function edit(int $id): View {
-        $tipo_post  = PostType::get();
-        $post       = Post::findOrFail($id);
+    public function edit(int $id): View
+    {
+        $tipo_post = PostType::get();
+        $post = Post::findOrFail($id);
+
         return view('business.posts.edit', compact('post', 'tipo_post'));
     }
 
-    public function list(): JsonResponse {
-        $results    = Post::join('post_type as pt', 'pt.id', '=', 'post.type_id')
+    public function list(): JsonResponse
+    {
+        $results = Post::join('post_type as pt', 'pt.id', '=', 'post.type_id')
             ->select('post.*', 'pt.description')
             ->orderBy('post.created_at', 'desc')->get();
-        $data       = $results->map(function ($item, $key) {
-            $user   = auth()->user();
+        $data = $results->map(function ($item, $key) {
+            $user = auth()->user();
             $buttons = '';
 
             if ($user->can('post_actualizar')) {
@@ -76,31 +79,32 @@ class PostsController extends Controller {
                 $item->titulo,
                 $item->description,
                 $item->created_at->format('Y-m-d H:i:s'),
-                $buttons ?: 'No hay acciones disponibles'
+                $buttons ?: 'No hay acciones disponibles',
             ];
         });
 
-      	return response()->json([
- 			"sEcho"					    => 1,
- 			"iTotalRecords"			    => $data->count(),
- 			"iTotalDisplayRecords"	    => $data->count(),
- 			"aaData"				    => $data,
- 		]);
+        return response()->json([
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data,
+        ]);
     }
 
-    public function store(PostValidate $request): JsonResponse {
+    public function store(PostValidate $request): JsonResponse
+    {
         $validated = $request->validated();
-        $id        = $request->input('postId');
+        $id = $request->input('postId');
 
         $extraDataMap = [
-			'autor_post'    => auth()->user()->id,
-            'titulo_corto'  => $request->titulo_corto,
-		];
+            'autor_post' => auth()->user()->id,
+            'titulo_corto' => $request->titulo_corto,
+        ];
 
         $processedFields = [
-            'url'           => strtolower($this->formatDescription($validated['titulo'])),
-			'alt_img'       => strtolower($this->formatDescription($validated['descrip_img'])),
-		];
+            'url' => strtolower($this->formatDescription($validated['titulo'])),
+            'alt_img' => strtolower($this->formatDescription($validated['descrip_img'])),
+        ];
 
         $data = array_merge($validated, $extraDataMap, $processedFields);
 
@@ -118,19 +122,20 @@ class PostsController extends Controller {
                 $data['img'] = $request->file('img')->store('homepage', 'public');
             }
 
-            if (!empty($validated['titulo'])) {
+            if (! empty($validated['titulo'])) {
                 $validated['url'] = $this->formatDescription($validated['titulo']);
             }
-            
+
             $result = Post::updateOrCreate(['id' => $id], $data);
 
             DB::commit();
+
             return response()->json([
-                'status'    => (bool) $result,
-                'type'      => $result ? 'success' : 'error',
-                'message'   => $result ? ($result->wasRecentlyCreated ? '¡Post creado con éxito!' : '¡Post actualizado!') : 'Recargue la página y vuelva a intentarlo',
-                'route'     => route('business.posts'),
-                'data'      => $result,
+                'status' => (bool) $result,
+                'type' => $result ? 'success' : 'error',
+                'message' => $result ? ($result->wasRecentlyCreated ? '¡Post creado con éxito!' : '¡Post actualizado!') : 'Recargue la página y vuelva a intentarlo',
+                'route' => route('business.posts'),
+                'data' => $result,
             ], 200);
 
         } catch (Throwable $e) {
@@ -141,15 +146,16 @@ class PostsController extends Controller {
             }
 
             return response()->json([
-                'status'        => false,
-                'type'          => 'error',
-                'message'       => 'Error al procesar el post: ' . $e->getMessage(),
-                'error_details' => config('app.debug') ? $e->getTrace() : null
+                'status' => false,
+                'type' => 'error',
+                'message' => 'Error al procesar el post: '.$e->getMessage(),
+                'error_details' => config('app.debug') ? $e->getTrace() : null,
             ], 500);
         }
     }
 
-    protected function handleImageUpload($request, $postId = null): string {
+    protected function handleImageUpload($request, $postId = null): string
+    {
         if ($postId && ($post = Post::find($postId))) {
             // Guardar referencia a la imagen anterior para eliminación después de commit
             $oldImage = $post->img;
@@ -164,17 +170,20 @@ class PostsController extends Controller {
         return $request->file('img')->store('homepage', 'public');
     }
 
-    protected function formatDescription(string $description): string {
+    protected function formatDescription(string $description): string
+    {
         return Str::slug($description);
     }
 
-    public function destroy(int $id): JsonResponse {
+    public function destroy(int $id): JsonResponse
+    {
         $result = Post::findOrFail($id);
         $result->delete();
+
         return response()->json([
-            'status'    => (bool) $result,
-            'type'      => $result ? 'success' : 'error',
-            'messages'  => $result ? 'El post fue eliminado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $result,
+            'type' => $result ? 'success' : 'error',
+            'messages' => $result ? 'El post fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 }

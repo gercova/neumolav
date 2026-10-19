@@ -254,6 +254,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         });
         // MÓDULO DE EMPRESA
         Route::middleware(['permission:empresa'])->group(function () {
+            Route::get('/enterprise/data', [EnterpriseController::class, 'getData']);
             Route::post('/enterprise/store', [EnterpriseController::class, 'store']);
             Route::get('/enterprise', [EnterpriseController::class, 'index'])->name('business.enterprise');
         });

@@ -1,10 +1,13 @@
 $(document).ready(function(){
+    // Si la vista SPA de Vue está presente, evitar inicializar scripts jQuery clásicos
+    if ($('#vue-enterprise').length > 0) {
+        return;
+    }
+
     //crear nuevo logo
     $(".foto-representante").change(function(){
         let imagen = this.files[0];
-        /*=============================================
-        VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG
-        =============================================*/
+        // VALIDAMOS EL FORMATO DE LA IMAGEN SEA JPG O PNG
         if(imagen["type"] != "image/jpeg" && imagen["type"] != "image/png"){
             $(".mini-logo").val("");
             swal.fire({
