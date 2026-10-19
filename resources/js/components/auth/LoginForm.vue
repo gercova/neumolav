@@ -17,7 +17,7 @@ const handleSubmit = async (event) => {
         <!-- Campo Email -->
         <div class="form-group mb-3">
             <label for="email" class="form-label sr-only">Correo electrónico</label>
-            <div class="input-group">
+            <div class="input-group login-input-group" :class="{ 'is-invalid-group': store.fieldErrors.email }">
                 <input
                     id="email"
                     v-model.trim="store.email"
@@ -32,9 +32,9 @@ const handleSubmit = async (event) => {
                     @input="store.clearFieldError('email')"
                 >
                 <div class="input-group-append">
-                    <div class="input-group-text bg-white">
-                        <span class="fas fa-envelope text-muted"></span>
-                    </div>
+                    <span class="input-group-text">
+                        <i class="fas fa-envelope text-muted"></i>
+                    </span>
                 </div>
             </div>
             <span
@@ -48,7 +48,7 @@ const handleSubmit = async (event) => {
         <!-- Campo Contraseña con Toggle Show/Hide -->
         <div class="form-group mb-3">
             <label for="password" class="form-label sr-only">Contraseña</label>
-            <div class="input-group">
+            <div class="input-group login-input-group" :class="{ 'is-invalid-group': store.fieldErrors.password }">
                 <input
                     id="password"
                     v-model="store.password"
@@ -65,14 +65,14 @@ const handleSubmit = async (event) => {
                 <div class="input-group-append">
                     <button
                         type="button"
-                        class="btn btn-outline-secondary input-group-text bg-white border-left-0"
+                        class="btn input-group-text border-0"
                         tabindex="-1"
                         :title="store.passwordVisible ? 'Ocultar contraseña' : 'Ver contraseña'"
                         @click="store.togglePasswordVisibility"
                     >
-                        <span
+                        <i
                             :class="store.passwordVisible ? 'fas fa-eye-slash text-primary' : 'fas fa-eye text-muted'"
-                        ></span>
+                        ></i>
                     </button>
                 </div>
             </div>
@@ -84,48 +84,44 @@ const handleSubmit = async (event) => {
             </span>
         </div>
 
-        <!-- Fila Recordarme y Botón -->
-        <div class="row align-items-center mb-3">
-            <div class="col-6">
-                <div class="custom-control custom-checkbox">
-                    <input
-                        id="remember"
-                        v-model="store.remember"
-                        type="checkbox"
-                        name="remember"
-                        class="custom-control-input"
-                        :disabled="store.loading"
-                    >
-                    <label class="custom-control-label text-muted small" for="remember">
-                        Recordarme
-                    </label>
-                </div>
+        <!-- Fila Recordarme y Protegido -->
+        <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
+            <div class="custom-control custom-checkbox">
+                <input
+                    id="remember"
+                    v-model="store.remember"
+                    type="checkbox"
+                    name="remember"
+                    class="custom-control-input"
+                    :disabled="store.loading"
+                >
+                <label class="custom-control-label text-muted small user-select-none font-weight-500" for="remember">
+                    Recordarme
+                </label>
             </div>
-            <div class="col-6 text-right">
-                <span class="badge badge-light text-muted p-1 small">
-                    <i class="fas fa-lock mr-1"></i> Protegido
+            <div>
+                <span class="login-protected-badge">
+                    <i class="fas fa-lock mr-1 text-primary"></i> Protegido
                 </span>
             </div>
         </div>
 
         <!-- Botón Iniciar Sesión -->
-        <div class="row">
-            <div class="col-12">
-                <button
-                    id="loginButton"
-                    type="submit"
-                    class="btn btn-primary btn-block shadow-sm font-weight-600"
-                    :disabled="store.loading"
-                >
-                    <template v-if="store.loading">
-                        <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
-                        Cargando...
-                    </template>
-                    <template v-else>
-                        <i class="fas fa-sign-in-alt mr-1"></i> Iniciar sesión
-                    </template>
-                </button>
-            </div>
+        <div class="form-group mb-1">
+            <button
+                id="loginButton"
+                type="submit"
+                class="btn btn-primary btn-block btn-login-submit"
+                :disabled="store.loading"
+            >
+                <template v-if="store.loading">
+                    <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                    Iniciando sesión...
+                </template>
+                <template v-else>
+                    <i class="fas fa-sign-in-alt mr-2"></i> Iniciar sesión
+                </template>
+            </button>
         </div>
     </form>
 </template>
@@ -134,29 +130,11 @@ const handleSubmit = async (event) => {
 .font-weight-500 {
     font-weight: 500;
 }
-.font-weight-600 {
-    font-weight: 600;
-}
-.input-group-text {
-    border-color: #ced4da;
-}
-.input-group .form-control:focus {
-    box-shadow: none;
-    border-color: #80bdff;
+.is-invalid-group {
+    border-color: #ef4444 !important;
 }
 .input-group-append button:focus {
+    outline: none;
     box-shadow: none;
-}
-#loginButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-#loginButton:hover:not(:disabled) {
-    transform: translateY(-1px);
-}
-#loginButton:active:not(:disabled) {
-    transform: translateY(0);
 }
 </style>

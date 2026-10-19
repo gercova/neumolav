@@ -25,29 +25,28 @@ const handleImageError = () => {
 
 <template>
     <div class="login-header-wrapper">
-        <div class="text-center p-3 brand-logo-container">
+        <div class="login-logo-container">
             <template v-if="logoUrl && !imageError">
-                <picture>
-                    <source :srcset="logoUrl" type="image/png">
-                    <img
-                        :src="logoUrl"
-                        :alt="'Logo ' + appName"
-                        class="img-fluid login-logo-img"
-                        loading="lazy"
-                        @error="handleImageError"
-                    >
-                </picture>
+                <img
+                    :src="logoUrl"
+                    :alt="'Logo ' + appName"
+                    class="login-logo-img"
+                    loading="eager"
+                    @error="handleImageError"
+                >
             </template>
             <template v-else>
-                <div class="fallback-logo py-2">
-                    <i class="fas fa-lungs fa-3x text-primary mb-2"></i>
+                <div class="fallback-logo py-2 text-center">
+                    <div class="fallback-icon-box mb-2">
+                        <i class="fas fa-lungs fa-2x text-primary"></i>
+                    </div>
                     <h3 class="font-weight-bold text-dark m-0">{{ appName }}</h3>
                 </div>
             </template>
         </div>
 
-        <div class="card-header text-center border-top-0 pt-0 pb-2">
-            <p class="login-box-msg text-muted mb-0 font-weight-500">
+        <div class="text-center px-4 pb-1">
+            <p class="login-header-subtitle mb-0">
                 {{ subtitle }}
             </p>
         </div>
@@ -57,24 +56,16 @@ const handleImageError = () => {
 <style scoped>
 .login-header-wrapper {
     background: transparent;
+    padding-top: 0.5rem;
 }
-.brand-logo-container {
-    min-height: 80px;
+.fallback-icon-box {
+    width: 54px;
+    height: 54px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: rgba(14, 165, 233, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.login-logo-img {
-    max-height: 90px;
-    max-width: 100%;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-}
-.login-logo-img:hover {
-    transform: scale(1.02);
-}
-.login-box-msg {
-    font-size: 0.95rem;
-    color: #495057;
 }
 </style>

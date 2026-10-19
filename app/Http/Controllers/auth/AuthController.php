@@ -36,9 +36,9 @@ class AuthController extends Controller
 
         $loginState = [
             'appName' => $enterprise->nombre_comercial ?: config('global.site_name', 'Neumotar'),
-            'logoUrl' => $enterprise->logo_receta ? asset('storage/'.$enterprise->logo_receta) : null,
+            'logoUrl' => $enterprise->logo_receta ? asset('storage/'.$enterprise->logo_receta) : ($enterprise->logo ? asset('storage/'.$enterprise->logo) : null),
             'faviconUrl' => $enterprise->logo ? asset('storage/'.$enterprise->logo) : null,
-            'subtitle' => $enterprise->descripcion ?: 'Especialista en enfermedades respiratorias',
+            'subtitle' => $enterprise->slogan ?: 'Especialista en enfermedades respiratorias',
             'redirectUrl' => route('home'),
             'routes' => [
                 'login' => url('/login'),

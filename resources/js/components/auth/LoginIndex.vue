@@ -30,7 +30,7 @@ onMounted(() => {
 
 <template>
     <div class="login-box animate-fade-in">
-        <div class="card card-outline card-primary shadow border-0">
+        <div class="card login-card-modern shadow-lg border-0">
             <!-- Encabezado con Logo y Subtítulo de la Empresa -->
             <LoginHeader
                 :app-name="store.appName"
@@ -38,9 +38,12 @@ onMounted(() => {
                 :subtitle="store.subtitle"
             />
 
+            <!-- Línea divisoria elegante -->
+            <div class="login-divider"></div>
+
             <!-- Cuerpo del Formulario -->
-            <div class="card-body pt-1 pb-3">
-                <p class="login-box-msg text-center text-secondary mb-3 font-weight-500">
+            <div class="card-body pt-0 pb-3 px-4">
+                <p class="login-msg-title">
                     Bienvenido, ingrese sus credenciales
                 </p>
 
@@ -63,42 +66,17 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.login-box {
-    width: 380px;
-    margin: 0 auto;
-}
-@media (max-width: 576px) {
-    .login-box {
-        width: 92%;
-        margin-top: 1rem;
-    }
-}
-.card {
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #ffffff;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
-}
-.card-primary.card-outline {
-    border-top: 3px solid #007bff;
-}
-.font-weight-500 {
-    font-weight: 500;
-}
-.login-box-msg {
-    font-size: 0.92rem;
-}
 .animate-fade-in {
-    animation: fadeIn 0.4s ease-in-out;
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(12px) scale(0.99);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 </style>

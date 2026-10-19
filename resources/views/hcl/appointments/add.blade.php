@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('title', config('global.site_name') . ' - Nuevo control')
-
 @php
     $formState = [
         'meta' => [
@@ -20,7 +19,6 @@
         'medications' => [],
     ];
 @endphp
-
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
