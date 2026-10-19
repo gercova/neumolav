@@ -116,8 +116,10 @@
         @include('partials.navbar', $enterprise)
         <!-- Sidebar -->
         @include('partials.sidebar', $enterprise)
-        <!-- Content Wrapper -->
-        @yield('content')
+        <!-- Content Wrapper / SPA Target Container -->
+        <main id="spa-content-container" class="spa-content-root">
+            @yield('content')
+        </main>
         <!-- Footer -->
         @include('partials.footer', $enterprise)
     </div>
@@ -161,7 +163,9 @@
         });
     </script>
     @vite(['resources/js/modules/quickview.js'])
-    @stack('scripts')
+    <div id="spa-page-scripts" style="display:none;">
+        @stack('scripts')
+    </div>
 </body>
 
 </html>
