@@ -261,12 +261,14 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
         // MÓDULO DE PUBLICACIONES
         Route::middleware(['permission:posts'])->group(function () {
             Route::get('/publications', [PostsController::class, 'index'])->name('business.posts');
-            Route::get('/publications/add/', [PostsController::class, 'add'])->name('business.posts.add');
-            Route::get('/publications/edit/{id}', [PostsController::class, 'edit'])->name('business.posts.edit');
-            Route::get('/publications/list', [PostsController::class, 'list']);
-            Route::get('/publications/{id}', [PostsController::class, 'show']);
+            Route::get('/publications/add', [PostsController::class, 'add'])->name('business.posts.add');
+            Route::get('/publications/edit/{id}', [PostsController::class, 'edit'])->name('business.posts.edit')->whereNumber('id');
+            Route::match(['get', 'post'], '/publications/list', [PostsController::class, 'list']);
+            Route::get('/publications/options', [PostsController::class, 'options']);
+            Route::get('/publications/{id}', [PostsController::class, 'show'])->whereNumber('id');
             Route::post('/publications/store', [PostsController::class, 'store']);
-            Route::delete('/publications/delete/{id}', [PostsController::class, 'destroy']);
+            Route::delete('/publications/delete/{id}', [PostsController::class, 'destroy'])->whereNumber('id');
+            Route::delete('/publications/{id}', [PostsController::class, 'destroy'])->whereNumber('id');
         });
         // MÓDULO DE REPORTES GRAFICOS
         Route::middleware(['permission:reportes'])->group(function () {
