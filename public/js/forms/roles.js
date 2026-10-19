@@ -1,4 +1,9 @@
 $(document).ready(function () {
+    // Si la aplicación Vue SPA está montada en la vista, se omite la inicialización de DataTables / jQuery
+    if ($('#vue-roles').length > 0) {
+        return;
+    }
+
     // DataTable
     const rolesTable = $('#roles_data').DataTable({
         ajax: {

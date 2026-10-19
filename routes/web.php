@@ -87,13 +87,14 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             // MÓDULO DE ROLES
             Route::middleware(['permission:roles'])->group(function () {
                 Route::get('/roles', [RolesController::class, 'index'])->name('security.roles');
-                Route::get('/roles/list', [RolesController::class, 'list']);
+                Route::match(['get', 'post'], '/roles/list', [RolesController::class, 'list']);
                 Route::get('/roles/{id}/permissions', [RolesController::class, 'getPermissions']);
                 Route::get('/roles/{id}/users', [RolesController::class, 'getUsers']);
                 Route::get('/roles/{id}', [RolesController::class, 'show']);
                 Route::post('/roles/store', [RolesController::class, 'store']);
                 Route::post('/roles/{id}/syncPermissions', [RolesController::class, 'syncPermissions'])->name('security.roles.syncPermissions');
                 Route::delete('/roles/delete/{id}', [RolesController::class, 'destroy']);
+                Route::delete('/roles/{id}', [RolesController::class, 'destroy']);
             });
             // MÓDULO DE ESPECIALIDADES
             Route::middleware(['permission:especialidades'])->group(function () {
