@@ -12,6 +12,8 @@ export const useSpecialtiesStore = defineStore('specialties', {
         pageSize: 10,
         search: '',
         occupationFilter: '',
+        specialtyFilter: '',
+        specialtyLabel: '',
         loading: false,
         submitting: false,
         permissions: {
@@ -65,6 +67,7 @@ export const useSpecialtiesStore = defineStore('specialties', {
                         pageSize: this.pageSize,
                         search: this.search || undefined,
                         occupation: this.occupationFilter || undefined,
+                        specialty_id: this.specialtyFilter || undefined,
                     },
                 });
 
@@ -103,6 +106,12 @@ export const useSpecialtiesStore = defineStore('specialties', {
 
         setOccupationFilter(occId) {
             this.occupationFilter = occId;
+            return this.fetchPage(1);
+        },
+
+        setSpecialtyFilter(id, label = '') {
+            this.specialtyFilter = id ? String(id) : '';
+            this.specialtyLabel = label || '';
             return this.fetchPage(1);
         },
 

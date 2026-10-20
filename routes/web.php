@@ -101,6 +101,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::get('/specialties', [SpecialtiesController::class, 'index'])->name('security.specialties');
                 Route::match(['get', 'post'], '/specialties/list', [SpecialtiesController::class, 'list']);
                 Route::get('/specialties/options', [SpecialtiesController::class, 'options']);
+                Route::get('/specialties/search', [SpecialtiesController::class, 'search'])->name('security.specialties.search');
                 Route::get('/specialties/{id}', [SpecialtiesController::class, 'show']);
                 Route::post('/specialties/store', [SpecialtiesController::class, 'store']);
                 Route::delete('/specialties/delete/{id}', [SpecialtiesController::class, 'destroy']);

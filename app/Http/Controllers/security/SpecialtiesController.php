@@ -16,7 +16,7 @@ class SpecialtiesController extends Controller
     {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:especialidad_acceder')->only('index');
-        $this->middleware('permission:especialidad_ver')->only('list', 'show', 'options');
+        $this->middleware('permission:especialidad_ver')->only('list', 'show', 'options', 'search');
         $this->middleware('permission:especialidad_crear|especialidad_actualizar')->only('store');
         $this->middleware('permission:especialidad_borrar')->only('destroy');
     }
@@ -39,11 +39,41 @@ class SpecialtiesController extends Controller
         ], 200);
     }
 
+    public function search(Request $request): JsonResponse
+    {
+        $q = trim((string) $request->input('q', $request->input('search', '')));
+        $query = Specialty::query()->select('id', 'descripcion', 'id_ocupacion')
+            ->with('occupation:id,descripcion')
+            ->orderBy('descripcion');
+
+        if ($q !== '') {
+            $query->where('descripcion', 'LIKE', "%{$q}%");
+        }
+
+        $specialties = $query->limit(5)->get()->map(function ($item) {
+            $occ = $item->occupation ? " ({$item->occupation->descripcion})" : '';
+
+            return [
+                'id' => $item->id,
+                'value' => $item->id,
+                'label' => $item->descripcion.$occ,
+                'descripcion' => $item->descripcion,
+            ];
+        });
+
+        return response()->json($specialties, 200);
+    }
+
     public function list(Request $request): JsonResponse
     {
         $search = $request->input('search');
         $occupationFilter = $request->input('occupation', $request->input('id_ocupacion'));
+        $specialtyFilter = $request->input('specialty_id', $request->input('specialty'));
         $query = Specialty::with('occupation')->orderBy('id', 'desc');
+
+        if (! empty($specialtyFilter)) {
+            $query->where('id', $specialtyFilter);
+        }
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {

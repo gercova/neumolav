@@ -11,6 +11,7 @@ const props = defineProps({
     initialLabel:      { type: String, default: '' },
     disabled:          { type: Boolean, default: false },
     clearable:         { type: Boolean, default: true },
+    size:              { type: String, default: 'md' }, // 'sm' | 'md'
 });
 
 const emit = defineEmits(['update:modelValue', 'selected', 'clear']);
@@ -231,7 +232,8 @@ onBeforeUnmount(() => {
             :class="{
                 'has-value': hasValue,
                 'is-focused': isFocused || open,
-                'is-disabled': disabled
+                'is-disabled': disabled,
+                'select2-sm': size === 'sm'
             }"
             tabindex="0"
             role="combobox"
@@ -388,6 +390,23 @@ onBeforeUnmount(() => {
     background-color: #e9ecef;
     cursor: not-allowed;
     opacity: 0.85;
+}
+
+.select2-custom-trigger.select2-sm {
+    min-height: 31px !important;
+    height: 31px !important;
+    padding: 0.2rem 0.6rem !important;
+    font-size: 0.875rem !important;
+    border-radius: 0.2rem !important;
+}
+
+.select2-custom-trigger.select2-sm .select2-custom-clear-btn {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.select2-custom-trigger.select2-sm .select2-custom-arrow {
+    font-size: 0.7rem;
 }
 
 .select2-custom-rendered {

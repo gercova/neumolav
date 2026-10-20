@@ -280,4 +280,63 @@ class SpecialtiesHomeTest extends TestCase
             'id' => $spec->id,
         ]);
     }
+
+    public function test_authorized_user_can_search_specialties_for_select2_limited_to_five(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $occ = Occupation::first() ?? Occupation::create(['descripcion' => 'Ocupacion Test', 'estado' => 1]);
+
+        $prefix = 'Select2Test_'.rand(1000, 9999);
+        for ($i = 1; $i <= 7; $i++) {
+            Specialty::create([
+                'id_ocupacion' => $occ->id,
+                'descripcion' => "{$prefix}_{$i}",
+                'detalle' => "Detalle {$i}",
+                'estado' => 1,
+            ]);
+        }
+
+        $response = $this->actingAs($user)->getJson("/admin/specialties/search?q={$prefix}");
+        $response->assertStatus(200);
+
+        $data = $response->json();
+        $this->assertIsArray($data);
+        $this->assertCount(5, $data);
+        $this->assertArrayHasKey('id', $data[0]);
+        $this->assertArrayHasKey('value', $data[0]);
+        $this->assertArrayHasKey('label', $data[0]);
+        $this->assertArrayHasKey('descripcion', $data[0]);
+    }
+
+    public function test_authorized_user_can_filter_specialties_by_specialty_id(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $occ = Occupation::first() ?? Occupation::create(['descripcion' => 'Ocupacion Test Filter', 'estado' => 1]);
+
+        $specA = Specialty::create([
+            'id_ocupacion' => $occ->id,
+            'descripcion' => 'Espec_A_'.rand(1000, 9999),
+            'detalle' => 'Detalle A',
+            'estado' => 1,
+        ]);
+
+        $specB = Specialty::create([
+            'id_ocupacion' => $occ->id,
+            'descripcion' => 'Espec_B_'.rand(1000, 9999),
+            'detalle' => 'Detalle B',
+            'estado' => 1,
+        ]);
+
+        $response = $this->actingAs($user)->getJson("/admin/specialties/list?specialty_id={$specA->id}");
+        $response->assertStatus(200);
+
+        $response->assertJsonFragment([
+            'id' => $specA->id,
+            'descripcion' => $specA->descripcion,
+        ]);
+
+        $response->assertJsonMissing([
+            'descripcion' => $specB->descripcion,
+        ]);
+    }
 }

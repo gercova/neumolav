@@ -78,7 +78,7 @@ const confirmDelete = async (item) => {
                         <i class="bi bi-award text-muted" style="font-size: 2.5rem; opacity: .5;"></i>
                         <h6 class="text-dark font-weight-bold mt-2 mb-1">Sin resultados</h6>
                         <p class="text-muted small mb-0">
-                            {{ store.search || store.occupationFilter ? 'No se encontraron especialidades con esos filtros.' : 'Aún no hay especialidades registradas.' }}
+                            {{ store.search || store.occupationFilter || store.specialtyFilter ? 'No se encontraron especialidades con esos filtros.' : 'Aún no hay especialidades registradas.' }}
                         </p>
                     </td>
                 </tr>
