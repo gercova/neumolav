@@ -124,11 +124,11 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                             <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 70px;">#</th>
+                                        <th style="width: 5%;">#</th>
                                         <th>Fecha</th>
                                         <th>DNI</th>
                                         <th>Tipo Examen</th>
-                                        <th class="text-center" style="width: 250px;">Opciones</th>
+                                        <th class="text-center" style="width: 30%;">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -79,7 +79,6 @@ const goPrint = (id) => window.open(`/admin/reports/print/${id}`, '_blank');
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card">
@@ -94,7 +93,6 @@ const goPrint = (id) => window.open(`/admin/reports/print/${id}`, '_blank');
                         <a v-if="canCreate" class="btn btn-primary mb-3" :href="addUrl">
                             <i class="bi bi-plus-circle"></i> Agregar nuevo reporte
                         </a>
-
                         <!-- Controles de Tabla: PageSize y Búsqueda -->
                         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center">
@@ -119,15 +117,14 @@ const goPrint = (id) => window.open(`/admin/reports/print/${id}`, '_blank');
                                 </label>
                             </div>
                         </div>
-
                         <div class="table-responsive">
                             <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 70px;">#</th>
+                                        <th style="width: 5%;">#</th>
                                         <th>Fecha</th>
                                         <th>DNI</th>
-                                        <th class="text-center" style="width: 250px;">Opciones</th>
+                                        <th class="text-center" style="width: 30%;">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>

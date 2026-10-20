@@ -84,7 +84,6 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
             <!-- Controles de navegación -->
             <nav aria-label="Paginación de controles">
                 <ul class="pagination pagination-sm mb-0">
-
                     <!-- Primera -->
                     <li class="page-item" :class="{ disabled: page === 1 || loading }">
                         <button class="page-link" title="Primera página" @click="store.firstPage()" :disabled="page === 1 || loading">«</button>

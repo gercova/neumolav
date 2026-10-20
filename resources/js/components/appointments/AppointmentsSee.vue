@@ -118,14 +118,13 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                                 </label>
                             </div>
                         </div>
-
                         <div class="table-responsive">
                             <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 70px;">#</th>
-                                        <th>Fecha</th>
-                                        <th class="text-center" style="width: 250px;">Opciones</th>
+                                        <th style="width: 5%;">#</th>
+                                        <th style="width: 75%;">Fecha</th>
+                                        <th class="text-center" style="width: 20%;">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
