@@ -21,7 +21,7 @@ watch(() => store.search, (v) => {
 <template>
     <div class="input-group" style="max-width: 360px;">
         <div class="input-group-prepend">
-            <span class="input-group-text bg-white">
+            <span class="input-group-text">
                 <i class="bi bi-search"></i>
             </span>
         </div>

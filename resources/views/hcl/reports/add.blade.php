@@ -1,27 +1,22 @@
 @extends('layouts.app')
 @section('title', config('global.site_name') . ' - Nuevo informe')
-
 @section('styles')
     <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
 @endsection
-
 @php
     $formState = [
         'meta' => [
-            'isEdit' => false,
-            'canEdit' => auth()
-                ->user()
-                ->hasAnyRole(['administrador', 'especialista']),
-            'patient' => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
-            'userName' => Auth::user()->name,
+            'isEdit'    => false,
+            'canEdit'   => auth()->user()->hasAnyRole(['administrador', 'especialista']),
+            'patient'   => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
+            'userName'  => Auth::user()->name,
         ],
         'form' => [
-            'id_historia' => $hc->id,
-            'dni' => $hc->dni,
+            'id_historia'   => $hc->id,
+            'dni'           => $hc->dni,
         ],
     ];
 @endphp
-
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -39,7 +34,6 @@
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card card-primary">

@@ -2,8 +2,8 @@
 @section('title', config('global.site_name') . ' - Historias')
 @php
     $historiesState = [
-        'addUrl' => route('hcl.histories.add'),
-        'editUrl' => url('/admin/histories/edit'),
+        'addUrl'    => route('hcl.histories.add'),
+        'editUrl'   => url('/admin/histories/edit'),
     ];
 @endphp
 @section('content')

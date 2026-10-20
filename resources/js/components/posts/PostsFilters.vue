@@ -29,21 +29,22 @@ watch(search, (val) => {
         <!-- Buscar -->
         <div class="input-group input-group-sm" style="min-width: 200px; max-width: 280px;">
             <div class="input-group-prepend">
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search text-muted"></i>
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
                 </span>
             </div>
             <input
                 v-model="localSearch"
                 type="text"
-                class="form-control border-left-0"
+                class="form-control"
                 placeholder="Buscar publicación..."
                 @input="onSearch"
             >
             <div v-if="localSearch" class="input-group-append">
                 <button
-                    class="btn btn-outline-secondary btn-sm"
+                    class="btn btn-outline-secondary"
                     type="button"
+                    title="Limpiar búsqueda"
                     @click="localSearch = ''; store.setSearch('')"
                 >
                     <i class="bi bi-x"></i>

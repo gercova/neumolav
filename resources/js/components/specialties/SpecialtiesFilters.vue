@@ -32,7 +32,7 @@ const clearFilters = () => {
 </script>
 
 <template>
-    <div class="d-flex flex-wrap align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2">
         <!-- Selector de Cargo / Ocupación -->
         <div class="filter-select">
             <select
@@ -54,7 +54,7 @@ const clearFilters = () => {
         <!-- Barra de Búsqueda -->
         <div class="input-group input-group-sm search-input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text bg-white">
+                <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
             </div>

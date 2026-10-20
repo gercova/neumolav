@@ -97,7 +97,7 @@
                                 </div>
                                 <div class="input-group input-group-sm mb-1" style="width: 170px;">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text bg-white"><i class="bi bi-calendar3"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                                     </div>
                                     <input type="date" class="form-control" id="selected_date"
                                         value="{{ $selectedDate }}">
@@ -168,7 +168,6 @@
                         </small>
                     </div>
                 </div>
-
             </div>
         </section>
     </div>
@@ -186,7 +185,6 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
                 <div class="modal-body p-0">
                     <!-- Pestañas de Navegación del Modal -->
                     <ul class="nav nav-tabs nav-justified bg-light" id="appointmentModalTabs" role="tablist">
@@ -204,7 +202,6 @@
                             </a>
                         </li>
                     </ul>
-
                     <div class="tab-content p-4" id="appointmentModalTabContent">
                         <!-- PESTAÑA 1: BUSCAR PACIENTE EXISTENTE -->
                         <div class="tab-pane fade show active" id="tab-search-patient" role="tabpanel"
@@ -215,7 +212,7 @@
                                 </label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
                                     </div>
                                     <input type="text" class="form-control" id="search_patient_input"
                                         placeholder="Escriba DNI o Apellidos y Nombres del paciente..."
@@ -230,13 +227,11 @@
                                 <small class="form-text text-muted">Ingrese al menos 2 caracteres para buscar en el
                                     registro histórico de pacientes.</small>
                             </div>
-
                             <!-- Lista de Resultados de Búsqueda -->
                             <div id="patient_search_results" class="border rounded bg-white mb-3"
                                 style="max-height: 190px; overflow-y: auto; display: none;">
                                 <!-- Items cargados dinámicamente -->
                             </div>
-
                             <!-- Tarjeta de Paciente Seleccionado -->
                             <div id="selected_patient_display" class="selected-patient-card" style="display: none;">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -256,7 +251,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Aviso de paciente no encontrado -->
                             <div class="alert alert-light border mb-3 py-2 text-center" id="box_not_found_prompt">
                                 <span class="text-muted">¿No encuentra al paciente registrado?</span>
@@ -265,11 +259,9 @@
                                     <i class="bi bi-person-plus"></i> Registrar nuevo paciente aquí
                                 </a>
                             </div>
-
                             <!-- Formulario de Agendamiento para Paciente Seleccionado -->
                             <form id="form_schedule_existing">
                                 <input type="hidden" id="existing_patient_id" name="id_historia" value="">
-
                                 <div class="row">
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
@@ -280,7 +272,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="font-weight-bold d-block">Tipo de Atención: <span
                                             class="text-danger">*</span></label>
@@ -308,7 +299,6 @@
                                     <small class="form-text text-muted">Haga clic en una opción para clasificar la atención
                                         del paciente.</small>
                                 </div>
-
                                 <div class="text-right">
                                     <button type="button" class="btn btn-secondary mr-2"
                                         data-dismiss="modal">Cancelar</button>
@@ -318,7 +308,6 @@
                                 </div>
                             </form>
                         </div>
-
                         <!-- PESTAÑA 2: REGISTRO RÁPIDO DE PACIENTE -->
                         <div class="tab-pane fade" id="tab-quick-patient" role="tabpanel"
                             aria-labelledby="tab-quick-link">

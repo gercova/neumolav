@@ -1,30 +1,27 @@
 @extends('layouts.app')
-
 @section('title', config('global.site_name') . ' - Actualizar historia')
-
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/vanilla-datepicker.css') }}">
 @endsection
-
 @php
-    $formState = [
-        'isEdit' => true,
+    $formState      = [
+        'isEdit'    => true,
         'canSeeClinical' => auth()
             ->user()
             ->hasAnyRole(['administrador', 'especialista']),
-        'form' => array_merge($history->toArray(), [
-            'fecha_nacimiento' => $history->fecha_nacimiento?->format('Y-m-d'),
+        'form'      => array_merge($history->toArray(), [
+            'fecha_nacimiento'  => $history->fecha_nacimiento?->format('Y-m-d'),
             'ubigeo_nacimiento' => $unacimiento[0]['nacimiento'] ?? '',
             'ubigeo_residencia' => $uresidencia[0]['residencia'] ?? '',
-            'id_ocupacion' => $occupation[0]['occupation'] ?? '',
+            'id_ocupacion'      => $occupation[0]['occupation'] ?? '',
         ]),
-        'catalog' => [
-            'documentTypes' => $dt,
-            'sexes' => $sx,
-            'bloodGroups' => $bg,
-            'degrees' => $di,
-            'maritalStatuses' => $ms,
-            'smokingTypes' => $tb,
+        'catalog'   => [
+            'documentTypes'     => $dt,
+            'sexes'             => $sx,
+            'bloodGroups'       => $bg,
+            'degrees'           => $di,
+            'maritalStatuses'   => $ms,
+            'smokingTypes'      => $tb,
         ],
     ];
 @endphp
@@ -46,22 +43,18 @@
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card card-warning card-outline shadow-sm">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-user-edit mr-1"></i> Filiación y Datos del Paciente</h3>
                     </div>
-                    <div id="vue-history-form">
-                        {{-- Vue montará aquí --}}
-                    </div>
+                    <div id="vue-history-form"></div>
                 </div>
             </div>
         </section>
     </div>
 @endsection
-
 @push('scripts')
     <script src="{{ asset('js/vanilla-datepicker.js') }}"></script>
     <script>

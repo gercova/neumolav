@@ -11,16 +11,16 @@ const {
     passwordFormErrors,
 } = storeToRefs(store);
 
-const password = ref('');
-const passwordConfirmation = ref('');
-const showPassword = ref(false);
+const password              = ref('');
+const passwordConfirmation  = ref('');
+const showPassword          = ref(false);
 
 watch([passwordModalVisible, passwordTargetUser], ([visible]) => {
     if (visible) {
         document.body.classList.add('modal-open');
-        password.value = '';
-        passwordConfirmation.value = '';
-        showPassword.value = false;
+        password.value              = '';
+        passwordConfirmation.value  = '';
+        showPassword.value          = false;
     } else {
         document.body.classList.remove('modal-open');
     }
@@ -58,7 +58,6 @@ const handleSubmit = async () => {
     });
 };
 </script>
-
 <template>
     <Teleport to="body">
         <div
@@ -112,7 +111,7 @@ const handleSubmit = async () => {
                                 </label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text bg-white">
+                                        <span class="input-group-text">
                                             <i class="bi bi-lock"></i>
                                         </span>
                                     </div>
@@ -152,7 +151,7 @@ const handleSubmit = async () => {
                                 </label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text bg-white">
+                                        <span class="input-group-text">
                                             <i class="bi bi-shield-lock"></i>
                                         </span>
                                     </div>
@@ -174,7 +173,6 @@ const handleSubmit = async () => {
                                 </div>
                             </div>
                         </div>
-
                         <div class="modal-footer bg-light">
                             <button
                                 type="button"
@@ -200,7 +198,6 @@ const handleSubmit = async () => {
         </div>
     </Teleport>
 </template>
-
 <style scoped>
 .font-weight-semibold {
     font-weight: 600;

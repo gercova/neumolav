@@ -15,7 +15,7 @@ watch(term, (v) => {
 <template>
     <div class="input-group" style="max-width: 360px;">
         <div class="input-group-prepend">
-            <span class="input-group-text bg-white">
+            <span class="input-group-text">
                 <i class="bi bi-search"></i>
             </span>
         </div>
@@ -26,7 +26,7 @@ watch(term, (v) => {
             placeholder="Buscar por DNI, nombres o apellidos..."
         >
         <div v-if="term" class="input-group-append">
-            <button class="btn btn-outline-secondary" @click="term = ''">
+            <button class="btn btn-outline-secondary" type="button" title="Limpiar búsqueda" @click="term = ''">
                 <i class="bi bi-x"></i>
             </button>
         </div>

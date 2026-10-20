@@ -1,31 +1,27 @@
 @extends('layouts.app')
-
 @section('title', config('global.site_name') . ' - Nueva historia')
-
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/vanilla-datepicker.css') }}">
 @endsection
-
 @php
     $formState = [
-        'isEdit' => false,
+        'isEdit'    => false,
         'canSeeClinical' => auth()
             ->user()
             ->hasAnyRole(['administrador', 'especialista']),
-        'form' => [
+        'form'      => [
             'id_tipo_atencion' => 1,
         ],
-        'catalog' => [
-            'documentTypes' => $dt,
-            'sexes' => $sx,
-            'bloodGroups' => $bg,
-            'degrees' => $di,
-            'maritalStatuses' => $ms,
-            'smokingTypes' => $tb,
+        'catalog'   => [
+            'documentTypes'     => $dt,
+            'sexes'             => $sx,
+            'bloodGroups'       => $bg,
+            'degrees'           => $di,
+            'maritalStatuses'   => $ms,
+            'smokingTypes'      => $tb,
         ],
     ];
 @endphp
-
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">

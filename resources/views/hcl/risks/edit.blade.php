@@ -1,23 +1,19 @@
 @extends('layouts.app')
 @section('title', config('global.site_name') . ' - Actualizar informe de riesgo')
-
 @php
-    $formState = [
-        'meta' => [
-            'isEdit' => true,
-            'canEdit' => auth()
-                ->user()
-                ->hasAnyRole(['administrador', 'especialista']),
-            'patient' => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
-            'userName' => Auth::user()->name,
+    $formState  = [
+        'meta'  => [
+            'isEdit'    => true,
+            'canEdit'   => auth()->user()->hasAnyRole(['administrador', 'especialista']),
+            'patient'   => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
+            'userName'  => Auth::user()->name,
         ],
-        'form' => array_merge($rk->toArray(), [
-            'riskId' => $rk->id,
-            'id_historia' => $hc->id,
+        'form'  => array_merge($rk->toArray(), [
+            'riskId'        => $rk->id,
+            'id_historia'   => $hc->id,
         ]),
     ];
 @endphp
-
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -35,7 +31,6 @@
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card card-primary">
@@ -48,7 +43,6 @@
         </section>
     </div>
 @endsection
-
 @push('scripts')
     <script>
         window.__RISK_FORM_STATE__ = @json($formState);

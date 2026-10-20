@@ -56,7 +56,7 @@ const openSchedule = () => modals.openSchedule(currentDate.value);
                         <button class="btn btn-outline-secondary btn-sm" @click="goNext"><i class="bi bi-chevron-right"></i></button>
                     </div>
                     <div class="input-group input-group-sm mb-1" style="width: 170px;">
-                        <div class="input-group-prepend"><span class="input-group-text bg-white"><i class="bi bi-calendar3"></i></span></div>
+                        <div class="input-group-prepend"><span class="input-group-text"><i class="bi bi-calendar3"></i></span></div>
                         <input type="date" class="form-control" :value="currentDate" @change="onDateChange">
                     </div>
                 </div>

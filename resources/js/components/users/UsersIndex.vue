@@ -51,7 +51,6 @@ onMounted(() => {
     store.fetchPage(1);
 });
 </script>
-
 <template>
     <div class="content-wrapper">
         <div class="content-header">
@@ -70,7 +69,6 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -88,7 +86,6 @@ onMounted(() => {
                                 <span v-else class="text-muted small">
                                     <i class="bi bi-info-circle mr-1"></i> Consulta de usuarios
                                 </span>
-
                                 <UsersFilters />
                             </div>
 
@@ -100,7 +97,6 @@ onMounted(() => {
                 </div>
             </div>
         </section>
-
         <!-- Modales de Crear/Editar Usuario y Cambio Rápido de Contraseña -->
         <UserModal />
         <UserPasswordModal />

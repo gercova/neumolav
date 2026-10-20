@@ -3,11 +3,11 @@ import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUsersStore } from '@/stores/usersStore';
 
-const store = useUsersStore();
+const store     = useUsersStore();
 const { roles, roleFilter } = storeToRefs(store);
 
 const term = ref(store.search);
-let timer = null;
+let timer  = null;
 
 watch(term, (v) => {
     clearTimeout(timer);
@@ -30,9 +30,8 @@ const clearFilters = () => {
     store.fetchPage(1);
 };
 </script>
-
 <template>
-    <div class="d-flex flex-wrap align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2">
         <!-- Selector de Rol -->
         <div class="filter-select">
             <select
@@ -54,7 +53,7 @@ const clearFilters = () => {
         <!-- Barra de Búsqueda -->
         <div class="input-group input-group-sm search-input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text bg-white">
+                <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
             </div>
@@ -77,7 +76,6 @@ const clearFilters = () => {
         </div>
     </div>
 </template>
-
 <style scoped>
 .gap-2 {
     gap: 0.5rem;

@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
                                     <div class="card-body p-2">
                                         <div class="input-group input-group-sm mb-2">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
                                             </div>
                                             <input
                                                 v-model="availableSearch"
@@ -213,7 +213,7 @@ onBeforeUnmount(() => {
                                     <div class="card-body p-2">
                                         <div class="input-group input-group-sm mb-2">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
                                             </div>
                                             <input
                                                 v-model="assignedSearch"

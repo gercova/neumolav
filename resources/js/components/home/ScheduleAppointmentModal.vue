@@ -141,7 +141,7 @@ const onDniEnter = (e) => {
                                     <label class="font-weight-bold text-dark">Buscar Paciente en Base de Datos:</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
                                         </div>
                                         <input v-model="searchQuery" type="text" class="form-control"
                                                placeholder="Escriba DNI o Apellidos y Nombres..."

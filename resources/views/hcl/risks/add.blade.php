@@ -3,16 +3,14 @@
 @php
     $formState = [
         'meta' => [
-            'isEdit' => false,
-            'canEdit' => auth()
-                ->user()
-                ->hasAnyRole(['administrador', 'especialista']),
-            'patient' => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
-            'userName' => Auth::user()->name,
+            'isEdit'    => false,
+            'canEdit'   => auth()->user()->hasAnyRole(['administrador', 'especialista']),
+            'patient'   => ['id' => $hc->id, 'dni' => $hc->dni, 'nombres' => $hc->nombres],
+            'userName'  => Auth::user()->name,
         ],
-        'form' => [
-            'id_historia' => $hc->id,
-            'dni' => $hc->dni,
+        'form'      => [
+            'id_historia'   => $hc->id,
+            'dni'           => $hc->dni,
         ],
     ];
 @endphp
@@ -33,7 +31,6 @@
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card card-primary">
