@@ -1,8 +1,8 @@
 # PDR — Documento de Definición de Producto y Reporte de Arquitectura del Sistema
 
 **Sistema:** Neumo-LAV / Neumotar (Gestión de Historias Clínicas Electrónicas, Diagnósticos Neumológicos Especializados, Control de Turnos en Sala de Espera y Salud Ocupacional)  
-**Versión del Sistema:** 2.5 (Edición Corporativa y Asistencial)  
-**Entorno Tecnológico:** PHP 8.1+ (8.3 compatible) / Laravel Framework 10.x / MySQL 8.0+ / MariaDB 10.5+ / AdminLTE 3 / Bootstrap 4  
+**Versión del Sistema:** 3.3.0 (Edición Corporativa y Asistencial con Arquitectura Reactiva Vue 3 / Pinia / Vite)  
+**Entorno Tecnológico:** PHP 8.1+ (8.3 compatible) / Laravel Framework 10.x / Vue 3.5+ (Composition API & `<script setup>`) / Pinia 4.x / Vite 5.x / MySQL 8.0+ / MariaDB 10.5+ / AdminLTE 3 / Bootstrap 4  
 **Entidad Propietaria:** Medytarq SAC (RUC: 20605677593)  
 **Establecimiento:** Jr. Paraguay 136, Tarapoto, San Martín, Perú  
 
@@ -18,6 +18,7 @@
   - [2.1 Diagrama de Arquitectura de Capas](#21-diagrama-de-arquitectura-de-capas)
   - [2.2 Flujos de Secuencia Clínica y Procesos Asistenciales](#22-flujos-de-secuencia-clínica-y-procesos-asistenciales)
   - [2.3 Pila Tecnológica y Dependencias Principales](#23-pila-tecnológica-y-dependencias-principales)
+  - [2.4 Arquitectura Frontend Reactiva (Vue 3, Pinia y Vite)](#24-arquitectura-frontend-reactiva-vue-3-pinia-y-vite)
 - [3. Capa de Seguridad, Autenticación, Credenciales y Auditoría](#3-capa-de-seguridad-autenticación-credenciales-y-auditoría)
   - [3.1 Control de Acceso y Pipeline de Middleware](#31-control-de-acceso-y-pipeline-de-middleware)
   - [3.2 Mecanismo Anti Fuerza Bruta y Protección de Sesión](#32-mecanismo-anti-fuerza-bruta-y-protección-de-sesión)
@@ -50,6 +51,8 @@
 - [9. Despliegue, Respaldos y Mantenimiento Operativo](#9-despliegue-respaldos-y-mantenimiento-operativo)
   - [9.1 Parámetros de Configuración del Entorno (.env)](#91-parámetros-de-configuración-del-entorno-env)
   - [9.2 Política y Automatización de Respaldos de Base de Datos](#92-política-y-automatización-de-respaldos-de-base-de-datos)
+  - [9.3 Compilación y Despliegue de Activos Frontend (Vite)](#93-compilación-y-despliegue-de-activos-frontend-vite)
+- [10. Historial de Versiones y Control de Cambios (SemVer)](#10-historial-de-versiones-y-control-de-cambios-semver)
 
 ---
 
@@ -72,11 +75,12 @@ La plataforma abarca la totalidad del ciclo de atención del paciente ambulatori
 1. **Admisión y Filiación Demográfica Asistida:** Consulta sincrónica a la base de datos de **RENIEC** mediante API REST Decolecta para el autocompletado fidedigno de identidad. Normalización territorial según los 1,874 distritos del **Ubigeo Nacional** y clasificación de ocupación bajo el estándar **CIUO**.
 2. **Gestión de Turnos y Sala de Espera del Día:** Tablero interactivo en la vista principal (`/admin/home`) con semaforización de estados (`En Espera`, `Atendido`, `Cancelado`, `Reagendado`), filtro por fecha, buscador predictivo y registro express de pacientes (`quickPatient`).
 3. **Historia Clínica Neumológica (HCL):** Anamnesis completa, tiempo de enfermedad, síntomas cardinales respiratorios (tos, disnea, dolor torácico, expectoración, hemoptisis), antecedentes mórbidos (asma bronquial, EPOC, EPID, TBC, cáncer pulmonar, efusión pleural, neumonías recurrentes) y encolamiento automático de citas en admisión.
-4. **Controles Médicos y Consultas Asistenciales:** Registro evolutivo de cada cita médica, funciones vitales completas, formulación posológica detallada e impresión instantánea de recetas A4/A5 con firma médica digital.
-5. **Exámenes Auxiliares de Diagnóstico:** Gestión de pruebas de función pulmonar (espirometría basal y con broncodilatador, FEV1, FVC, ratio FEV1/FVC), análisis de laboratorio y fluidos pleurales (ADA, PAP, cultivos, BK), con repositorio fotográfico y visor de imágenes radiológicas y trazados.
-6. **Informes Médicos e Informes de Riesgo Quirúrgico:** Emisión de dictámenes clínicos oficiales para empleadores, peritajes o trámites de salud pública, y evaluaciones de riesgo quirúrgico neumológico y cardiovascular preoperatorio.
-7. **Analítica Epidemiológica en Tiempo Real:** Tableros estadísticos interactivos desarrollados con Highcharts que visualizan morbilidad respiratoria, Top 15 de diagnósticos, Top 15 de medicamentos y métricas sociodemográficas.
-8. **Portal Web y Reservas Omnicanal:** Portal web público con artículos de salud respiratoria y motor de solicitud de citas en línea con confirmación vía **WhatsApp Cloud API** y correo electrónico transaccional.
+4. **Controles Médicos y Consultas Asistenciales:** Registro evolutivo de cada cita médica, funciones vitales completas, formulación posológica detallada, visualización de historial (`/admin/appointments/see/{id}`) con paginación de cliente (10 registros por página) y modal interactivo de recetas (`PrescriptionDetailModal.vue`), además de impresión instantánea de recetas A4/A5 con firma médica digital.
+5. **Exámenes Auxiliares de Diagnóstico:** Gestión de pruebas de función pulmonar (espirometría basal y con broncodilatador, FEV1, FVC, ratio FEV1/FVC), análisis de laboratorio y fluidos pleurales (ADA, PAP, cultivos, BK), con repositorio fotográfico y visor de imágenes radiológicas y trazados. Historial (`/admin/exams/see/{id}`) paginado (10 registros por página) y modal interactivo de examen (`ExamDetailModal.vue`).
+6. **Informes Médicos e Informes de Riesgo Quirúrgico:** Emisión de dictámenes clínicos oficiales para empleadores, peritajes o trámites de salud pública, y evaluaciones de riesgo quirúrgico neumológico y cardiovascular preoperatorio. Ambas vistas (`reports/see/{id}` y `risks/see/{id}`) cuentan con paginación de 10 registros por página y modales dedicados de vista previa rápida.
+7. **Analítica Epidemiológica y Drill-Down en Tiempo Real:** Tableros estadísticos interactivos desarrollados con Highcharts que visualizan morbilidad respiratoria, Top 15 de diagnósticos, Top 15 de medicamentos, métricas sociodemográficas y desglose mensual interactivo con un clic en el gráfico de producción anual.
+8. **Arquitectura Reactiva con Vue 3 / Pinia / Vite:** Filtros estandarizados, componente Select2 asíncrono (`SearchSelect.vue`) con limitación inteligente de 5 resultados para no sobrecargar el servidor, y 30 stores reactivos para una interacción ultra-fluida.
+9. **Portal Web y Reservas Omnicanal:** Portal web público con artículos de salud respiratoria y motor de solicitud de citas en línea con confirmación vía **WhatsApp Cloud API** y correo electrónico transaccional.
 
 ### 1.3 Perfiles de Usuario y Modelo de Roles (RBAC)
 El sistema implementa el paquete `spatie/laravel-permission` estructurado en una matriz de tres roles institucionales:
@@ -97,9 +101,14 @@ El sistema implementa el paquete `spatie/laravel-permission` estructurado en una
 graph TD
     ClientBrowser[Navegador Web / Terminal del Consultorio / Recepción] -->|HTTPS Requests| ReverseProxy[Servidor Web Nginx / Apache]
     
-    subgraph Capa de Presentacion
+    subgraph Capa de Presentacion y UI Reactiva
         ReverseProxy --> BladeViews[Vistas Blade / AdminLTE 3 / Bootstrap 4]
-        BladeViews --> ClientLibs[DataTables / JTable / Highcharts / Select2 / SweetAlert2]
+        BladeViews --> VueApp[Capa Reactiva Vue 3: SFCs .vue compilados por Vite 5]
+        VueApp --> PiniaStores[30 Stores de Estado Global Reactivo: Pinia 4]
+        VueApp --> Select2Comp[SearchSelect.vue: Select2 Asíncrono con Criterio de 5 Elementos]
+        VueApp --> ClientPag[Composable useClientPagination: 10 registros por página]
+        VueApp --> Modals[Modales Clínicos: PrescriptionDetailModal, ExamDetailModal, QuickViewModal]
+        BladeViews --> ClientLibs[Highcharts / SweetAlert2 / DataTables]
     end
 
     subgraph Capa de Enrutamiento y Middleware
@@ -196,16 +205,52 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | **Lenguaje Core** | PHP | `^8.1` / `8.3.6` | Motor de ejecución del servidor con soporte de tipado estricto y constructor promotion. |
 | **Framework Web** | `laravel/framework` | `^10.10` | Arquitectura MVC, inyección de dependencias, Eloquent ORM, validación y migraciones. |
+| **Framework Frontend Reactivo** | `vue` | `^3.5.43` | Reactividad declarativa, Single File Components (`.vue`), Composition API y `<script setup>`. |
+| **Gestión de Estado Reactivo** | `pinia` | `^4.0.3` | Tienda de estado global y modular con 30 stores reactivos para cada dominio del sistema. |
+| **Empaquetador y Bundler** | `vite` | `^5.0.0` | Servidor de compilación ultrarrápido con Hot Module Replacement (HMR) y generación de assets. |
+| **Plugin Vue para Vite** | `@vitejs/plugin-vue` | `^6.0.10` | Compilación y transformación de SFCs de Vue en el pipeline de Vite. |
+| **Integración Laravel-Vite** | `laravel-vite-plugin`| `^1.0.0` | Directivas Blade `@vite` para enlace y resolución automática de manifiesto de chunks. |
+| **Cliente HTTP Frontend** | `axios` | `^1.20.0` | Cliente asíncrono para peticiones REST a controladores con manejo de CSRF token. |
 | **Generador PDF** | `barryvdh/laravel-dompdf` | `^3.1` | Renderizado de documentos clínicos y recetas médicas duales (A4 / A5) con firma digital. |
 | **Gestión de Permisos** | `spatie/laravel-permission` | `^6.21` | Implementación de RBAC en rutas, vistas y controladores con interfaz dual-panel. |
 | **Copias de Seguridad** | `spatie/laravel-backup` | `^8.8` | Respaldo periódico programado de la base de datos y archivos multimedia de exámenes. |
 | **Notificaciones WhatsApp** | `netflie/whatsapp-cloud-api`| `^2.2` | Conexión directa a Meta Cloud API para confirmación de citas del portal web. |
-| **Cliente HTTP** | `guzzlehttp/guzzle` | `^7.2` | Consultas HTTP a la API de RENIEC y a las APIs de IA (DeepSeek / Kimi). |
+| **Cliente HTTP Backend** | `guzzlehttp/guzzle` | `^7.2` | Consultas HTTP a la API de RENIEC y a las APIs de IA (DeepSeek / Kimi). |
 | **Machine Learning** | `php-ai/php-ml` | `^0.10.0` | Utilidades de predicción y análisis algorítmico en PHP. |
 | **Autenticación API** | `laravel/sanctum` | `^3.3` | Emisión de tokens de autenticación para servicios móviles y API. |
 | **UI Framework** | AdminLTE | `v3.2` | Plantilla administrativa basada en Bootstrap 4.6. |
-| **Gráficos Estadísticos** | Highcharts JS | `v10+` | Renderizado de tableros epidemiológicos interactivos y series de tiempo. |
+| **Gráficos Estadísticos** | Highcharts JS | `v10+` | Renderizado de tableros epidemiológicos interactivos, series de tiempo y drilldown mensual. |
 | **Tablas Dinámicas** | DataTables & JTable | `v1.10+` | Renderizado de listados paginados por AJAX con filtros avanzados y ordenamiento. |
+
+### 2.4 Arquitectura Frontend Reactiva (Vue 3, Pinia y Vite)
+
+El sistema ha evolucionado hacia un modelo híbrido en el que las vistas del servidor (Blade / AdminLTE 3) albergan componentes reactivos desarrollados en **Vue 3** y compilados a través de **Vite 5**:
+
+#### 1. Configuración Modular de Vite (`vite.config.js`)
+En lugar de un bundle monolítico, el archivo `vite.config.js` expone **29 puntos de entrada modulares** (`resources/js/modules/*.js`), permitiendo la carga condicional de JavaScript exclusivamente en las vistas donde se requiere (ej. `specialties.js`, `appointments-see.js`, `dashboard.js`, `quickview.js`, etc.).
+
+#### 2. Gestión de Estado con Pinia (`resources/js/stores/`)
+Se implementan **30 stores de Pinia** que desacoplan la lógica de presentación del consumo de datos:
+- Manejo reactivo de loading (`loading`, `submitting`), paginación (`currentPage`, `pageSize`, `total`), términos de búsqueda y filtros.
+- Acciones asíncronas para consumo de endpoints REST con Axios y propagación automática de cambios al DOM.
+
+#### 3. Componente Select2 Asíncrono Reutilizable (`SearchSelect.vue`)
+- Componente nativo de Vue 3 que emula y supera las capacidades de Select2 clásico.
+- Soporta búsqueda asíncrona parametrizable (`:search-fn`), debounce configurable, navegación por teclado (`ArrowUp`, `ArrowDown`, `Enter`), botón de limpieza inmediata y resaltado de fragmentos coincidentes.
+- Admite variantes de tamaño: `size="sm"` (altura fija de 31px para cabeceras y barras de filtros) y `size="md"` (para formularios modales).
+- **Control de Sobrecarga del Servidor:** Integrado en filtros como el de Especialidades con un límite estricto de 5 elementos (`:max-results="5"` en frontend y `->limit(5)` en backend).
+
+#### 4. Composables de Negocio (`resources/js/composables/`)
+- `useClientPagination.js`: Encapsula la lógica de paginación en cliente para conjuntos de datos (historiales clínicos), fijando un estándar de **10 registros por página** con controles responsivos (anterior, siguiente, salto directo a página y contador de rango).
+- `useHighcharts.js`: Abstrae la inicialización reactiva y redimensionamiento de gráficos epidemiológicos.
+- `useTipoAtencionModal.js`: Gestiona el diálogo interactivo de cambio de tipo de atención (`Nuevo`, `Control`, `Continuador`).
+
+#### 5. Modales Clínicos Especializados
+- `PrescriptionDetailModal.vue`: Modal reactivo para visualización detallada de diagnósticos CIE-10 y posología de medicamentos en controles.
+- `ExamDetailModal.vue`: Inspección de detalles de examen auxiliar, trazados y hallazgos.
+- `ReportPreviewModal.vue`: Vista previa rápida de informes médicos.
+- `RiskPreviewModal.vue`: Vista previa rápida de informes de riesgo quirúrgico.
+- `QuickViewModal.vue`: Expediente rápido multisección en `/admin/home` y tablas de pacientes, con botones de acción interactivos ("Receta", "Ver", "Imprimir").
 
 ---
 
@@ -295,6 +340,7 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 8. `updateTipoAtencion(Request $request, int $id)`: Permite cambiar el tipo de atención (`1: Nuevo`, `2: Control`, `3: Continuador`), sincronizando el valor tanto en la cita como en la historia clínica del paciente.
 9. `searchPatients(Request $request)`: Servicio de autocompletado predictivo para buscar pacientes por DNI o nombres al programar citas en mostrador.
 10. `destroy(int $id)`: Ejecuta la eliminación lógica (soft delete) de la cita seleccionada.
+11. **Modal de Resumen Rápido (`QuickViewModal.vue`):** Componente interactivo Vue 3 integrado en la barra de acciones de citas para consultar expediente en un clic. Incluye pestañas de filiación, antecedentes, controles previos y exámenes auxiliares, con botones de acción ("Receta", "Ver Examen" e "Imprimir") de alto contraste y vinculación directa a los modales de prescripción y detalle clínico.
 
 ---
 
@@ -302,7 +348,7 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - **Controlador:** [`app/Http/Controllers/hcl/HistoriesController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/HistoriesController.php)
 - **Modelo:** [`app/Models/History.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Models/History.php)
 - **Validador:** [`app/Http/Requests/HistoryValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/HistoryValidate.php)
-- **Vistas:** [`resources/views/hcl/histories/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/histories)
+- **Vistas:** [`resources/views/hcl/histories/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/histories) y componentes Vue en [`resources/js/components/histories/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/histories)
 
 #### Funcionalidades y Acciones
 1. `index()`: Despliega el listado principal de pacientes administrado mediante JTable.
@@ -312,7 +358,7 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 5. `searchDni(Request $request)`: Consulta sincrónica con RENIEC vía API REST Decolecta.
 6. `searchLocation(Request $request)`: Búsqueda dinámica de Ubigeo territorial por código, departamento, provincia o distrito.
 7. `searchOccupation(Request $request)`: Búsqueda predictiva de ocupaciones CIUO.
-8. `quickView(int|string $id)`: Retorna un resumen JSON para la ventana modal de consulta rápida, incorporando datos de filiación, signos vitales recientes y últimos exámenes/controles.
+8. `quickView(int|string $id)`: Retorna un resumen JSON para la ventana modal reactiva de consulta rápida (`QuickViewModal.vue`), incorporando datos de filiación, signos vitales recientes y últimos exámenes/controles.
 9. `destroy(History $hc)`: Eliminación lógica con verificación de integridad referencial.
 
 ---
@@ -322,9 +368,12 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - **Modelos:** `Appointment` (tabla `controles`), `DiagnosticAppointment`, `MedicationAppointment`, `Enterprise`
 - **Validador:** [`app/Http/Requests/AppointmentValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/AppointmentValidate.php)
 - **Servicio:** [`app/Services/TableViewService.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Services/TableViewService.php)
+- **Componentes Vue:** [`AppointmentsSeeTable.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/appointments/AppointmentsSeeTable.vue), [`PrescriptionDetailModal.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/shared/PrescriptionDetailModal.vue)
 
 #### Funcionalidades y Acciones
-1. `index()` / `see(History $hc)`: Panel de visualización de consultas y controles asociados a un paciente.
+1. `index()` / `see(History $hc)`: Panel de visualización de consultas y controles asociados a un paciente (`/admin/appointments/see/{hc}`).
+   - **Paginación en Cliente (10 registros por página):** Implementada mediante el composable `useClientPagination.js`, permitiendo navegación rápida con botones anterior, siguiente, páginas directas y contador de registros.
+   - **Modal Interactivo de Receta Médica (`PrescriptionDetailModal.vue`):** Permite inspeccionar en una ventana flotante el diagnóstico formal CIE-10 y la lista completa de medicamentos prescritos con posología (dosis, vía, frecuencia y duración), evitando saltos de pantalla o descargas innecesarias de PDF para revisión rápida.
 2. `add(History $hc)` / `edit(Appointment $ap)`: Formularios de consulta clínica médica.
 3. `store(AppointmentValidate $request)`: Transacción que persiste el control clínico, asocia diagnósticos CIE-10 (`control_diagnostico`) y prescribe medicamentos con posología (`control_medicacion`).
 4. `viewDetail(Appointment $ap)`: Retorna la información clínica completa del control en formato JSON.
@@ -341,9 +390,12 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - **Controlador:** [`app/Http/Controllers/hcl/ExamsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/ExamsController.php)
 - **Modelos:** `Exam`, `ExamType`, `DiagnosticExam`, `MedicationExam`, `Imagen`
 - **Validador:** [`app/Http/Requests/ExamValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/ExamValidate.php)
+- **Componentes Vue:** [`ExamsSeeTable.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/exams/ExamsSeeTable.vue), [`ExamDetailModal.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/exams/ExamDetailModal.vue)
 
 #### Funcionalidades y Acciones
-1. `index()` / `see(History $hc)`: Listado cronológico de exámenes auxiliares realizados al paciente.
+1. `index()` / `see(History $hc)`: Listado cronológico de exámenes auxiliares realizados al paciente (`/admin/exams/see/{hc}`).
+   - **Paginación en Cliente (10 registros por página):** Implementada con `useClientPagination.js`.
+   - **Modal Interactivo de Detalle de Examen (`ExamDetailModal.vue`):** Despliega parámetros del examen, diagnósticos, medicación y galería de imágenes médicas y trazados espirométricos.
 2. `add(History $hc)` / `edit(Exam $ex)`: Registro de funciones vitales completas, examen físico general, paneles laboratoriales, fluidos pleurales (ADA, PAP, cultivos) y parámetros espirométricos (FEV1, FVC, FEV1/FVC basal y post-BD).
 3. `store(ExamValidate $request)`: Guarda el examen, asocia diagnósticos CIE-10, fármacos administrados y procesa la carga múltiple de imágenes médicas (`imagenes`) almacenadas en `storage/app/public/exams/`.
 4. `viewDetail(Exam $ex)`: Retorna el detalle clínico del examen mediante JSON.
@@ -357,9 +409,12 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - **Controlador:** [`app/Http/Controllers/hcl/ReportsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/ReportsController.php)
 - **Modelos:** `Report` (tabla `historia_informe`), `DiagnosticReport`, `History`
 - **Validador:** [`app/Http/Requests/ReportValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/ReportValidate.php)
+- **Componentes Vue:** [`ReportsSeeTable.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/reports/ReportsSeeTable.vue), [`ReportPreviewModal.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/reports/ReportPreviewModal.vue)
 
 #### Funcionalidades y Acciones
-1. `index()` / `see(History $hc)`: Historial de informes médicos emitidos al paciente.
+1. `index()` / `see(History $hc)`: Historial de informes médicos emitidos al paciente (`/admin/reports/see/{hc}`).
+   - **Paginación en Cliente (10 registros por página):** Gestionada reactivamente con `useClientPagination.js`.
+   - **Modal de Vista Previa de Informe (`ReportPreviewModal.vue`):** Despliega el resumen estructurado del dictamen antes de imprimir.
 2. `add(History $hc)` / `edit(Report $rp)`: Formulario estructurado para emisión de dictámenes: antecedentes, historia de la enfermedad actual, examen físico, exámenes complementarios, correlación diagnóstica CIE-10, tratamiento y sugerencias.
 3. `store(ReportValidate $request)`: Persistencia transaccional del informe y sus diagnósticos vinculados.
 4. `listReports(History $hc)`: Invoca el procedimiento almacenado `PA_getReportsByMedicalHistory`.
@@ -372,9 +427,12 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - **Controlador:** [`app/Http/Controllers/hcl/RisksController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/RisksController.php)
 - **Modelos:** `Risk` (tabla `historia_riesgo`), `History`
 - **Validador:** [`app/Http/Requests/RiskValidate.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Requests/RiskValidate.php)
+- **Componentes Vue:** [`RisksSeeTable.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/risks/RisksSeeTable.vue), [`RiskPreviewModal.vue`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/risks/RiskPreviewModal.vue)
 
 #### Funcionalidades y Acciones
-1. `index()` / `see(History $hc)`: Listado de evaluaciones preoperatorias registradas.
+1. `index()` / `see(History $hc)`: Listado de evaluaciones preoperatorias registradas (`/admin/risks/see/{hc}`).
+   - **Paginación en Cliente (10 registros por página):** Gestionada reactivamente con `useClientPagination.js`.
+   - **Modal de Vista Previa de Riesgo Quirúrgico (`RiskPreviewModal.vue`):** Permite inspeccionar la estratificación de riesgo, parámetros ventilatorios y recomendaciones perioperatorias.
 2. `add(History $hc)` / `edit(Risk $rk)`: Formulario de valoración prequirúrgica: motivo de intervención, antecedentes cardiorrespiratorios, examen físico segmentario, pruebas de espirometría/gases arteriales, estratificación de riesgo neumológico (Bajo, Moderado, Alto) y recomendaciones anestésicas perioperatorias.
 3. `store(RiskValidate $request)`: Guarda o actualiza la evaluación de riesgo.
 4. `listRisks(History $hc)`: Invoca el procedimiento `PA_getRisksByMedicalHistory`.
@@ -385,19 +443,20 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 
 ### 4.7 Módulo Estadístico y Analítica Epidemiológica (`StatisticsController`)
 - **Controlador:** [`app/Http/Controllers/hcl/StatisticsController.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/hcl/StatisticsController.php)
-- **Vistas:** [`resources/views/hcl/statistics/index.blade.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/statistics/index.blade.php) y motor JS [`public/js/forms/dashboard.js`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/public/js/forms/dashboard.js)
+- **Vistas:** [`resources/views/hcl/statistics/index.blade.php`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/views/hcl/statistics/index.blade.php) y componentes Vue en [`resources/js/components/statistics/`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/resources/js/components/statistics)
 
 #### Endpoints y Métricas Epidemiológicas
 1. `index()`: Vista principal del dashboard analítico.
 2. `getCountRows()`: Métricas acumuladas: total de historias clínicas, exámenes auxiliares, citas de control y nuevos pacientes admitidos.
 3. `HCByMonth()` / `getAnnualData($year)`: Serie temporal de 12 meses comparando el volumen mensual de historias clínicas y atenciones.
-4. `getDiagnosticsByExam()`: Ranking interactivo del **Top 15 de diagnósticos más frecuentes** en la práctica neumológica del centro.
-5. `getDrugsByExam()`: Ranking interactivo del **Top 15 de fármacos respiratorios más recetados**.
-6. `getHistoriesBySex()`: Distribución demográfica por sexo biológico (Masculino / Femenino).
-7. `getHistoriesBySmoking()`: Distribución poblacional por consumo de tabaco consumiendo la vista `vista_tabaquismo`.
-8. `getHistoriesByBloodingGroup()`: Distribución por grupo sanguíneo y factor Rh mediante `vista_grupo_sanguineo`.
-9. `getHistoriesByMaritalStatus()`: Distribución por estado civil mediante `vista_estado_civil`.
-10. `getHistoriesByDegreeIntruction()`: Distribución por nivel de instrucción educativa.
+4. **Drill-Down Interactivo por Mes y Categoría (`ProductionReportChart.vue`):** Al interactuar con el gráfico de barras del "Reporte de Historias Clínicas" (producción de historias, exámenes y controles), hacer clic sobre cualquier barra permite profundizar inmediatamente hacia una vista mensual detallada de dicha categoría en el mes seleccionado. El gráfico incluye un botón largo y estilizado de "Volver al Reporte Anual" para restablecer la vista panorámica sin recargar la página.
+5. `getDiagnosticsByExam()`: Ranking interactivo del **Top 15 de diagnósticos más frecuentes** en la práctica neumológica del centro.
+6. `getDrugsByExam()`: Ranking interactivo del **Top 15 de fármacos respiratorios más recetados**.
+7. `getHistoriesBySex()`: Distribución demográfica por sexo biológico (Masculino / Femenino).
+8. `getHistoriesBySmoking()`: Distribución poblacional por consumo de tabaco consumiendo la vista `vista_tabaquismo`.
+9. `getHistoriesByBloodingGroup()`: Distribución por grupo sanguíneo y factor Rh mediante `vista_grupo_sanguineo`.
+10. `getHistoriesByMaritalStatus()`: Distribución por estado civil mediante `vista_estado_civil`.
+11. `getHistoriesByDegreeIntruction()`: Distribución por nivel de instrucción educativa.
 
 ---
 
@@ -432,7 +491,11 @@ El sistema implementa el trait [`app/Traits/AuditLogTrait.php`](file:///media/ge
 - Mantenimiento del catálogo de permisos granulares Spatie (`permiso_acceder`, `rol_acceder`, `control_crear`, etc.).
 
 #### [`SpecialtiesController`](file:///media/gercova/DATA1/PROYECTOS%20WEB/neumo-lav/app/Http/Controllers/security/SpecialtiesController.php)
-- Mantenimiento de especialidades médicas vinculadas a los profesionales de la salud.
+- **Mantenimiento y Filtrado Inteligente de Especialidades:**
+  - `options()`: Retorna el catálogo de ocupaciones asociadas para los modales de especialidad.
+  - `search(Request $request)`: Endpoint especializado para el componente Select2 (`SearchSelect.vue`). Realiza búsqueda parcial por descripción y **aplica una restricción estricta de 5 elementos (`->limit(5)`)** para garantizar tiempos de respuesta ultrarrápidos y evitar sobrecarga en el servidor de base de datos.
+  - `list(Request $request)`: Soporta filtrado por `specialty_id` para acotar la tabla al registro seleccionado desde la cabecera.
+  - **Filtro de Cabecera Estandarizado (`SpecialtiesFilters.vue`):** Implementa `SearchSelect.vue` con tamaño compacto (`size="sm"` de 31px de altura) integrado armónicamente con el grupo de búsqueda general.
 
 ---
 
@@ -672,6 +735,8 @@ A continuación se documentan las rutas activas registradas en [`routes/web.php`
 | `DELETE`| `/admin/permissions/delete/{id}` | — | `PermissionController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:permisos` |
 | `GET` | `/admin/specialties` | `security.specialties` | `SpecialtiesController@index` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `GET` | `/admin/specialties/list` | — | `SpecialtiesController@list` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
+| `GET` | `/admin/specialties/options` | — | `SpecialtiesController@options` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
+| `GET` | `/admin/specialties/search` | `security.specialties.search` | `SpecialtiesController@search` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`, `perm:especialidad_ver`|
 | `GET` | `/admin/specialties/{id}` | — | `SpecialtiesController@show` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `POST` | `/admin/specialties/store` | — | `SpecialtiesController@store` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
 | `DELETE`| `/admin/specialties/delete/{id}` | — | `SpecialtiesController@destroy` | `auth`, `prevent.back` | `role:administrador`, `perm:seguridad`, `perm:especialidades`|
@@ -869,7 +934,63 @@ Se recomienda programar en el `crontab` del servidor la ejecución nocturna auto
 0 2 * * * cd /ruta/al/proyecto && php artisan backup:run --only-db >> /dev/null 2>&1
 ```
 
+### 9.3 Compilación y Despliegue de Activos Frontend (Vite)
+
+La suite de interfaces reactivas en Vue 3 y estilos de la aplicación se compilan a través de Vite. Durante el aprovisionamiento o actualización del servidor, se deben ejecutar los siguientes comandos:
+
+```bash
+# 1. Instalación de dependencias de Node.js
+npm install
+
+# 2. Generación del bundle optimizado para producción
+npm run build
+```
+
+El build genera los archivos minificados y versionados con hash en `public/build/` y genera el archivo de manifiesto `public/build/manifest.json`, que es consumido por las directivas `@vite` en las vistas Blade. En caso de requerir desarrollo activo con Hot Module Replacement (HMR), se ejecuta:
+
+```bash
+npm run dev
+```
+
+---
+
+## 10. Historial de Versiones y Control de Cambios (SemVer)
+
+El proyecto adopta **Semantic Versioning 2.0.0** (`MAJOR.MINOR.PATCH`). A continuación se detallan las versiones liberadas y su alcance funcional:
+
+### Versión 3.3.0 (2026-10-20) — Release Asistencial y Frontend Reactivo Avanzado
+
+Partiendo de la versión base `3.2.0`, esta entrega incorpora mejoras sustanciales en rendimiento del servidor, experiencia de usuario y componentes de consulta clínica interactiva, clasificándose como un incremento de versión **MINOR** bajo Semantic Versioning:
+
+1. **Componente Select2 Asíncrono con Limitación de Servidor (`SearchSelect.vue`):**
+   - Selector reactivo en Vue 3 con consulta en vivo mediante debounce, resaltado de coincidencias y navegación por teclado.
+   - Variantes de tamaño (`sm` de 31px para cabeceras de tablas y `md` para formularios generales).
+   - Conexión con endpoint `/admin/specialties/search` con **límite estricto de 5 resultados (`->limit(5)`)** para evitar saturación de memoria y consumo de red en el servidor.
+   - Integrado en `/admin/specialties` con filtrado dinámico reactivo (`specialty_id`).
+2. **Paginación en Cliente en Módulos de Historial Clínico (10 registros por página):**
+   - Composable `useClientPagination.js` integrado en las vistas de historial:
+     - `/admin/appointments/see/{id}` (Controles y consultas)
+     - `/admin/exams/see/{id}` (Exámenes auxiliares)
+     - `/admin/reports/see/{id}` (Informes médicos)
+     - `/admin/risks/see/{id}` (Informes de riesgo quirúrgico)
+   - Controles de navegación responsivos, conteo dinámico de elementos y transición instantánea sin recarga de página.
+3. **Modales Clínicos de Detalle y Previsualización Rápida:**
+   - `PrescriptionDetailModal.vue`: Modal para visualizar diagnósticos y prescripciones farmacológicas detalladas de controles previos.
+   - `ExamDetailModal.vue`: Modal para consultar diagnósticos, medicación aplicada e imágenes adjuntas del examen auxiliar.
+   - `ReportPreviewModal.vue`: Modal de previsualización de informes médicos certificados.
+   - `RiskPreviewModal.vue`: Modal de previsualización de informes de riesgo quirúrgico preoperatorio.
+   - `QuickViewModal.vue`: Corrección funcional de los botones de "Receta" (controles) y "Ver" (exámenes) en `/admin/home`, con rediseño visual armónico en contraste con el botón de impresión.
+4. **Dashboard y Reporte de Historias Clínicas Interactivo con Drill-Down Mensual:**
+   - Gráfico de producción anual interactivo (`AnnualChart.vue`).
+   - Al hacer clic sobre cualquier barra mensual (Historias, Exámenes o Controles), el gráfico se conmuta automáticamente a una vista de desglose mensual de la categoría seleccionada.
+   - Botón alargado, estrecho y estilizado de "Volver al Reporte Anual" integrado armoniosamente con el diseño.
+5. **Estandarización Estética de Filtros de Búsqueda:**
+   - Rediseño homogéneo en dos columnas equilibradas de los grupos de filtro y búsqueda en los módulos principales de la plataforma.
+6. **Actualización de Versión en Plantilla Principal:**
+   - Indicador visual actualizado a `v3.3.0 • SPA` en el pie de página (`resources/views/partials/footer.blade.php`).
+
 ---
 
 **Documento elaborado para:** Medytarq SAC / Neumotar  
 **Tarapoto, San Martín, Perú**
+

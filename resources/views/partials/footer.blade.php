@@ -15,7 +15,7 @@
         </span>
         <span class="footer-system-pill">
             <i class="bi bi-lightning-charge text-info mr-1"></i>
-            <span>v3.2.0 &bull; SPA</span>
+            <span>v3.3.0 &bull; SPA</span>
         </span>
     </div>
 </footer>
