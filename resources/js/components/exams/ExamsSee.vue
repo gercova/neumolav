@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useExamsSeeStore } from '@/stores/examsSeeStore';
+import PrescriptionDetailModal from '@/components/shared/PrescriptionDetailModal.vue';
 
 const props = defineProps({
     historyId: Number,
@@ -12,8 +13,15 @@ const props = defineProps({
 });
 
 const store = useExamsSeeStore();
+const selectedId = ref(null);
+const modalVisible = ref(false);
 
 onMounted(() => store.fetchByHistory(props.historyId));
+
+const openDetail = (id) => {
+    selectedId.value = id;
+    modalVisible.value = true;
+};
 
 const confirmDelete = async (id) => {
     const r = await window.Swal.fire({
@@ -99,8 +107,8 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                                         <td><span class="badge badge-light border">{{ ex.dni }}</span></td>
                                         <td>{{ ex.tipo }}</td>
                                         <td class="text-center">
-                                            <button class="btn btn-info btn-xs mr-1" @click="goEdit(ex.id)">
-                                                <i class="bi bi-eye"></i> Ver
+                                            <button class="btn btn-info btn-xs mr-1" @click="openDetail(ex.id)">
+                                                <i class="bi bi-eye"></i> Ver receta
                                             </button>
                                             <button class="btn btn-warning btn-xs mr-1" @click="goEdit(ex.id)">
                                                 <i class="bi bi-pencil-square"></i> Editar
@@ -130,5 +138,15 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                 </div>
             </div>
         </section>
+
+        <!-- Modal de Detalles de Examen / Receta -->
+        <PrescriptionDetailModal
+            :visible="modalVisible"
+            :id="selectedId"
+            type="exams"
+            :fallback-dni="dni"
+            :fallback-nombres="nombres"
+            @close="modalVisible = false"
+        />
     </div>
 </template>

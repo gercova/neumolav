@@ -26,7 +26,6 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                     <th style="width:21%" class="text-center">Opciones</th>
                 </tr>
             </thead>
-
             <tbody>
                 <!-- Cargando -->
                 <tr v-if="loading">
@@ -35,7 +34,6 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                         Cargando pacientes...
                     </td>
                 </tr>
-
                 <!-- Sin resultados -->
                 <tr v-else-if="items.length === 0">
                     <td colspan="7" class="text-center py-5">
@@ -48,7 +46,6 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                         </p>
                     </td>
                 </tr>
-
                 <!-- Filas -->
                 <tr v-else v-for="h in items" :key="h.id">
                     <td class="text-muted small">{{ h.fecha }}</td>
@@ -63,10 +60,8 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                 </tr>
             </tbody>
         </table>
-
         <!-- Barra de paginación -->
         <div v-if="!loading && total > 0" class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 border-top bg-light gap-2">
-
             <!-- Info + selector de tamaño de página -->
             <div class="d-flex align-items-center text-muted small">
                 <span class="mr-2">
@@ -86,7 +81,6 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                     </select>
                 </div>
             </div>
-
             <!-- Controles de navegación -->
             <nav aria-label="Paginación de controles">
                 <ul class="pagination pagination-sm mb-0">
@@ -95,12 +89,10 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                     <li class="page-item" :class="{ disabled: page === 1 || loading }">
                         <button class="page-link" title="Primera página" @click="store.firstPage()" :disabled="page === 1 || loading">«</button>
                     </li>
-
                     <!-- Anterior -->
                     <li class="page-item" :class="{ disabled: page === 1 || loading }">
                         <button class="page-link" title="Página anterior" @click="store.prevPage()" :disabled="page === 1 || loading">‹</button>
                     </li>
-
                     <!-- Páginas con elipsis -->
                     <template v-for="p in visiblePages" :key="p">
                         <li v-if="p === '…'" class="page-item disabled">
@@ -110,17 +102,14 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
                             <button class="page-link" :disabled="loading" @click="store.goToPage(p)">{{ p }}</button>
                         </li>
                     </template>
-
                     <!-- Siguiente -->
                     <li class="page-item" :class="{ disabled: page === totalPages || loading }">
                         <button class="page-link" title="Página siguiente" @click="store.nextPage()" :disabled="page === totalPages || loading">›</button>
                     </li>
-
                     <!-- Última -->
                     <li class="page-item" :class="{ disabled: page === totalPages || loading }">
                         <button class="page-link" title="Última página" @click="store.lastPage()" :disabled="page === totalPages || loading">»</button>
                     </li>
-
                 </ul>
             </nav>
         </div>

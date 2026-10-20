@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useReportsSeeStore } from '@/stores/reportsSeeStore';
+import ReportDetailModal from '@/components/reports/ReportDetailModal.vue';
 
 const props = defineProps({
     historyId: Number,
@@ -11,9 +12,16 @@ const props = defineProps({
     homeUrl: String,
 });
 
-const store = useReportsSeeStore();
+const store         = useReportsSeeStore();
+const selectedId    = ref(null);
+const modalVisible  = ref(false);
 
 onMounted(() => store.fetchByHistory(props.historyId));
+
+const openDetail        = (id) => {
+    selectedId.value    = id;
+    modalVisible.value  = true;
+};
 
 const confirmDelete = async (id) => {
     const r = await window.Swal.fire({
@@ -97,7 +105,7 @@ const goPrint = (id) => window.open(`/admin/reports/print/${id}`, '_blank');
                                         <td>{{ r.createdAt }}</td>
                                         <td><span class="badge badge-light border">{{ dni }}</span></td>
                                         <td class="text-center">
-                                            <button class="btn btn-info btn-xs mr-1" @click="goPrint(r.id)">
+                                            <button class="btn btn-info btn-xs mr-1" @click="openDetail(r.id)">
                                                 <i class="bi bi-eye"></i> Ver informe
                                             </button>
                                             <button class="btn btn-warning btn-xs mr-1" @click="goEdit(r.id)">
@@ -115,5 +123,14 @@ const goPrint = (id) => window.open(`/admin/reports/print/${id}`, '_blank');
                 </div>
             </div>
         </section>
+
+        <!-- Modal de Detalles de Informe Clínico -->
+        <ReportDetailModal
+            :visible="modalVisible"
+            :id="selectedId"
+            :fallback-dni="dni"
+            :fallback-nombres="nombres"
+            @close="modalVisible = false"
+        />
     </div>
 </template>

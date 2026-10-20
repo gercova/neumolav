@@ -48,7 +48,6 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -78,7 +77,6 @@ onMounted(() => {
                 </div>
             </div>
         </section>
-
         <!-- Modal para Agregar y Editar Especialidad -->
         <SpecialtyModal />
     </div>

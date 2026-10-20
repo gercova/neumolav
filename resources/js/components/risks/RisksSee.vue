@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRisksSeeStore } from '@/stores/risksSeeStore';
+import RiskDetailModal from '@/components/risks/RiskDetailModal.vue';
 
 const props = defineProps({
     historyId: Number,
@@ -11,9 +12,16 @@ const props = defineProps({
     homeUrl: String,
 });
 
-const store = useRisksSeeStore();
+const store         = useRisksSeeStore();
+const selectedId    = ref(null);
+const modalVisible  = ref(false);
 
 onMounted(() => store.fetchByHistory(props.historyId));
+
+const openDetail        = (id) => {
+    selectedId.value    = id;
+    modalVisible.value  = true;
+};
 
 const confirmDelete = async (id) => {
     const r = await window.Swal.fire({
@@ -53,7 +61,6 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card">
@@ -68,7 +75,6 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                         <a v-if="canCreate" class="btn btn-primary mb-3" :href="addUrl">
                             <i class="bi bi-plus-circle"></i> Agregar nuevo informe
                         </a>
-
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
@@ -97,7 +103,7 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                                         <td>{{ r.createdAt }}</td>
                                         <td><span class="badge badge-light border">{{ r.dni }}</span></td>
                                         <td class="text-center">
-                                            <button class="btn btn-info btn-xs mr-1" @click="goPrint(r.id)">
+                                            <button class="btn btn-info btn-xs mr-1" @click="openDetail(r.id)">
                                                 <i class="bi bi-eye"></i> Ver informe
                                             </button>
                                             <button class="btn btn-warning btn-xs mr-1" @click="goEdit(r.id)">
@@ -115,5 +121,13 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                 </div>
             </div>
         </section>
+        <!-- Modal de Detalles de Informe de Riesgo -->
+        <RiskDetailModal
+            :visible="modalVisible"
+            :id="selectedId"
+            :fallback-dni="dni"
+            :fallback-nombres="nombres"
+            @close="modalVisible = false"
+        />
     </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAppointmentsSeeStore } from '@/stores/appointmentsSeeStore';
+import PrescriptionDetailModal from '@/components/shared/PrescriptionDetailModal.vue';
 
 const props = defineProps({
     historyId: Number,
@@ -11,9 +12,16 @@ const props = defineProps({
     homeUrl: String,
 });
 
-const store = useAppointmentsSeeStore();
+const store         = useAppointmentsSeeStore();
+const selectedId    = ref(null);
+const modalVisible  = ref(false);
 
 onMounted(() => store.fetchByHistory(props.historyId));
+
+const openDetail        = (id) => {
+    selectedId.value    = id;
+    modalVisible.value  = true;
+};
 
 const confirmDelete = async (id) => {
     const r = await window.Swal.fire({
@@ -53,7 +61,6 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                 </div>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <div class="card">
@@ -68,7 +75,6 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                         <a v-if="canCreate" class="btn btn-primary mb-3" :href="addUrl">
                             <i class="bi bi-plus-circle"></i> Agregar nuevo control
                         </a>
-
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
@@ -95,7 +101,7 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                                         <td>{{ c.index }}</td>
                                         <td>{{ c.createdAt }}</td>
                                         <td class="text-center">
-                                            <button class="btn btn-info btn-xs mr-1" @click="goEdit(c.id)">
+                                            <button class="btn btn-info btn-xs mr-1" @click="openDetail(c.id)">
                                                 <i class="bi bi-eye"></i> Ver receta
                                             </button>
                                             <button class="btn btn-warning btn-xs mr-1" @click="goEdit(c.id)">
@@ -126,5 +132,14 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                 </div>
             </div>
         </section>
+        <!-- Modal de Detalles de Cita / Receta -->
+        <PrescriptionDetailModal
+            :visible="modalVisible"
+            :id="selectedId"
+            type="appointments"
+            :fallback-dni="dni"
+            :fallback-nombres="nombres"
+            @close="modalVisible = false"
+        />
     </div>
 </template>

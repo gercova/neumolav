@@ -66,7 +66,6 @@ const confirmDelete = async (item) => {
                     <th style="width: 12%;" class="text-center">Opciones</th>
                 </tr>
             </thead>
-
             <tbody>
                 <tr v-if="loading">
                     <td colspan="6" class="text-center py-4 text-muted">
@@ -74,7 +73,6 @@ const confirmDelete = async (item) => {
                         Cargando especialidades...
                     </td>
                 </tr>
-
                 <tr v-else-if="items.length === 0">
                     <td colspan="6" class="text-center py-5">
                         <i class="bi bi-award text-muted" style="font-size: 2.5rem; opacity: .5;"></i>
@@ -84,38 +82,32 @@ const confirmDelete = async (item) => {
                         </p>
                     </td>
                 </tr>
-
                 <tr v-else v-for="(item, index) in items" :key="item.id || index">
                     <td class="text-center align-middle">
                         <span class="badge badge-light border font-weight-normal">
                             {{ (page - 1) * pageSize + index + 1 }}
                         </span>
                     </td>
-
                     <td class="align-middle">
                         <span class="badge badge-info px-2 py-1 font-weight-normal">
                             <i class="bi bi-briefcase mr-1"></i>{{ item.occupation_name || 'Sin cargo' }}
                         </span>
                     </td>
-
                     <td class="align-middle">
                         <span class="font-weight-bold text-dark d-block">
                             {{ item.descripcion }}
                         </span>
                     </td>
-
                     <td class="align-middle">
                         <span class="text-secondary small">
                             {{ item.detalle || '—' }}
                         </span>
                     </td>
-
                     <td class="text-center align-middle text-nowrap">
                         <span class="small text-muted">
                             <i class="bi bi-calendar3 mr-1"></i>{{ item.created_at ? item.created_at.substring(0, 10) : '—' }}
                         </span>
                     </td>
-
                     <td class="text-center align-middle">
                         <div class="btn-group btn-group-sm" role="group">
                             <!-- Editar especialidad -->
@@ -145,7 +137,6 @@ const confirmDelete = async (item) => {
             </tbody>
         </table>
     </div>
-
     <!-- Paginación y Resumen -->
     <div
         v-if="total > 0"
@@ -170,7 +161,6 @@ const confirmDelete = async (item) => {
                 </select>
             </div>
         </div>
-
         <nav v-if="totalPages > 1" aria-label="Navegación de páginas">
             <ul class="pagination pagination-sm mb-0">
                 <li class="page-item" :class="{ disabled: page === 1 }">
@@ -183,7 +173,6 @@ const confirmDelete = async (item) => {
                         <i class="bi bi-chevron-left"></i>
                     </button>
                 </li>
-
                 <li
                     v-for="(p, idx) in visiblePages"
                     :key="idx"
@@ -195,7 +184,6 @@ const confirmDelete = async (item) => {
                         {{ p }}
                     </button>
                 </li>
-
                 <li class="page-item" :class="{ disabled: page === totalPages }">
                     <button class="page-link" :disabled="page === totalPages" @click="store.nextPage()" title="Página siguiente">
                         <i class="bi bi-chevron-right"></i>

@@ -28,10 +28,9 @@ const form = ref({
     firma_digital: null,
 });
 
-const avatarPreview = ref(null);
-const signaturePreview = ref(null);
-
-const isEditing = computed(() => Boolean(form.value.userId));
+const avatarPreview     = ref(null);
+const signaturePreview  = ref(null);
+const isEditing         = computed(() => Boolean(form.value.userId));
 
 watch([userModalVisible, editingUser], ([visible, item]) => {
     if (visible) {
@@ -106,9 +105,9 @@ onBeforeUnmount(() => {
 const onAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        form.value.avatar = file;
-        const reader = new FileReader();
-        reader.onload = (event) => {
+        form.value.avatar   = file;
+        const reader        = new FileReader();
+        reader.onload       = (event) => {
             avatarPreview.value = event.target.result;
         };
         reader.readAsDataURL(file);
@@ -120,10 +119,10 @@ const onAvatarChange = (e) => {
 const onSignatureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        form.value.firma_digital = file;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            signaturePreview.value = event.target.result;
+        form.value.firma_digital    = file;
+        const reader                = new FileReader();
+        reader.onload               = (event) => {
+            signaturePreview.value  = event.target.result;
         };
         reader.readAsDataURL(file);
     } else {
@@ -439,13 +438,13 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-.font-weight-semibold {
-    font-weight: 600;
-}
-.bg-warning-light {
-    background-color: #ffeeba;
-}
-.custom-file-label::after {
-    content: "Examinar";
-}
+    .font-weight-semibold {
+        font-weight: 600;
+    }
+    .bg-warning-light {
+        background-color: #ffeeba;
+    }
+    .custom-file-label::after {
+        content: "Examinar";
+    }
 </style>
