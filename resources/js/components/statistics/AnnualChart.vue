@@ -65,12 +65,12 @@ const annualOptions = computed(() => ({
 }));
 
 // ── Opciones para el reporte mensual filtrado por categoría y mes ──
-const monthlyOptions = computed(() => {
-    const detail = monthlyData.value;
-    const cat = selectedCategory.value || 'Historias';
-    const seriesItem = detail?.series?.[cat] || { name: cat, data: [] };
-    const monthName = store.selectedMonthName;
-    const total = (seriesItem.data || []).reduce((a, b) => a + b, 0);
+const monthlyOptions    = computed(() => {
+    const detail        = monthlyData.value;
+    const cat           = selectedCategory.value || 'Historias';
+    const seriesItem    = detail?.series?.[cat] || { name: cat, data: [] };
+    const monthName     = store.selectedMonthName;
+    const total         = (seriesItem.data || []).reduce((a, b) => a + b, 0);
 
     return {
         chart: { type: 'column' },
@@ -137,15 +137,18 @@ useHighcharts(container, () => options.value);
         <!-- Barra de navegación y filtros cuando está en vista mensual -->
         <div v-if="isMonthlyView" class="d-flex flex-wrap justify-content-between align-items-center mb-3 p-2 bg-light rounded border">
             <div class="d-flex align-items-center mb-2 mb-md-0">
-                <button class="btn btn-outline-secondary btn-sm mr-3" @click="store.resetToAnnual">
-                    <i class="bi bi-arrow-left"></i> Volver al reporte anual
+                <button
+                    class="btn btn-outline-secondary btn-sm mr-4 text-nowrap"
+                    style="white-space: nowrap; height: 31px; display: inline-flex; align-items: center; padding: 0.25rem 0.85rem; font-size: 0.85rem;"
+                    @click="store.resetToAnnual"
+                >
+                    <i class="bi bi-arrow-left mr-1"></i> Volver al reporte anual
                 </button>
                 <span class="font-weight-bold text-dark">
                     <i class="bi bi-calendar-event text-primary mr-1"></i>
                     {{ store.selectedMonthName }} {{ selectedYear }}
                 </span>
             </div>
-
             <!-- Selector de Categoría (Historias, Exámenes, Citas) y Mes -->
             <div class="d-flex flex-wrap align-items-center">
                 <span class="text-muted small mr-2">Categoría:</span>
@@ -160,7 +163,6 @@ useHighcharts(container, () => options.value);
                         {{ cat }}
                     </button>
                 </div>
-
                 <span class="text-muted small mr-2">Mes:</span>
                 <select
                     class="custom-select custom-select-sm form-control form-control-sm"
@@ -174,13 +176,11 @@ useHighcharts(container, () => options.value);
                 </select>
             </div>
         </div>
-
         <!-- Indicador de carga para el detalle mensual -->
         <div v-if="store.loading.monthly" class="text-center py-5 text-muted">
             <div class="spinner-border text-primary" role="status"></div>
             <p class="mt-2 mb-0">Cargando reporte de {{ selectedCategory }} para {{ store.selectedMonthName }}...</p>
         </div>
-
         <!-- Contenedor del gráfico Highcharts -->
         <div v-show="!store.loading.monthly" ref="container" style="margin: 0 auto; width: 100%; min-height: 400px;"></div>
     </div>

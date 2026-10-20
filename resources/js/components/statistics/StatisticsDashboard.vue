@@ -47,21 +47,22 @@ onMounted(() => {
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <h3 class="card-title mb-0">
+                            <div class="card-header d-flex flex-wrap align-items-center justify-content-between">
+                                <h3 class="card-title mb-0 d-flex align-items-center">
                                     Reporte de historias clínicas
-                                    <span v-if="store.isMonthlyView" class="badge badge-info ml-2 font-weight-normal">
+                                    <span v-if="store.isMonthlyView" class="badge badge-info ml-2 font-weight-normal text-nowrap">
                                         {{ store.selectedCategory }} - {{ store.selectedMonthName }} {{ store.selectedYear }}
                                     </span>
                                 </h3>
-                                <div class="card-tools d-flex align-items-center">
+                                <div class="card-tools d-flex align-items-center m-0" style="flex-shrink: 0;">
                                     <button
                                         v-if="store.isMonthlyView"
-                                        class="btn btn-outline-secondary btn-sm mr-2"
+                                        class="btn btn-outline-secondary btn-sm mr-2 text-nowrap"
+                                        style="white-space: nowrap; height: 31px; display: inline-flex; align-items: center; padding: 0.25rem 0.85rem; font-size: 0.85rem;"
                                         title="Volver a reporte anual"
                                         @click="store.resetToAnnual"
                                     >
-                                        <i class="bi bi-arrow-left"></i> Volver al reporte anual
+                                        <i class="bi bi-arrow-left mr-1"></i> Volver al reporte anual
                                     </button>
                                     <YearSelector />
                                 </div>
