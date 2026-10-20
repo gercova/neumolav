@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useExamsSeeStore } from '@/stores/examsSeeStore';
+import { useClientPagination } from '@/composables/useClientPagination';
 import PrescriptionDetailModal from '@/components/shared/PrescriptionDetailModal.vue';
 
 const props = defineProps({
@@ -15,6 +16,23 @@ const props = defineProps({
 const store = useExamsSeeStore();
 const selectedId = ref(null);
 const modalVisible = ref(false);
+
+const {
+    currentPage,
+    pageSize,
+    pageSizeOptions,
+    searchQuery,
+    filteredItems,
+    totalRecords,
+    totalPages,
+    paginatedItems,
+    startRecord,
+    endRecord,
+    visiblePages,
+    goToPage,
+    prevPage,
+    nextPage,
+} = useClientPagination(() => store.items, 10);
 
 onMounted(() => store.fetchByHistory(props.historyId));
 
@@ -77,22 +95,47 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                             <i class="bi bi-plus-circle"></i> Agregar nuevo examen
                         </a>
 
+                        <!-- Controles de Tabla: PageSize y Búsqueda -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <label class="text-muted small mb-0 d-flex align-items-center">
+                                    Mostrar
+                                    <select v-model="pageSize" class="custom-select custom-select-sm form-control form-control-sm mx-2" style="width: auto;">
+                                        <option v-for="opt in pageSizeOptions" :key="opt" :value="opt">{{ opt }}</option>
+                                    </select>
+                                    registros
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center mt-2 mt-sm-0">
+                                <label class="text-muted small mb-0 d-flex align-items-center">
+                                    Buscar:
+                                    <input
+                                        v-model="searchQuery"
+                                        type="search"
+                                        class="form-control form-control-sm ml-2"
+                                        placeholder=""
+                                        style="width: 180px;"
+                                    >
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th style="width: 70px;">#</th>
                                         <th>Fecha</th>
                                         <th>DNI</th>
                                         <th>Tipo Examen</th>
-                                        <th class="text-center">Opciones</th>
+                                        <th class="text-center" style="width: 250px;">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-if="store.loading">
                                         <td colspan="5" class="text-center py-3 text-muted">
-                                            <span class="spinner-border spinner-border-sm text-primary mr-2"></span>
-                                            Cargando exámenes...
+                                             <span class="spinner-border spinner-border-sm text-primary mr-2"></span>
+                                             Cargando exámenes...
                                         </td>
                                     </tr>
                                     <tr v-else-if="!store.items.length">
@@ -101,8 +144,13 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                                             <p class="mb-0 mt-2">Este paciente no tiene exámenes registrados.</p>
                                         </td>
                                     </tr>
-                                    <tr v-for="ex in store.items" :key="ex.id">
-                                        <td>{{ ex.index }}</td>
+                                    <tr v-else-if="!filteredItems.length">
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            <i class="bi bi-search mr-1"></i> No se encontraron exámenes que coincidan con la búsqueda.
+                                        </td>
+                                    </tr>
+                                    <tr v-for="(ex, idx) in paginatedItems" :key="ex.id || idx">
+                                        <td>{{ (currentPage - 1) * pageSize + idx + 1 }}</td>
                                         <td>{{ ex.createdAt }}</td>
                                         <td><span class="badge badge-light border">{{ ex.dni }}</span></td>
                                         <td>{{ ex.tipo }}</td>
@@ -133,6 +181,38 @@ const goPrint = (id, format) => window.open(`/admin/exams/print/${id}/${format}`
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Barra de Paginación y Resumen -->
+                        <div v-if="store.items.length > 0" class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <div class="text-muted small mb-2 mb-sm-0">
+                                Mostrando {{ startRecord }} a {{ endRecord }} de {{ totalRecords }} registros
+                            </div>
+                            <nav aria-label="Navegación de páginas">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                        <button class="page-link" :disabled="currentPage === 1" @click="prevPage">
+                                            Anterior
+                                        </button>
+                                    </li>
+                                    <li
+                                        v-for="(p, pIdx) in visiblePages"
+                                        :key="pIdx"
+                                        class="page-item"
+                                        :class="{ active: p === currentPage, disabled: p === '…' }"
+                                    >
+                                        <span v-if="p === '…'" class="page-link">…</span>
+                                        <button v-else class="page-link" @click="goToPage(p)">
+                                            {{ p }}
+                                        </button>
+                                    </li>
+                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                        <button class="page-link" :disabled="currentPage === totalPages" @click="nextPage">
+                                            Siguiente
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>

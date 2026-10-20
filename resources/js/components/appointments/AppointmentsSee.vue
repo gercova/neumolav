@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAppointmentsSeeStore } from '@/stores/appointmentsSeeStore';
+import { useClientPagination } from '@/composables/useClientPagination';
 import PrescriptionDetailModal from '@/components/shared/PrescriptionDetailModal.vue';
 
 const props = defineProps({
@@ -16,9 +17,26 @@ const store         = useAppointmentsSeeStore();
 const selectedId    = ref(null);
 const modalVisible  = ref(false);
 
+const {
+    currentPage,
+    pageSize,
+    pageSizeOptions,
+    searchQuery,
+    filteredItems,
+    totalRecords,
+    totalPages,
+    paginatedItems,
+    startRecord,
+    endRecord,
+    visiblePages,
+    goToPage,
+    prevPage,
+    nextPage,
+} = useClientPagination(() => store.items, 10);
+
 onMounted(() => store.fetchByHistory(props.historyId));
 
-const openDetail        = (id) => {
+const openDetail = (id) => {
     selectedId.value    = id;
     modalVisible.value  = true;
 };
@@ -75,13 +93,39 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                         <a v-if="canCreate" class="btn btn-primary mb-3" :href="addUrl">
                             <i class="bi bi-plus-circle"></i> Agregar nuevo control
                         </a>
+
+                        <!-- Controles de Tabla: PageSize y Búsqueda -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <label class="text-muted small mb-0 d-flex align-items-center">
+                                    Mostrar
+                                    <select v-model="pageSize" class="custom-select custom-select-sm form-control form-control-sm mx-2" style="width: auto;">
+                                        <option v-for="opt in pageSizeOptions" :key="opt" :value="opt">{{ opt }}</option>
+                                    </select>
+                                    registros
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center mt-2 mt-sm-0">
+                                <label class="text-muted small mb-0 d-flex align-items-center">
+                                    Buscar:
+                                    <input
+                                        v-model="searchQuery"
+                                        type="search"
+                                        class="form-control form-control-sm ml-2"
+                                        placeholder=""
+                                        style="width: 180px;"
+                                    >
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th style="width: 70px;">#</th>
                                         <th>Fecha</th>
-                                        <th class="text-center">Opciones</th>
+                                        <th class="text-center" style="width: 250px;">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -97,8 +141,13 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                                             <p class="mb-0 mt-2">Este paciente no tiene controles registrados.</p>
                                         </td>
                                     </tr>
-                                    <tr v-for="c in store.items" :key="c.id">
-                                        <td>{{ c.index }}</td>
+                                    <tr v-else-if="!filteredItems.length">
+                                        <td colspan="3" class="text-center py-4 text-muted">
+                                            <i class="bi bi-search mr-1"></i> No se encontraron controles que coincidan con la búsqueda.
+                                        </td>
+                                    </tr>
+                                    <tr v-for="(c, idx) in paginatedItems" :key="c.id || idx">
+                                        <td>{{ (currentPage - 1) * pageSize + idx + 1 }}</td>
                                         <td>{{ c.createdAt }}</td>
                                         <td class="text-center">
                                             <button class="btn btn-info btn-xs mr-1" @click="openDetail(c.id)">
@@ -127,6 +176,38 @@ const goPrint = (id, f) => window.open(`/admin/appointments/print/${id}/${f}`, '
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Barra de Paginación y Resumen -->
+                        <div v-if="store.items.length > 0" class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <div class="text-muted small mb-2 mb-sm-0">
+                                Mostrando {{ startRecord }} a {{ endRecord }} de {{ totalRecords }} registros
+                            </div>
+                            <nav aria-label="Navegación de páginas">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                        <button class="page-link" :disabled="currentPage === 1" @click="prevPage">
+                                            Anterior
+                                        </button>
+                                    </li>
+                                    <li
+                                        v-for="(p, pIdx) in visiblePages"
+                                        :key="pIdx"
+                                        class="page-item"
+                                        :class="{ active: p === currentPage, disabled: p === '…' }"
+                                    >
+                                        <span v-if="p === '…'" class="page-link">…</span>
+                                        <button v-else class="page-link" @click="goToPage(p)">
+                                            {{ p }}
+                                        </button>
+                                    </li>
+                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                        <button class="page-link" :disabled="currentPage === totalPages" @click="nextPage">
+                                            Siguiente
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
