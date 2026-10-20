@@ -278,6 +278,7 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
             Route::get('/dashboard/hcCount', [StatisticsController::class, 'getCountRows']);
             Route::get('/dashboard/hcByMonth', [StatisticsController::class, 'HCByMonth']);
             Route::get('/dashboard/histories/{year}', [StatisticsController::class, 'getAnnualData']);
+            Route::get('/dashboard/monthlyDetail/{year}/{month}', [StatisticsController::class, 'getMonthlyDetail']);
             Route::get('/dashboard/diagnosticsByExam', [StatisticsController::class, 'getDiagnosticsByExam']);
             Route::get('/dashboard/drugsByExam', [StatisticsController::class, 'getDrugsByExam']);
             Route::get('/dashboard/historiesBySex', [StatisticsController::class, 'getHistoriesBySex']);

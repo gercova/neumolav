@@ -43,14 +43,26 @@ onMounted(() => {
             <div class="container-fluid">
                 <!-- 1. Contadores -->
                 <StatsCards />
-
                 <!-- 2. Chart anual con selector -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte de historias clínicas</h3>
-                                <div class="card-tools">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h3 class="card-title mb-0">
+                                    Reporte de historias clínicas
+                                    <span v-if="store.isMonthlyView" class="badge badge-info ml-2 font-weight-normal">
+                                        {{ store.selectedCategory }} - {{ store.selectedMonthName }} {{ store.selectedYear }}
+                                    </span>
+                                </h3>
+                                <div class="card-tools d-flex align-items-center">
+                                    <button
+                                        v-if="store.isMonthlyView"
+                                        class="btn btn-outline-secondary btn-sm mr-2"
+                                        title="Volver a reporte anual"
+                                        @click="store.resetToAnnual"
+                                    >
+                                        <i class="bi bi-arrow-left"></i> Volver al reporte anual
+                                    </button>
                                     <YearSelector />
                                 </div>
                             </div>
@@ -60,13 +72,11 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-
                 <!-- 3. Diagnósticos y fármacos -->
                 <div class="row">
                     <div class="col-6"><TopDiagnosticsChart /></div>
                     <div class="col-6"><TopDrugsChart /></div>
                 </div>
-
                 <!-- 4. Demográficos (5 charts) -->
                 <DemographicCharts />
             </div>

@@ -118,7 +118,6 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                                 </label>
                             </div>
                         </div>
-
                         <div class="table-responsive">
                             <table class="table table-striped table-hover mb-0">
                                 <thead>
@@ -166,7 +165,6 @@ const goPrint = (id) => window.open(`/admin/risks/print/${id}`, '_blank');
                                 </tbody>
                             </table>
                         </div>
-
                         <!-- Barra de Paginación y Resumen -->
                         <div v-if="store.items.length > 0" class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top">
                             <div class="text-muted small mb-2 mb-sm-0">

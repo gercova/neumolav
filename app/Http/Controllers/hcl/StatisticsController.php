@@ -8,43 +8,53 @@ use App\Models\DiagnosticExam;
 use App\Models\Exam;
 use App\Models\History;
 use App\Models\MedicationExam;
+use App\Traits\ApiResponse;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
-class StatisticsController extends Controller {
+class StatisticsController extends Controller
+{
     use ApiResponse;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:dashboard')->only('index');
     }
 
-    public function index(): View {
+    public function index(): View
+    {
         $yr = $this->years();
+
         return view('hcl.statistics.index', compact('yr'));
     }
 
-    public function years(){
+    public function years()
+    {
         return History::selectRaw('YEAR(created_at) as year')->groupBy('year')->orderBy('year', 'desc')->get();
     }
 
-    public function getCountRows(): JsonResponse {
-        $fechaActual    = now()->toDateString();
-        $hc             = History::whereNull('deleted_at')->count();
-        $ex             = Exam::whereNull('deleted_at')->count();
-        $ap             = Appointment::whereNull('deleted_at')->count();
-        $cd             = History::whereNull('deleted_at')->whereDate('created_at', $fechaActual)->count();
+    public function getCountRows(): JsonResponse
+    {
+        $fechaActual = now()->toDateString();
+        $hc = History::whereNull('deleted_at')->count();
+        $ex = Exam::whereNull('deleted_at')->count();
+        $ap = Appointment::whereNull('deleted_at')->count();
+        $cd = History::whereNull('deleted_at')->whereDate('created_at', $fechaActual)->count();
+
         return response()->json(compact('hc', 'ex', 'ap', 'cd'), 200);
     }
 
-    public function getMonthlyCountsByYear($year, $model, $name) {
-        if (!class_exists($model)) {
+    public function getMonthlyCountsByYear(int $year, string $model, string $name)
+    {
+        if (! class_exists($model)) {
             throw new InvalidArgumentException("El modelo '{$model}' no existe.");
         }
-        
+
         $records = $model::query()
             ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', $year)
@@ -57,23 +67,95 @@ class StatisticsController extends Controller {
         foreach ($records as $record) {
             $data[$record->month - 1] = (int) $record->count;
         }
+
         // Retornamos en el formato solicitado: array de objetos con name y data
         return [
             [
                 'name' => $name,
-                'data' => $data
-            ]
+                'data' => $data,
+            ],
         ];
     }
 
-    public function getAnnualData($year) {
-        $histories      = $this->getMonthlyCountsByYear($year, History::class, 'Historias');
-        $exams          = $this->getMonthlyCountsByYear($year, Exam::class, 'Exámenes');
-        $appointments   = $this->getMonthlyCountsByYear($year, Appointment::class, 'Citas');
+    public function getAnnualData(int $year)
+    {
+        $histories = $this->getMonthlyCountsByYear($year, History::class, 'Historias');
+        $exams = $this->getMonthlyCountsByYear($year, Exam::class, 'Exámenes');
+        $appointments = $this->getMonthlyCountsByYear($year, Appointment::class, 'Citas');
+
         return array_merge($histories, $exams, $appointments);
     }
 
-    public function getDiagnosticsByExam(){
+    public function getDailyCountsByMonth(int $year, int $month, string $model, string $name): array
+    {
+        if (! class_exists($model)) {
+            throw new InvalidArgumentException("El modelo '{$model}' no existe.");
+        }
+
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $records = $model::query()
+            ->selectRaw('EXTRACT(DAY FROM created_at) as day, COUNT(*) as count')
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $data = array_fill(0, $daysInMonth, 0);
+        foreach ($records as $record) {
+            $dayIdx = (int) $record->day - 1;
+            if ($dayIdx >= 0 && $dayIdx < $daysInMonth) {
+                $data[$dayIdx] = (int) $record->count;
+            }
+        }
+
+        return [
+            'name' => $name,
+            'data' => $data,
+        ];
+    }
+
+    public function getMonthlyDetail(int $year, int $month, Request $request): JsonResponse
+    {
+        if ($month < 1 || $month > 12) {
+            return response()->json(['error' => 'Mes inválido'], 422);
+        }
+
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $categories = array_map(fn ($d) => str_pad((string) $d, 2, '0', STR_PAD_LEFT), range(1, $daysInMonth));
+
+        $histories = $this->getDailyCountsByMonth($year, $month, History::class, 'Historias');
+        $exams = $this->getDailyCountsByMonth($year, $month, Exam::class, 'Exámenes');
+        $appointments = $this->getDailyCountsByMonth($year, $month, Appointment::class, 'Citas');
+
+        $monthNames = [
+            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+            5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+            9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre',
+        ];
+
+        return response()->json([
+            'year'          => $year,
+            'month'         => $month,
+            'monthName'     => $monthNames[$month] ?? "Mes {$month}",
+            'daysInMonth'   => $daysInMonth,
+            'categories'    => $categories,
+            'series'    => [
+                'Historias' => $histories,
+                'Exámenes'  => $exams,
+                'Citas'     => $appointments,
+            ],
+            'allSeries'     => [$histories, $exams, $appointments],
+        ]);
+    }
+
+    public function HCByMonth(Request $request): JsonResponse {
+        $year   = (int) ($request->get('year') ?: now()->year);
+        $month  = (int) ($request->get('month') ?: now()->month);
+        return $this->getMonthlyDetail($year, $month, $request);
+    }
+
+    public function getDiagnosticsByExam() {
         return DiagnosticExam::select('d.descripcion as diagnostico', DB::raw('COUNT(examen_diagnostico.id_diagnostico) as cantidad'))
             ->join('diagnosticos as d', 'd.id', '=', 'examen_diagnostico.id_diagnostico')
             ->whereNull('examen_diagnostico.deleted_at')
@@ -84,7 +166,7 @@ class StatisticsController extends Controller {
             ->get();
     }
 
-    public function getDrugsByExam(){
+    public function getDrugsByExam() {
         return MedicationExam::select('d.descripcion as droga', DB::raw('COUNT(*) as cantidad'))
             ->join('drogas as d', 'd.id', '=', 'examen_medicacion.id_droga')
             ->whereNull('examen_medicacion.deleted_at')
@@ -95,14 +177,14 @@ class StatisticsController extends Controller {
             ->get();
     }
 
-    public function getHistoriesBySex(){
+    public function getHistoriesBySex() {
         return History::select('s.descripcion as sexo', DB::raw('COUNT(historias.id_sexo) as cantidad'))
             ->join('sexo as s', 's.id', '=', 'historias.id_sexo')
             ->groupBy('sexo')
             ->get();
     }
 
-    public function getHistoriesByBloodingGroup(){
+    public function getHistoriesByBloodingGroup() {
         return History::selectRaw('gs.descripcion grupo_sanguineo, COUNT(historias.id_gs) cantidad')
             ->join('grupo_sanguineo as gs', 'gs.id', '=', 'historias.id_gs')
             ->groupBy('grupo_sanguineo')
@@ -110,7 +192,7 @@ class StatisticsController extends Controller {
             ->get();
     }
 
-    public function getHistoriesByMaritalStatus(){
+    public function getHistoriesByMaritalStatus() {
         return History::selectRaw('e.descripcion estado_civil, COUNT(historias.id_estado) cantidad')
             ->join('estado_civil as e', 'e.id', '=', 'historias.id_estado')
             ->groupBy('estado_civil')
@@ -118,7 +200,7 @@ class StatisticsController extends Controller {
             ->get();
     }
 
-    public function getHistoriesByDegreeIntruction(){
+    public function getHistoriesByDegreeIntruction() {
         return History::selectRaw('di.descripcion grado_instruccion, COUNT(historias.id_gi) cantidad')
             ->join('grado_instruccion as di', 'di.id', '=', 'historias.id_gi')
             ->groupBy('grado_instruccion')
@@ -126,7 +208,7 @@ class StatisticsController extends Controller {
             ->get();
     }
 
-    public function getHistoriesBySmoking(){
+    public function getHistoriesBySmoking() {
         return History::selectRaw('t.consumo tabaquismo, COUNT(historias.id_ct) cantidad')
             ->join('tabaquismo as t', 't.id', '=', 'historias.id_ct')
             ->groupBy('t.consumo')
