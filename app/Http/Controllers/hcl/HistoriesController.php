@@ -110,7 +110,6 @@ class HistoriesController extends Controller
     public function store(HistoryValidate $request): JsonResponse
     {
         $validated = $request->validated();
-
         $processedFields = [
             'nombres' => strtoupper($validated['nombres']),
             'ubigeo_nacimiento' => ! empty($request->input('ubigeo_nacimiento')) ? ($this->getStringId($request->input('ubigeo_nacimiento'))) : '220901',

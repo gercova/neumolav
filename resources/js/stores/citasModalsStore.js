@@ -52,18 +52,18 @@ export const useCitasModalsStore = defineStore('citasModals', {
     actions: {
         /* ═══════════════ SCHEDULE ═══════════════ */
         openSchedule(defaultDate = '') {
-            this.scheduleVisible = true;
-            this.scheduleTab = 'search';
-            this.scheduleDefaultDate = defaultDate;
-            this.existingDate = defaultDate;
-            this.searchQuery = '';
-            this.searchResults = [];
-            this.selectedPatient = null;
-            this.existingTipoAtencion = 2;
-            this.quick = { ...defaultQuick(), fecha_cita: defaultDate };
-            this.errors = {};
-            this.reniecFeedback = '';
-            this.quickFeedback = '';
+            this.scheduleVisible        = true;
+            this.scheduleTab            = 'search';
+            this.scheduleDefaultDate    = defaultDate;
+            this.existingDate           = defaultDate;
+            this.searchQuery            = '';
+            this.searchResults          = [];
+            this.selectedPatient        = null;
+            this.existingTipoAtencion   = 2;
+            this.quick                  = { ...defaultQuick(), fecha_cita: defaultDate };
+            this.errors                 = {};
+            this.reniecFeedback         = '';
+            this.quickFeedback          = '';
         },
 
         closeSchedule() {
@@ -91,14 +91,14 @@ export const useCitasModalsStore = defineStore('citasModals', {
         },
 
         selectPatient(p) {
-            this.selectedPatient = p;
-            this.searchResults = [];
-            this.searchQuery = '';
+            this.selectedPatient    = p;
+            this.searchResults      = [];
+            this.searchQuery        = '';
         },
 
         clearSelectedPatient() {
-            this.selectedPatient = null;
-            this.existingTipoAtencion = 2;
+            this.selectedPatient        = null;
+            this.existingTipoAtencion   = 2;
         },
 
         async submitExisting() {

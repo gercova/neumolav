@@ -153,11 +153,13 @@ const remove = async () => {
 </script>
 <template>
     <div class="d-inline-block position-relative">
-        <button ref="buttonRef"
-                type="button"
-                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center"
-                :disabled="busy"
-                @click="toggleMenu">
+        <button 
+            ref="buttonRef"
+            type="button"
+            class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center"
+            :disabled="busy"
+            @click="toggleMenu"
+        >
             <i class="bi bi-three-dots-vertical mr-1"></i> Acciones
         </button>
 

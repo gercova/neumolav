@@ -100,7 +100,6 @@ const onDniEnter = (e) => {
     }
 };
 </script>
-
 <template>
     <Teleport to="body">
         <div v-if="scheduleVisible" class="modal fade show d-block" tabindex="-1"
@@ -116,7 +115,6 @@ const onDniEnter = (e) => {
                             <span>&times;</span>
                         </button>
                     </div>
-
                     <div class="modal-body p-0">
                         <!-- TABS -->
                         <ul class="nav nav-tabs nav-justified bg-light">
@@ -133,7 +131,6 @@ const onDniEnter = (e) => {
                                 </a>
                             </li>
                         </ul>
-
                         <div class="p-4">
                             <!-- ══════════ TAB 1: BUSCAR EXISTENTE ══════════ -->
                             <div v-show="scheduleTab === 'search'">

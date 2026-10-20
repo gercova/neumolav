@@ -88,7 +88,11 @@ watch(() => [props.visible, props.id], ([isVisible, newId]) => {
         document.body.classList.add('modal-open');
         fetchDetail(newId);
     } else {
-        document.body.classList.remove('modal-open');
+        setTimeout(() => {
+            if (!document.querySelector('.modal.show')) {
+                document.body.classList.remove('modal-open');
+            }
+        }, 50);
     }
 });
 
@@ -103,7 +107,11 @@ if (typeof window !== 'undefined') {
 }
 
 onBeforeUnmount(() => {
-    document.body.classList.remove('modal-open');
+    setTimeout(() => {
+        if (!document.querySelector('.modal.show')) {
+            document.body.classList.remove('modal-open');
+        }
+    }, 50);
     if (typeof window !== 'undefined') {
         window.removeEventListener('keydown', onKeydown);
     }
@@ -122,7 +130,7 @@ const onBackdrop = (e) => {
             v-if="visible"
             class="modal fade show d-block"
             tabindex="-1"
-            style="background: rgba(0, 0, 0, 0.5); z-index: 1050;"
+            style="background: rgba(0, 0, 0, 0.5); z-index: 1060;"
             @click="onBackdrop"
         >
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">

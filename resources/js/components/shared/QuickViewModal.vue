@@ -1,13 +1,40 @@
 <script setup>
-import { watch, onBeforeUnmount } from 'vue';
+import { ref, watch, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useQuickViewStore } from '@/stores/quickViewStore';
+import PrescriptionDetailModal from '@/components/shared/PrescriptionDetailModal.vue';
 
 const store = useQuickViewStore();
 const {
     visible, loading, error, history, appointments, exams, routes, activeTab,
     appointmentsCount, examsCount, tipoAtencion, tipoAtencionColor, isArchived,
 } = storeToRefs(store);
+
+// Modal de Detalles de Receta / Examen
+const detailModalVisible = ref(false);
+const detailModalId = ref(null);
+const detailModalType = ref('appointments'); // 'appointments' | 'exams'
+
+const openAppointmentDetail = (id) => {
+    if (!id) return;
+    detailModalId.value = Number(id);
+    detailModalType.value = 'appointments';
+    detailModalVisible.value = true;
+};
+
+const openExamDetail = (id) => {
+    if (!id) return;
+    detailModalId.value = Number(id);
+    detailModalType.value = 'exams';
+    detailModalVisible.value = true;
+};
+
+const closeDetailModal = () => {
+    detailModalVisible.value = false;
+    if (visible.value) {
+        document.body.classList.add('modal-open');
+    }
+};
 
 // Bloquea scroll del body cuando el modal está abierto
 watch(visible, (v) => {
@@ -205,23 +232,24 @@ const antecedenteBadge = (val) => {
                                                     </span>
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <div class="btn-group">
+                                                    <div class="qv-actions-wrapper">
                                                         <button type="button"
-                                                                class="btn btn-info btn-xs mr-1 qv-view-appointment"
-                                                                :value="ap.id"
+                                                                class="btn qv-btn-action"
+                                                                @click="openAppointmentDetail(ap.id)"
                                                                 title="Ver receta e indicaciones">
-                                                            <i class="bi bi-eye"></i> Receta
+                                                            <i class="bi bi-eye mr-1"></i> Receta
                                                         </button>
                                                         <div class="dropdown d-inline-block">
-                                                            <button class="btn btn-default btn-xs dropdown-toggle"
-                                                                    data-toggle="dropdown">
+                                                            <button class="btn qv-btn-print dropdown-toggle"
+                                                                    data-toggle="dropdown"
+                                                                    title="Imprimir receta">
                                                                 <i class="bi bi-printer"></i>
                                                             </button>
-                                                            <div class="dropdown-menu dropdown-menu-right">
-                                                                <a class="dropdown-item" :href="ap.print_a4" target="_blank">
+                                                            <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                                                                <a class="dropdown-item py-1" :href="ap.print_a4" target="_blank">
                                                                     <i class="bi bi-file-earmark-pdf text-danger mr-1"></i> Imprimir A4
                                                                 </a>
-                                                                <a class="dropdown-item" :href="ap.print_a5" target="_blank">
+                                                                <a class="dropdown-item py-1" :href="ap.print_a5" target="_blank">
                                                                     <i class="bi bi-file-earmark-pdf text-info mr-1"></i> Imprimir A5
                                                                 </a>
                                                             </div>
@@ -287,21 +315,24 @@ const antecedenteBadge = (val) => {
                                                     </span>
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <div class="btn-group">
-                                                        <a :href="ex.edit_url" target="_blank"
-                                                           class="btn btn-info btn-xs mr-1" title="Ver / Editar examen">
-                                                            <i class="bi bi-eye"></i> Ver
-                                                        </a>
+                                                    <div class="qv-actions-wrapper">
+                                                        <button type="button"
+                                                                class="btn qv-btn-action"
+                                                                @click="openExamDetail(ex.id)"
+                                                                title="Ver receta e indicaciones del examen">
+                                                            <i class="bi bi-eye mr-1"></i> Ver
+                                                        </button>
                                                         <div class="dropdown d-inline-block">
-                                                            <button class="btn btn-default btn-xs dropdown-toggle"
-                                                                    data-toggle="dropdown">
+                                                            <button class="btn qv-btn-print dropdown-toggle"
+                                                                    data-toggle="dropdown"
+                                                                    title="Imprimir examen">
                                                                 <i class="bi bi-printer"></i>
                                                             </button>
-                                                            <div class="dropdown-menu dropdown-menu-right">
-                                                                <a class="dropdown-item" :href="ex.print_a4" target="_blank">
+                                                            <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                                                                <a class="dropdown-item py-1" :href="ex.print_a4" target="_blank">
                                                                     <i class="bi bi-file-earmark-pdf text-danger mr-1"></i> Imprimir A4
                                                                 </a>
-                                                                <a class="dropdown-item" :href="ex.print_a5" target="_blank">
+                                                                <a class="dropdown-item py-1" :href="ex.print_a5" target="_blank">
                                                                     <i class="bi bi-file-earmark-pdf text-info mr-1"></i> Imprimir A5
                                                                 </a>
                                                             </div>
@@ -531,5 +562,110 @@ const antecedenteBadge = (val) => {
                 </div>
             </div>
         </div>
+
+        <!-- Modal de Receta / Detalles de Control o Examen -->
+        <PrescriptionDetailModal
+            :visible="detailModalVisible"
+            :id="detailModalId"
+            :type="detailModalType"
+            :fallback-dni="history?.dni"
+            :fallback-nombres="history?.nombres"
+            @close="closeDetailModal"
+        />
     </Teleport>
 </template>
+
+<style scoped>
+/* Contenedor alineado de botones de acción */
+.qv-actions-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+
+/* Botón principal de acción: Receta (Controles) o Ver (Exámenes) */
+.qv-btn-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 28px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    background-color: #0284c7 !important;
+    border: 1px solid #0284c7 !important;
+    color: #ffffff !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 2px rgba(2, 132, 199, 0.2);
+    transition: all 0.15s ease-in-out;
+}
+
+.qv-btn-action:hover {
+    background-color: #0369a1 !important;
+    border-color: #0369a1 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+}
+
+.qv-btn-action:active {
+    transform: translateY(0);
+}
+
+.qv-btn-action i {
+    font-size: 13px;
+    line-height: 1;
+}
+
+/* Botón dropdown de impresión: armonizado en altura, padding y estilo */
+.qv-btn-print {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 28px !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.15s ease-in-out;
+}
+
+.qv-btn-print:hover,
+.qv-btn-print:focus,
+.show > .qv-btn-print {
+    background-color: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    color: #1e293b !important;
+    transform: translateY(-1px);
+}
+
+.qv-btn-print i {
+    font-size: 13px;
+    line-height: 1;
+    margin-right: 3px;
+}
+
+.qv-actions-wrapper .dropdown-menu {
+    min-width: 135px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 4px 0;
+}
+
+.qv-actions-wrapper .dropdown-item {
+    font-size: 12px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+}
+</style>

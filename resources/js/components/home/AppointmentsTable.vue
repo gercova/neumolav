@@ -47,8 +47,8 @@ const handleTableClick = (e) => {
     if (btn) {
         e.stopPropagation();
         e.preventDefault();
-        const id = parseInt(btn.dataset.id);
-        const cita = citas.value.find(item => item.id === id);
+        const id    = parseInt(btn.dataset.id);
+        const cita  = citas.value.find(item => item.id === id);
         if (cita) {
             openChangeTipo(cita);
         }

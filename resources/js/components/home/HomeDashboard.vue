@@ -59,7 +59,6 @@ onBeforeUnmount(() => {
     window.__neumoEvents?.removeEventListener('open-change-tipo', onOpenChangeTipo);
 });
 </script>
-
 <template>
     <div class="content-wrapper">
         <div class="content-header">
@@ -72,23 +71,18 @@ onBeforeUnmount(() => {
                 </h1>
             </div>
         </div>
-
         <section class="content">
             <div class="container-fluid">
                 <!-- 1. Indicadores globales (server-rendered, pasa como prop) -->
                 <GlobalStats :stats="globalStats" />
-
                 <!-- 2. Estadísticas del día (fetch AJAX) -->
                 <DailyStats />
-
                 <!-- 3. Barra de fecha + filtro + acciones -->
                 <DateNavigator :statuses="statuses" />
-
                 <!-- 4. Tabla principal FIFO -->
                 <AppointmentsTable />
             </div>
         </section>
-
         <!-- Modales Vue (fuera del content-wrapper) -->
         <ScheduleAppointmentModal :document-types="documentTypes" :sexes="sexes" />
         <RescheduleAppointmentModal />
