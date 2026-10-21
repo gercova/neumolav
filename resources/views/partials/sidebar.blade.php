@@ -261,6 +261,15 @@
                                     </a>
                                 </li>
                             @endcan
+
+                            @can('configuracion_acceder')
+                                <li class="nav-item">
+                                    <a href="{{ route('security.config') }}" class="nav-link {{ request()->routeIs('security.config*') ? 'active' : '' }}">
+                                        <i class="bi bi-chevron-right"></i>
+                                        <p>Versiones & Config</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan

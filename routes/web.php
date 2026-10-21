@@ -16,6 +16,7 @@ use App\Http\Controllers\maintenance\DiagnosticsController;
 use App\Http\Controllers\maintenance\DrugsController;
 use App\Http\Controllers\maintenance\OccupationsController;
 use App\Http\Controllers\maintenance\PresentationsController as DPController;
+use App\Http\Controllers\security\ConfigController;
 use App\Http\Controllers\security\PermissionController;
 use App\Http\Controllers\security\RolesController;
 use App\Http\Controllers\security\SpecialtiesController;
@@ -120,6 +121,15 @@ Route::middleware(['auth', 'prevent.back'])->group(function () {
                 Route::post('/users/storePermission/{user}', [UsersController::class, 'storePermission'])->name('securty.users.storePermission');
                 Route::delete('/users/delete/{id}', [UsersController::class, 'destroy']);
                 Route::delete('/users/{id}', [UsersController::class, 'destroy']);
+            });
+            // MÓDULO DE CONFIGURACIÓN Y VERSIONADO
+            Route::middleware(['permission:configuracion'])->group(function () {
+                Route::get('/config', [ConfigController::class, 'index'])->name('security.config');
+                Route::match(['get', 'post'], '/config/list', [ConfigController::class, 'list'])->name('security.config.list');
+                Route::get('/config/detect', [ConfigController::class, 'detect'])->name('security.config.detect');
+                Route::post('/config/generate', [ConfigController::class, 'generate'])->name('security.config.generate');
+                Route::get('/config/{id}', [ConfigController::class, 'show'])->name('security.config.show');
+                Route::delete('/config/{id}', [ConfigController::class, 'destroy'])->name('security.config.destroy');
             });
         });
         // MÓDULO DE HISTORIAS

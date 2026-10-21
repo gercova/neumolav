@@ -38,6 +38,7 @@ export default defineConfig({
                 'resources/js/modules/specialties.js',
                 'resources/js/modules/enterprise.js',
                 'resources/js/modules/publications.js',
+                'resources/js/modules/config.js',
             ],
             refresh: true,
         }),
