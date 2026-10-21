@@ -1,218 +1,379 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $en->logo) }}">
-    <title>Informe Neumológico - {{ $en->nombre_comercial }}</title>
+    <title>Informe Neumológico - {{ $en->nombre_comercial ?? 'NeumoLav' }}</title>
     <style>
-        /* Estilos generales compatibles con DOMPDF */
-        body {
-            font-family: 'Arial', sans-serif;
+        @page {
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            color: #333;
-            line-height: 1.2;
-            font-size: 12px;
+            box-sizing: border-box;
         }
 
-        /* Encabezado profesional - compatible */
-        .header {
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            border-bottom: 2px solid #007bff;
-            margin-bottom: 10px;
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10.5px;
+            color: #111827;
+            line-height: 1.35;
+            background: #ffffff;
         }
 
-        .header-content {
-            display: table;
+        table {
             width: 100%;
+            border-collapse: collapse;
         }
 
-        .logo-section {
-            display: table-cell;
-            width: 70%;
-            vertical-align: top;
+        /* HEADER */
+        .header-table {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+        }
+
+        .clinic-brand {
+            width: 65%;
+            padding-right: 12px;
         }
 
         .clinic-name {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
-            color: #0056b3;
-            margin: 0 0 3px 0;
+            color: #0F2C59;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 2px 0;
         }
 
         .clinic-slogan {
-            font-size: 11px;
-            color: #6c757d;
-            margin: 0 0 5px 0;
+            font-size: 9.5px;
+            color: #1E6091;
             font-style: italic;
+            margin-bottom: 4px;
         }
 
-        .doctor-info {
-            font-size: 11px;
-            margin: 0;
-        }
-
-        .doctor-credentials {
+        .clinic-doctor {
             font-size: 10px;
-            margin: 2px 0;
+            font-weight: bold;
+            color: #0F2C59;
+            margin-bottom: 2px;
         }
 
-        .clinic-address {
-            font-size: 10px;
-            margin: 2px 0 0 0;
+        .clinic-credentials {
+            font-size: 9px;
+            color: #334155;
+            margin-bottom: 2px;
         }
 
-        .patient-info-section {
-            display: table-cell;
-            width: 30%;
+        .clinic-contact {
+            font-size: 8.5px;
+            color: #64748B;
+            line-height: 1.25;
+        }
+
+        /* DOCUMENT BADGE CARD */
+        .doc-badge-col {
+            width: 35%;
             text-align: right;
-            border-left: 1px solid #dee2e6;
-            padding-left: 12px;
-            vertical-align: top;
         }
 
-        .document-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #343a40;
-            margin: 0 0 8px 0;
-        }
-
-        /* Información del paciente */
-        .patient-info {
-            background-color: #f8f9fa;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid #007bff;
-        }
-
-        .patient-details {
-            display: table;
+        .doc-badge-box {
+            display: inline-block;
             width: 100%;
-        }
-
-        .patient-field {
-            display: table-cell;
-            padding-right: 15px;
-        }
-
-        .patient-field strong {
-            color: #495057;
-        }
-
-        /* Secciones de contenido */
-        .content-section {
-            margin-bottom: 10px;
-            page-break-inside: avoid;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #0056b3;
-            padding-bottom: 3px;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 5px;
-        }
-
-        .section-content {
-            padding: 0 5px;
-            text-align: justify;
-        }
-
-        .section-content p {
-            margin: 2px 0;
-            font-size: 12px;
-            line-height: 1.3;
-        }
-
-        /* Secciones específicas para el nuevo formato */
-        .diagnosis-section {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 8px 10px;
-            margin: 8px 0;
-        }
-
-        .treatment-section {
-            background-color: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            padding: 8px 10px;
-            margin: 8px 0;
-        }
-
-        /* Eliminar espacios entre secciones */
-        .content-section+.content-section {
-            margin-top: -5px;
-        }
-
-        /* Pie de página */
-        .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #f8f9fa;
-            padding: 6px 0;
-            border-top: 2px solid #007bff;
-            font-size: 10px;
-        }
-
-        .footer-content {
-            display: table;
-            width: 100%;
-            padding: 0 15px;
-        }
-
-        .footer-clinic {
-            display: table-cell;
-            font-weight: bold;
-            color: #0056b3;
-            width: 50%;
-        }
-
-        .footer-contact {
-            display: table-cell;
-            color: #6c757d;
-            text-align: right;
-            width: 50%;
-        }
-
-        /* Utilidades */
-        .signature-area {
-            margin-top: 25px;
+            border: 1.5px solid #0284C7;
+            background-color: #F0F7FF;
             text-align: center;
         }
 
-        .signature-line {
-            width: 60%;
-            border-top: 1px solid #333;
-            margin: 0 auto 3px;
-        }
-
-        .doctor-signature {
+        .doc-badge-header {
+            background-color: #0F2C59;
+            color: #FFFFFF;
+            padding: 5px 8px;
             font-size: 11px;
-            margin-top: 0;
-            line-height: 1.1;
+            font-weight: bold;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
         }
 
-        /* Reducir espacios en elementos específicos */
-        h3 {
-            margin: 8px 0 5px 0;
+        .doc-badge-body {
+            padding: 6px 8px;
         }
 
-        p {
-            margin: 3px 0;
+        .doc-badge-subtitle {
+            font-size: 8.5px;
+            font-weight: bold;
+            color: #0284C7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
 
-        br {
-            line-height: 0.8;
+        .doc-badge-folio {
+            font-size: 10px;
+            color: #0F2C59;
+            font-weight: bold;
+            margin-bottom: 3px;
         }
 
-        /* Compatibilidad extra para DOMPDF */
-        .page-break {
-            page-break-before: always;
+        .doc-badge-date {
+            font-size: 9px;
+            color: #334155;
+        }
+
+        /* DIVIDER ACCENT */
+        .accent-bar {
+            height: 3px;
+            background-color: #0F2C59;
+            margin-bottom: 2px;
+            width: 100%;
+        }
+
+        .accent-subbar {
+            height: 1.5px;
+            background-color: #0284C7;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        /* PATIENT CARD */
+        .patient-card {
+            background-color: #F4F9FD;
+            border: 1px solid #D0E3F3;
+            border-left: 4px solid #0F2C59;
+            margin-bottom: 10px;
+            padding: 7px 10px;
+        }
+
+        .patient-table td {
+            padding: 2px 4px;
+            font-size: 10px;
+        }
+
+        .patient-label {
+            font-weight: bold;
+            color: #0F2C59;
+            text-transform: uppercase;
+            font-size: 9px;
+        }
+
+        .patient-value {
+            color: #111827;
+            font-weight: bold;
+        }
+
+        /* CLINICAL REPORT SECTIONS */
+        .report-section {
+            margin-bottom: 8px;
+            page-break-inside: avoid;
+        }
+
+        .section-bar {
+            background-color: #F0F7FF;
+            border: 1px solid #BAE6FD;
+            border-left: 3.5px solid #0F2C59;
+            padding: 4px 8px;
+        }
+
+        .section-bar-title {
+            font-size: 9.5px;
+            font-weight: bold;
+            color: #0F2C59;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .section-body {
+            padding: 5px 8px;
+            border: 1px solid #E2E8F0;
+            border-top: none;
+            background-color: #FFFFFF;
+            text-align: justify;
+            font-size: 10px;
+            color: #1E293B;
+            line-height: 1.35;
+        }
+
+        .section-body p {
+            margin-bottom: 3px;
+        }
+
+        .section-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* SPECIAL DIAGNOSIS BLOCK */
+        .diagnosis-section {
+            margin-bottom: 8px;
+            page-break-inside: avoid;
+        }
+
+        .diagnosis-bar {
+            background-color: #EBF5FB;
+            border: 1px solid #BAE6FD;
+            border-left: 4px solid #0284C7;
+            padding: 5px 8px;
+        }
+
+        .diagnosis-bar-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #0F2C59;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .diagnosis-body {
+            padding: 6px 8px;
+            border: 1px solid #BAE6FD;
+            border-top: none;
+            background-color: #F8FAFC;
+            font-size: 10.5px;
+            font-weight: bold;
+            color: #0F2C59;
+            line-height: 1.35;
+        }
+
+        /* TREATMENT & SUGGESTIONS BLOCKS */
+        .treatment-section {
+            margin-bottom: 8px;
+            page-break-inside: avoid;
+        }
+
+        .treatment-bar {
+            background-color: #F0F7FF;
+            border: 1px solid #BAE6FD;
+            border-left: 4px solid #0F2C59;
+            padding: 4px 8px;
+        }
+
+        .treatment-body {
+            padding: 5px 8px;
+            border: 1px solid #BAE6FD;
+            border-top: none;
+            background-color: #FFFFFF;
+            text-align: justify;
+            font-size: 10px;
+            color: #1E293B;
+            line-height: 1.35;
+        }
+
+        .suggestions-bar {
+            background-color: #F0F7FF;
+            border: 1px solid #BAE6FD;
+            border-left: 4px solid #0284C7;
+            padding: 4px 8px;
+        }
+
+        .empty-field {
+            color: #94A3B8;
+            font-style: italic;
+        }
+
+        /* SIGNATURE SECTION */
+        .signature-table {
+            width: 100%;
+            margin-top: 18px;
+            page-break-inside: avoid;
+        }
+
+        .signature-left {
+            width: 58%;
+            vertical-align: bottom;
+            padding-left: 5px;
+        }
+
+        .signature-right {
+            width: 42%;
+            text-align: center;
+            vertical-align: bottom;
+        }
+
+        .signature-img-container {
+            height: 62px;
+            margin-bottom: 2px;
+            text-align: center;
+        }
+
+        .signature-img {
+            max-height: 60px;
+            max-width: 180px;
+        }
+
+        .signature-spacer {
+            height: 50px;
+        }
+
+        .signature-line {
+            width: 220px;
+            border-top: 1.5px solid #0F2C59;
+            margin: 0 auto 4px auto;
+        }
+
+        .doctor-signature-name {
+            font-size: 10.5px;
+            font-weight: bold;
+            color: #0F2C59;
+            line-height: 1.2;
+        }
+
+        .doctor-signature-spec {
+            font-size: 9px;
+            color: #0284C7;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .doctor-signature-reg {
+            font-size: 8.5px;
+            color: #475569;
+            line-height: 1.2;
+        }
+
+        .security-stamp {
+            border: 1px dashed #CBD5E1;
+            background-color: #F8FAFC;
+            padding: 6px 9px;
+            font-size: 8px;
+            color: #64748B;
+            display: inline-block;
+            max-width: 300px;
+            line-height: 1.3;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 20px;
+            padding-top: 6px;
+            border-top: 1.5px solid #0F2C59;
+            page-break-inside: avoid;
+        }
+
+        .footer-subline {
+            height: 1px;
+            background-color: #0284C7;
+            margin-bottom: 5px;
+        }
+
+        .footer-table td {
+            font-size: 8px;
+            color: #64748B;
+            vertical-align: middle;
+        }
+
+        .footer-left {
+            text-align: left;
+            width: 55%;
+        }
+
+        .footer-right {
+            text-align: right;
+            width: 45%;
         }
 
         .no-break {
@@ -220,117 +381,255 @@
         }
     </style>
 </head>
-
 <body>
-    <!-- Encabezado -->
-    <div class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <h1 class="clinic-name">{{ $en->nombre_comercial }}</h1>
-                <p class="clinic-slogan">{{ $en->slogan }}</p>
-                <p class="doctor-info"><strong>{{ !empty($us->name) ? $us->name : $en->representante_legal }} - {{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</strong></p>
-                <p class="doctor-credentials">CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} | RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</p>
-                <p class="clinic-address">Dirección: {{ $en->direccion }}, {{ $en->ubigeo }}</p>
-            </div>
-            <div class="patient-info-section">
-                <h2 class="document-title">INFORME MÉDICO</h2>
-                <p><strong>Fecha:</strong> {{ date('d/m/Y', strtotime($rp->created_at)) }}</p>
-            </div>
-        </div>
-    </div>
+    @php
+        $logoPath = null;
+        if (!empty($en->logo_receta) && file_exists(public_path('storage/' . $en->logo_receta))) {
+            $logoPath = public_path('storage/' . $en->logo_receta);
+        } elseif (!empty($en->logo) && file_exists(public_path('storage/' . $en->logo))) {
+            $logoPath = public_path('storage/' . $en->logo);
+        } elseif (!empty($en->logo_mini) && file_exists(public_path('storage/' . $en->logo_mini))) {
+            $logoPath = public_path('storage/' . $en->logo_mini);
+        }
+        $logoBase64 = null;
+        if ($logoPath && is_readable($logoPath)) {
+            $logoType = pathinfo($logoPath, PATHINFO_EXTENSION);
+            $logoData = @file_get_contents($logoPath);
+            if ($logoData) {
+                $logoBase64 = 'data:image/' . $logoType . ';base64,' . base64_encode($logoData);
+            }
+        }
 
-    <!-- Información del paciente -->
-    <div class="patient-info">
-        <div class="patient-details">
-            <div class="patient-field"><strong>DNI:</strong> {{ $hc[0]->dni }}</div>
-            <div class="patient-field"><strong>Paciente:</strong> {{ $hc[0]->nombres }}</div>
-            <div class="patient-field"><strong>Edad:</strong> {{ $hc[0]->age }} años</div>
-        </div>
-    </div>
+        $doctorName = !empty($us->name) ? $us->name : (!empty($en->representante_legal) ? $en->representante_legal : 'Médico Neumólogo');
+        $specialtyName = !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo';
+        $cmp = !empty($us->cmp) ? $us->cmp : '60432';
+        $rne = !empty($us->rne) ? $us->rne : '39261';
 
-    <!-- Contenido principal -->
-    <div class="content">
-        <!-- Antecedentes -->
-        <div class="content-section">
-            <h3 class="section-title">ANTECEDENTES</h3>
-            <div class="section-content">
-                <p>{!! $rp->antecedentes !!}</p>
-            </div>
-        </div>
+        $sigImg = null;
+        if (!empty($signatureBase64)) {
+            $sigImg = $signatureBase64;
+        } elseif (!empty($us->firma_digital) && \Illuminate\Support\Facades\Storage::disk('public')->exists($us->firma_digital)) {
+            $mime = \Illuminate\Support\Facades\Storage::disk('public')->mimeType($us->firma_digital) ?: 'image/png';
+            $sigData = \Illuminate\Support\Facades\Storage::disk('public')->get($us->firma_digital);
+            $sigImg = 'data:' . $mime . ';base64,' . base64_encode($sigData);
+        }
+    @endphp
 
-        <!-- Historial de enfermedad -->
-        <div class="content-section">
-            <h3 class="section-title">HISTORIAL DE ENFERMEDAD</h3>
-            <div class="section-content">
-                <p>{!! $rp->historial_enfermedad !!}</p>
-            </div>
-        </div>
-
-        <!-- Examen físico -->
-        <div class="content-section">
-            <h3 class="section-title">EXAMEN FÍSICO</h3>
-            <div class="section-content">
-                <p>{!! $rp->examen_fisico !!}</p>
-            </div>
-        </div>
-
-        <!-- Exámenes complementarios -->
-        <div class="content-section">
-            <h3 class="section-title">EXÁMENES COMPLEMENTARIOS</h3>
-            <div class="section-content">
-                <p>{!! $rp->examen_complementario !!}</p>
-            </div>
-        </div>
-
-        <!-- Diagnóstico -->
-        <div class="content-section diagnosis-section no-break">
-            <h3 class="section-title">DIAGNÓSTICO</h3>
-            <div class="section-content">
-                <p><strong>{{ implode(' / ',array_map(function ($d) {return $d->diagnostic;}, $dx)) }}</strong></p>
-            </div>
-        </div>
-
-        <!-- Tratamiento -->
-        <div class="content-section treatment-section no-break">
-            <h3 class="section-title">TRATAMIENTO</h3>
-            <div class="section-content">
-                <p>{!! $rp->tratamiento !!}</p>
-            </div>
-        </div>
-
-        <!-- Sugerencia -->
-        <div class="content-section treatment-section no-break">
-            <h3 class="section-title">SUGERENCIAS</h3>
-            <div class="section-content">
-                <p>{!! $rp->sugerencia !!}</p>
-            </div>
-        </div>
-
-        <!-- Firma y Sello -->
-        <div class="signature-area no-break" style="margin-top: 30px; text-align: center;">
-            @if(!empty($withSignature) && !empty($signatureBase64))
-                <div style="margin-bottom: -15px;">
-                    <img src="{{ $signatureBase64 }}" style="max-height: 75px; max-width: 220px;" alt="Firma Digital">
+    <!-- ENCABEZADO -->
+    <table class="header-table no-break">
+        <tr>
+            <td class="clinic-brand">
+                <table style="width: 100%;">
+                    <tr>
+                        @if($logoBase64)
+                            <td style="width: 75px; vertical-align: top; padding-right: 10px;">
+                                <img src="{{ $logoBase64 }}" style="max-height: 52px; max-width: 75px;" alt="Logo">
+                            </td>
+                        @else
+                            <td style="width: 46px; vertical-align: top; padding-right: 8px;">
+                                <div style="width: 42px; height: 42px; background-color: #0F2C59; border: 2px solid #0284C7; text-align: center; line-height: 40px; color: #FFFFFF; font-weight: bold; font-size: 20px;">
+                                    +
+                                </div>
+                            </td>
+                        @endif
+                        <td style="vertical-align: top;">
+                            <h1 class="clinic-name">{{ $en->nombre_comercial ?: ($en->razon_social ?: 'CENTRO NEUMOLÓGICO') }}</h1>
+                            @if(!empty($en->slogan) || !empty($en->frase))
+                                <div class="clinic-slogan">{{ $en->slogan ?: $en->frase }}</div>
+                            @endif
+                            <div class="clinic-doctor">Dr(a). {{ $doctorName }} &bull; {{ $specialtyName }}</div>
+                            <div class="clinic-credentials">CMP: {{ $cmp }} &nbsp;|&nbsp; RNE: {{ $rne }}</div>
+                            <div class="clinic-contact">
+                                {{ $en->direccion }}{{ !empty($en->ubigeo) ? ' - ' . $en->ubigeo : '' }}
+                                @if(!empty($en->telefono)) &bull; Tel: {{ $en->telefono }} @endif
+                                @if(!empty($en->ruc)) &bull; RUC: {{ $en->ruc }} @endif
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td class="doc-badge-col">
+                <div class="doc-badge-box">
+                    <div class="doc-badge-header">INFORME MÉDICO</div>
+                    <div class="doc-badge-body">
+                        <div class="doc-badge-subtitle">ESPECIALIDAD EN NEUMOLOGÍA</div>
+                        <div class="doc-badge-folio">N° INF-{{ str_pad($rp->id, 5, '0', STR_PAD_LEFT) }}</div>
+                        <div class="doc-badge-date">
+                            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($rp->created_at)->format('d/m/Y') }}
+                        </div>
+                    </div>
                 </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="accent-bar"></div>
+    <div class="accent-subbar"></div>
+
+    <!-- DATOS DEL PACIENTE -->
+    <div class="patient-card no-break">
+        <table class="patient-table">
+            <tr>
+                <td style="width: 42%;">
+                    <span class="patient-label">Paciente:</span><br>
+                    <span class="patient-value">{{ $hc[0]->nombres ?? '---' }}</span>
+                </td>
+                <td style="width: 20%;">
+                    <span class="patient-label">DNI / Documento:</span><br>
+                    <span class="patient-value">{{ $hc[0]->dni ?? '---' }}</span>
+                </td>
+                <td style="width: 16%;">
+                    <span class="patient-label">Edad:</span><br>
+                    <span class="patient-value">{{ $hc[0]->age ?? '---' }} años</span>
+                </td>
+                <td style="width: 22%;">
+                    <span class="patient-label">N° Historia Clínica:</span><br>
+                    <span class="patient-value">{{ !empty($hc[0]->history) ? str_pad($hc[0]->history, 5, '0', STR_PAD_LEFT) : '---' }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SECCIONES DEL INFORME -->
+
+    <!-- I. ANTECEDENTES -->
+    <div class="report-section no-break">
+        <div class="section-bar">
+            <span class="section-bar-title">I. Antecedentes Clínicos Relevantes</span>
+        </div>
+        <div class="section-body">
+            @if(!empty(trim(strip_tags($rp->antecedentes))))
+                {!! $rp->antecedentes !!}
             @else
-                <div style="height: 50px;"></div>
+                <span class="empty-field">Sin antecedentes patológicos consignados.</span>
             @endif
-            <div class="signature-line" style="width: 240px; border-top: 1px solid #333; margin: 0 auto 4px;"></div>
-            <div class="doctor-signature" style="font-size: 11px; line-height: 1.2;">
-                <strong>Dr(a). {{ !empty($us->name) ? $us->name : $en->representante_legal }}</strong><br>
-                <span>{{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</span><br>
-                <span>CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} &nbsp;|&nbsp; RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</span>
-            </div>
         </div>
     </div>
 
-    <!-- Pie de página -->
-    <div class="footer">
-        <div class="footer-content">
-            <div class="footer-clinic">Clínica Rodriguez y Especialistas II</div>
-            <div class="footer-contact">Atención de lunes a sábado | Tel: {{ $en->telefono }}</div>
+    <!-- II. HISTORIAL DE ENFERMEDAD -->
+    <div class="report-section no-break">
+        <div class="section-bar">
+            <span class="section-bar-title">II. Historial de la Enfermedad Actual</span>
         </div>
+        <div class="section-body">
+            @if(!empty(trim(strip_tags($rp->historial_enfermedad))))
+                {!! $rp->historial_enfermedad !!}
+            @else
+                <span class="empty-field">No refiere información adicional de inicio o evolución.</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- III. EXAMEN FÍSICO -->
+    <div class="report-section no-break">
+        <div class="section-bar">
+            <span class="section-bar-title">III. Examen Físico y Hallazgos Clínicos</span>
+        </div>
+        <div class="section-body">
+            @if(!empty(trim(strip_tags($rp->examen_fisico))))
+                {!! $rp->examen_fisico !!}
+            @else
+                <span class="empty-field">Sin hallazgos clínicos de significancia patológica.</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- IV. EXÁMENES COMPLEMENTARIOS -->
+    <div class="report-section no-break">
+        <div class="section-bar">
+            <span class="section-bar-title">IV. Exámenes Complementarios y Estudios Auxiliares</span>
+        </div>
+        <div class="section-body">
+            @if(!empty(trim(strip_tags($rp->examen_complementario))))
+                {!! $rp->examen_complementario !!}
+            @else
+                <span class="empty-field">No se registran exámenes complementarios asociados.</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- V. DIAGNÓSTICO -->
+    <div class="diagnosis-section no-break">
+        <div class="diagnosis-bar">
+            <span class="diagnosis-bar-title">V. Conclusión Diagnóstica</span>
+        </div>
+        <div class="diagnosis-body">
+            @if(!empty($dx) && count($dx) > 0)
+                {{ implode('  •  ', array_map(function($d) { return $d->diagnostic; }, $dx)) }}
+            @else
+                <span class="empty-field">Evaluación médica general</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- VI. PLAN DE TRATAMIENTO -->
+    <div class="treatment-section no-break">
+        <div class="treatment-bar">
+            <span class="section-bar-title">VI. Plan de Tratamiento Médico</span>
+        </div>
+        <div class="treatment-body">
+            @if(!empty(trim(strip_tags($rp->tratamiento))))
+                {!! $rp->tratamiento !!}
+            @else
+                <span class="empty-field">Sin indicaciones terapéuticas registradas.</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- VII. SUGERENCIAS Y RECOMENDACIONES -->
+    <div class="treatment-section no-break">
+        <div class="section-bar suggestions-bar">
+            <span class="section-bar-title">VII. Sugerencias y Recomendaciones Médicas</span>
+        </div>
+        <div class="treatment-body">
+            @if(!empty(trim(strip_tags($rp->sugerencia))))
+                {!! $rp->sugerencia !!}
+            @else
+                <span class="empty-field">Continuar con controles periódicos según evolución clínica.</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE FIRMA -->
+    <table class="signature-table no-break">
+        <tr>
+            <td class="signature-left">
+                <div class="security-stamp">
+                    <strong>Certificación Médica Profesional</strong><br>
+                    El presente informe refleja la evaluación clínica del paciente a la fecha indicada.
+                </div>
+            </td>
+            <td class="signature-right">
+                <div class="signature-img-container">
+                    @if($sigImg)
+                        <img src="{{ $sigImg }}" class="signature-img" alt="Firma Digital">
+                    @else
+                        <div class="signature-spacer"></div>
+                    @endif
+                </div>
+                <div class="signature-line"></div>
+                <div class="doctor-signature-name">Dr(a). {{ $doctorName }}</div>
+                <div class="doctor-signature-spec">{{ $specialtyName }}</div>
+                <div class="doctor-signature-reg">CMP: {{ $cmp }} &nbsp;|&nbsp; RNE: {{ $rne }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- PIE DE PÁGINA -->
+    <div class="footer no-break">
+        <div class="footer-subline"></div>
+        <table class="footer-table">
+            <tr>
+                <td class="footer-left">
+                    <strong>{{ $en->nombre_comercial ?: ($en->razon_social ?: 'Centro Neumológico') }}</strong> &bull;
+                    Atención Médica Especializada
+                    @if(!empty($en->telefono)) &bull; Tel: {{ $en->telefono }} @endif
+                </td>
+                <td class="footer-right">
+                    Documento de carácter médico confidencial &bull; Fecha de emisión: {{ date('d/m/Y H:i') }}
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
-
 </html>
