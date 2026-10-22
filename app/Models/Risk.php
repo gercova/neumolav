@@ -10,10 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Risk extends Model
 {
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'historia_riesgo';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    use AuditLogTrait, HasFactory, SoftDeletes;
+
+    protected $table = 'historia_riesgo';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_historia',
         'dni',
         'motivo',
@@ -23,19 +26,20 @@ class Risk extends Model
         'examen_complementario',
         'riesgo_neumologico',
         'sugerencia',
-        'estado'
+        'estado',
     ];
 
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
-    protected $casts        = [
-        'estado'                => 'boolean',
-        'created_at'            => 'datetime',
-        'updated_at'            => 'datetime',
-        'deleted_at'            => 'datetime',
+    protected $casts = [
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function history(): BelongsTo {
+    public function history(): BelongsTo
+    {
         return $this->belongsTo(History::class, 'id_historia', 'id');
     }
 }

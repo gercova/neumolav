@@ -32,16 +32,16 @@ return [
     ],
 
     'deepseek' => [
-        'key'       => env('DEEPSEEK_API_KEY'),
-        'key2'      => env('DEEPSEEK_API_KEY_2'),
-        'endpoint'  => 'https://api.deepseek.com/v1/summarize',
-        'timeout'   => 15,
+        'key' => env('DEEPSEEK_API_KEY'),
+        'key2' => env('DEEPSEEK_API_KEY_2'),
+        'endpoint' => 'https://api.deepseek.com/v1/summarize',
+        'timeout' => 15,
     ],
-    
+
     'kimi' => [
-        'key'       => env('KIMI_API_KEY'),
-        'endpoint'  => 'https://api.kimi.ai/v1/summarize',
-        'timeout'   => 15,
+        'key' => env('KIMI_API_KEY'),
+        'endpoint' => 'https://api.kimi.ai/v1/summarize',
+        'timeout' => 15,
     ],
 
     'decolecta' => [

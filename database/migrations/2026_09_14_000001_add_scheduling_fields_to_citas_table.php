@@ -23,7 +23,7 @@ return new class extends Migration
         });
 
         // Backfill existing rows with fecha_cita from created_at
-        DB::statement("UPDATE citas SET fecha_cita = DATE(created_at) WHERE fecha_cita IS NULL");
+        DB::statement('UPDATE citas SET fecha_cita = DATE(created_at) WHERE fecha_cita IS NULL');
     }
 
     /**

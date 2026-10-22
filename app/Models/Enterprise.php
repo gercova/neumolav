@@ -6,12 +6,15 @@ use App\Traits\AuditLogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Enterprise extends Model {
+class Enterprise extends Model
+{
+    use AuditLogTrait, HasFactory;
 
-    use HasFactory, AuditLogTrait;
-    protected $table        = 'empresa';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    protected $table = 'empresa';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'razon_social',
         'nombre_comercial',
         'ruc',
@@ -34,12 +37,13 @@ class Enterprise extends Model {
         'logo_receta',
         'rubro',
         'fecha_creacion',
-        'autocomplete'
+        'autocomplete',
     ];
 
-    protected $dates        = ['created_at', 'updated_at'];
-    protected $casts        = [
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime'
+    protected $dates = ['created_at', 'updated_at'];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }

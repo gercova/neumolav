@@ -8,29 +8,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Diagnostic extends Model {
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    
-    protected $table        = 'diagnosticos';
-    protected $primaryKey   = 'id';
-    protected $fillable     = ['descripcion'];
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
-    protected $casts        = [
+class Diagnostic extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
+
+    protected $table = 'diagnosticos';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = ['descripcion'];
+
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
+    protected $casts = [
         'descripcion' => 'string',
-        'created_at'  => 'datetime',
-        'updated_at'  => 'datetime',
-        'deleted_at'  => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function diagnosticAppointment(): HasMany {
+    public function diagnosticAppointment(): HasMany
+    {
         return $this->hasMany(DiagnosticAppointment::class, 'id_diagnostico', 'id');
     }
 
-    public function diagnosticExam(): HasMany {
+    public function diagnosticExam(): HasMany
+    {
         return $this->hasMany(DiagnosticExam::class, 'id_diagnostico', 'id');
     }
 
-    public function diagnosticReport(): HasMany {
+    public function diagnosticReport(): HasMany
+    {
         return $this->hasMany(DiagnosticReport::class, 'id_diagnostico', 'id');
     }
 }

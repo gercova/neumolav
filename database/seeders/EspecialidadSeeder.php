@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Specialty;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EspecialidadSeeder extends Seeder
@@ -15,23 +14,23 @@ class EspecialidadSeeder extends Seeder
     {
         $especialidades = [
             [
-                'id_ocupacion'  => 22,
-                'descripcion'   => 'Administrador (a)',
-                'detalle'       => 'Ing. de Sistemas',
+                'id_ocupacion' => 22,
+                'descripcion' => 'Administrador (a)',
+                'detalle' => 'Ing. de Sistemas',
             ],
             [
-                'id_ocupacion'  => 1,
-                'descripcion'   => 'Neumólogo',
-                'detalle'       => '--',
+                'id_ocupacion' => 1,
+                'descripcion' => 'Neumólogo',
+                'detalle' => '--',
             ],
             [
-                'id_ocupacion'  => 8,
-                'descripcion'   => 'Enfermero (a)',
-                'detalle'       => '--',
+                'id_ocupacion' => 8,
+                'descripcion' => 'Enfermero (a)',
+                'detalle' => '--',
             ],
         ];
 
-        foreach($especialidades as $item){
+        foreach ($especialidades as $item) {
             Specialty::create($item);
         }
     }

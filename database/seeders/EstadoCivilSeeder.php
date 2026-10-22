@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\MaritalStatus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EstadoCivilSeeder extends Seeder
@@ -21,7 +20,7 @@ class EstadoCivilSeeder extends Seeder
             ['descripcion' => 'Conviviente'],
         ];
 
-        foreach($estadosciviles as $item){
+        foreach ($estadosciviles as $item) {
             MaritalStatus::create($item);
         }
     }

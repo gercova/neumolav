@@ -135,27 +135,30 @@ class StatisticsController extends Controller
         ];
 
         return response()->json([
-            'year'          => $year,
-            'month'         => $month,
-            'monthName'     => $monthNames[$month] ?? "Mes {$month}",
-            'daysInMonth'   => $daysInMonth,
-            'categories'    => $categories,
-            'series'    => [
+            'year' => $year,
+            'month' => $month,
+            'monthName' => $monthNames[$month] ?? "Mes {$month}",
+            'daysInMonth' => $daysInMonth,
+            'categories' => $categories,
+            'series' => [
                 'Historias' => $histories,
-                'Exámenes'  => $exams,
-                'Citas'     => $appointments,
+                'Exámenes' => $exams,
+                'Citas' => $appointments,
             ],
-            'allSeries'     => [$histories, $exams, $appointments],
+            'allSeries' => [$histories, $exams, $appointments],
         ]);
     }
 
-    public function HCByMonth(Request $request): JsonResponse {
-        $year   = (int) ($request->get('year') ?: now()->year);
-        $month  = (int) ($request->get('month') ?: now()->month);
+    public function HCByMonth(Request $request): JsonResponse
+    {
+        $year = (int) ($request->get('year') ?: now()->year);
+        $month = (int) ($request->get('month') ?: now()->month);
+
         return $this->getMonthlyDetail($year, $month, $request);
     }
 
-    public function getDiagnosticsByExam() {
+    public function getDiagnosticsByExam()
+    {
         return DiagnosticExam::select('d.descripcion as diagnostico', DB::raw('COUNT(examen_diagnostico.id_diagnostico) as cantidad'))
             ->join('diagnosticos as d', 'd.id', '=', 'examen_diagnostico.id_diagnostico')
             ->whereNull('examen_diagnostico.deleted_at')
@@ -166,7 +169,8 @@ class StatisticsController extends Controller
             ->get();
     }
 
-    public function getDrugsByExam() {
+    public function getDrugsByExam()
+    {
         return MedicationExam::select('d.descripcion as droga', DB::raw('COUNT(*) as cantidad'))
             ->join('drogas as d', 'd.id', '=', 'examen_medicacion.id_droga')
             ->whereNull('examen_medicacion.deleted_at')
@@ -177,14 +181,16 @@ class StatisticsController extends Controller
             ->get();
     }
 
-    public function getHistoriesBySex() {
+    public function getHistoriesBySex()
+    {
         return History::select('s.descripcion as sexo', DB::raw('COUNT(historias.id_sexo) as cantidad'))
             ->join('sexo as s', 's.id', '=', 'historias.id_sexo')
             ->groupBy('sexo')
             ->get();
     }
 
-    public function getHistoriesByBloodingGroup() {
+    public function getHistoriesByBloodingGroup()
+    {
         return History::selectRaw('gs.descripcion grupo_sanguineo, COUNT(historias.id_gs) cantidad')
             ->join('grupo_sanguineo as gs', 'gs.id', '=', 'historias.id_gs')
             ->groupBy('grupo_sanguineo')
@@ -192,7 +198,8 @@ class StatisticsController extends Controller
             ->get();
     }
 
-    public function getHistoriesByMaritalStatus() {
+    public function getHistoriesByMaritalStatus()
+    {
         return History::selectRaw('e.descripcion estado_civil, COUNT(historias.id_estado) cantidad')
             ->join('estado_civil as e', 'e.id', '=', 'historias.id_estado')
             ->groupBy('estado_civil')
@@ -200,7 +207,8 @@ class StatisticsController extends Controller
             ->get();
     }
 
-    public function getHistoriesByDegreeIntruction() {
+    public function getHistoriesByDegreeIntruction()
+    {
         return History::selectRaw('di.descripcion grado_instruccion, COUNT(historias.id_gi) cantidad')
             ->join('grado_instruccion as di', 'di.id', '=', 'historias.id_gi')
             ->groupBy('grado_instruccion')
@@ -208,7 +216,8 @@ class StatisticsController extends Controller
             ->get();
     }
 
-    public function getHistoriesBySmoking() {
+    public function getHistoriesBySmoking()
+    {
         return History::selectRaw('t.consumo tabaquismo, COUNT(historias.id_ct) cantidad')
             ->join('tabaquismo as t', 't.id', '=', 'historias.id_ct')
             ->groupBy('t.consumo')

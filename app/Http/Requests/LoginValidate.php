@@ -6,31 +6,35 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoginValidate extends FormRequest
 {
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return true;
     }
 
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
-            'email'     => 'required|email',
-            'password'  => 'required|min:6',
-            'remember'  => 'nullable|boolean',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'remember' => 'nullable|boolean',
         ];
     }
 
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
-            'email.required'    => 'El campo E-mail es requerido',
-            'email.email'       => 'El campo E-mail debe ser un correo',
+            'email.required' => 'El campo E-mail es requerido',
+            'email.email' => 'El campo E-mail debe ser un correo',
             'password.required' => 'El campo Contraseña es requerido',
-            'password.min'      => 'El campo Contraseña debe tener más de 6 caracteres',
+            'password.min' => 'El campo Contraseña debe tener más de 6 caracteres',
         ];
     }
 
-    protected function prepareForValidation(): void {
+    protected function prepareForValidation(): void
+    {
         $this->merge([
-            'email'     => is_string($this->email) ? trim(strip_tags($this->email)) : $this->email,
-            'password'  => is_string($this->password) ? trim(strip_tags($this->password)) : $this->password,
+            'email' => is_string($this->email) ? trim(strip_tags($this->email)) : $this->email,
+            'password' => is_string($this->password) ? trim(strip_tags($this->password)) : $this->password,
         ]);
     }
 }

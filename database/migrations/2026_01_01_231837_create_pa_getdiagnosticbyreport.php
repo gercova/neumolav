@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS PA_getDiagnosticByReport;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS PA_getDiagnosticByReport;');
         DB::unprepared(
             'CREATE PROCEDURE PA_getDiagnosticByReport(
                 IN id_report BIGINT(19)
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS getDiagnosticByReport;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS getDiagnosticByReport;');
     }
 };

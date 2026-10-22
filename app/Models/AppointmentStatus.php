@@ -10,6 +10,7 @@ class AppointmentStatus extends Model
     use HasFactory;
 
     protected $table = 'estado_cita';
+
     protected $fillable = [
         'descripcion',
     ];

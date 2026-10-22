@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -11,7 +10,8 @@ class UbigeoProvinciaSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void {
+    public function run(): void
+    {
         $datos = [
             ['id' => '0101', 'nombre_provincia' => 'CHACHAPOYAS', 'department_id' => '01'],
             ['id' => '0102', 'nombre_provincia' => 'BAGUA', 'department_id' => '01'],

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\BloodGroups;
 use App\Models\DegreesInstruction;
 use App\Models\Sex;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class GSGISeeder extends Seeder
@@ -15,10 +14,10 @@ class GSGISeeder extends Seeder
      */
     public function run(): void
     {
-        
+
         Sex::create(['id' => 'F', 'descripcion' => 'Femenino']);
         Sex::create(['id' => 'M', 'descripcion' => 'Masculino']);
-        
+
         $grado_instruccion = [
             'Primaria completa',
             'Primaria incompleta',
@@ -28,13 +27,13 @@ class GSGISeeder extends Seeder
             'Universitaria incompleta',
             'Técnica completa',
             'Técnica incompleta',
-            'Sin grado'
+            'Sin grado',
         ];
         foreach ($grado_instruccion as $grado) {
             DegreesInstruction::create(['descripcion' => $grado]);
         }
 
-        $grupo_sanguineo = ['A+','A-','B+','B-','AB+','AB-','O+','O-','Sin datos'];
+        $grupo_sanguineo = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Sin datos'];
         foreach ($grupo_sanguineo as $grupo) {
             BloodGroups::create(['descripcion' => $grupo]);
         }

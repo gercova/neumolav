@@ -24,28 +24,28 @@ return new class extends Migration
         // Insertar datos base antes de crear las FKs
         DB::table('tipos_atencion')->insert([
             [
-                'id'          => 1,
+                'id' => 1,
                 'descripcion' => 'Nuevo',
-                'codigo'      => 'NUEVO',
+                'codigo' => 'NUEVO',
                 'badge_color' => 'success',
-                'created_at'  => now(),
-                'updated_at'  => now()
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'id'          => 2,
+                'id' => 2,
                 'descripcion' => 'Control',
-                'codigo'      => 'CONTROL',
+                'codigo' => 'CONTROL',
                 'badge_color' => 'primary',
-                'created_at'  => now(),
-                'updated_at'  => now()
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'id'          => 3,
+                'id' => 3,
                 'descripcion' => 'Continuador',
-                'codigo'      => 'CONTINUADOR',
+                'codigo' => 'CONTINUADOR',
                 'badge_color' => 'warning',
-                'created_at'  => now(),
-                'updated_at'  => now()
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
 

@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Report extends Model {
+class Report extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'historia_informe';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    protected $table = 'historia_informe';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_historia',
         'dni',
         'antecedentes',
@@ -24,23 +27,25 @@ class Report extends Model {
         'diagnostico',
         'tratamiento',
         'sugerencia',
-        'estado'
+        'estado',
     ];
 
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $casts = [
-        'estado'                => 'boolean',
-        'created_at'            => 'datetime',
-        'updated_at'            => 'datetime',
-        'deleted_at'            => 'datetime',
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function history(): BelongsTo {
+    public function history(): BelongsTo
+    {
         return $this->belongsTo(History::class, 'dni');
     }
 
-    public function diagnostics(): HasMany {
+    public function diagnostics(): HasMany
+    {
         return $this->hasMany(DiagnosticReport::class, 'id_informe', 'dni');
     }
 }

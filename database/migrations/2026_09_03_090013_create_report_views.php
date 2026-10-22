@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void {
+    public function up(): void
+    {
         // Vista view_active_drugs
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE VIEW view_active_drugs AS
             SELECT
                 dc.descripcion AS category,
@@ -24,7 +23,7 @@ return new class extends Migration
               AND dc.deleted_at IS NULL
               AND dp.deleted_at IS NULL
             ORDER BY d.descripcion ASC
-        ");
+        ');
 
         // Vista view_active_histories
         DB::statement("
@@ -46,7 +45,7 @@ return new class extends Migration
         ");
 
         // Vista view_active_users
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE VIEW view_active_users AS
             SELECT
                 u.name AS name,
@@ -63,7 +62,7 @@ return new class extends Migration
                     WHERE ull.id_user = u.id
                     AND u.deleted_at IS NULL
                 )
-        ");
+        ');
 
         // Vista view_user_roles_last_login
         DB::statement("
@@ -89,7 +88,7 @@ return new class extends Migration
         ");
 
         // Vista vista_estado_civil
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE VIEW vista_estado_civil AS
             SELECT
                 e.descripcion AS estados,
@@ -99,10 +98,10 @@ return new class extends Migration
             GROUP BY e.descripcion
             HAVING COUNT(h.dni) >= 1
             ORDER BY COUNT(h.dni) DESC
-        ");
+        ');
 
         // Vista vista_grupo_sanguineo
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE VIEW vista_grupo_sanguineo AS
             SELECT
                 g.descripcion AS grupos,
@@ -112,10 +111,10 @@ return new class extends Migration
             GROUP BY g.descripcion
             HAVING COUNT(h.dni) >= 1
             ORDER BY COUNT(h.dni) DESC
-        ");
+        ');
 
         // Vista vista_tabaquismo
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE VIEW vista_tabaquismo AS
             SELECT
                 t.consumo AS label,
@@ -124,7 +123,7 @@ return new class extends Migration
             JOIN tabaquismo t ON h.id_ct = t.id
             GROUP BY t.consumo
             ORDER BY COUNT(h.dni) ASC
-        ");
+        ');
     }
 
     /**

@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS PA_getReportsByDNI;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS PA_getReportsByDNI;');
         DB::unprepared(
             'CREATE PROCEDURE PA_getReportsByDNI(
                 IN id_historia BIGINT(19)
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS getReportsByDNI;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS getReportsByDNI;');
     }
 };

@@ -67,7 +67,6 @@ class ConfigController extends Controller
     {
         $search = trim((string) $request->input('search', ''));
         $type = strtoupper(trim((string) $request->input('type', '')));
-
         $query = AppVersion::with('creator:id,name,username,email')->orderByDesc('id');
 
         if ($type !== '' && in_array($type, ['MAJOR', 'MINOR', 'PATCH'], true)) {
@@ -156,7 +155,6 @@ class ConfigController extends Controller
     {
         $validated = $request->validated();
         $user = auth()->user();
-
         // If changes were not provided from modal, run detection automatically to populate payload
         if (empty($validated['classes_changed']) && empty($validated['views_changed']) && empty($validated['scripts_changed'])) {
             $detection = $this->versioningService->detectPendingChanges();
@@ -226,7 +224,6 @@ class ConfigController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $version = AppVersion::findOrFail($id);
-
         if (AppVersion::count() <= 1) {
             return response()->json([
                 'status' => false,

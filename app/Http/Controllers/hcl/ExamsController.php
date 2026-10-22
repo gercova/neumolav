@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ExamsController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware(['auth', 'prevent.back']);
         $this->middleware('permission:examen_acceder')->only('index');
         $this->middleware('permission:examen_ver')->only('seeExams', 'listExams', 'viewDetail');
@@ -31,16 +32,18 @@ class ExamsController extends Controller
         $this->middleware('permission:examen_borrar')->only('destroy', 'destroyExamDiagnostics', 'destroyPrescriptionDrug', 'destroyExamImage');
     }
 
-    public function index(): View {
+    public function index(): View
+    {
         return view('hcl.exams.index');
     }
 
-    public function listHistories(Request $request): JsonResponse {
+    public function listHistories(Request $request): JsonResponse
+    {
         $startIndex = $request->input('jtStartIndex', 0);
-        $pageSize 	= $request->input('jtPageSize', 10);
-        $search 	= $request->input('search');
+        $pageSize = $request->input('jtPageSize', 10);
+        $search = $request->input('search');
 
-        $query 		= DB::table('view_active_histories')
+        $query = DB::table('view_active_histories')
             ->when(! empty($search), function ($q) use ($search) {
                 $q->where(function ($inner) use ($search) {
                     $inner->where('dni', 'LIKE', "%{$search}%")
@@ -48,69 +51,79 @@ class ExamsController extends Controller
                 });
             });
 
-        $count 			= (clone $query)->count();
-        $records 		= $query->offset($startIndex)->limit($pageSize)->get();
-        $user 			= auth()->user();
-        $permissions 	= [
-            'view_exm' 	=> $user->can('examen_ver'),
-            'add_exm' 	=> $user->can('examen_crear'),
+        $count = (clone $query)->count();
+        $records = $query->offset($startIndex)->limit($pageSize)->get();
+        $user = auth()->user();
+        $permissions = [
+            'view_exm' => $user->can('examen_ver'),
+            'add_exm' => $user->can('examen_crear'),
         ];
 
         $records = $records->map(function ($row) use ($permissions) {
-            $row->Permissions 	= $permissions;
-            $row->see_url 		= route('hcl.exams.see', ['hc' => $row->id]);
-            $row->add_url 		= route('hcl.exams.add', ['hc' => $row->id]);
+            $row->Permissions = $permissions;
+            $row->see_url = route('hcl.exams.see', ['hc' => $row->id]);
+            $row->add_url = route('hcl.exams.add', ['hc' => $row->id]);
+
             return $row;
         });
 
         return response()->json([
-            'Result' 			=> 'OK',
-            'Records' 			=> $records,
-            'TotalRecordCount' 	=> $count,
+            'Result' => 'OK',
+            'Records' => $records,
+            'TotalRecordCount' => $count,
         ]);
     }
 
-    public function add(History $hc): View {
+    public function add(History $hc): View
+    {
         $te = ExamType::get();
+
         return view('hcl.exams.add', compact('te', 'hc'));
     }
 
-    public function edit(Exam $ex): View {
+    public function edit(Exam $ex): View
+    {
         $te = ExamType::get();
         $hc = History::where('id', $ex->id_historia)->first();
+
         return view('hcl.exams.edit', compact('te', 'hc', 'ex'));
     }
 
-    public function see(History $hc): View {
+    public function see(History $hc): View
+    {
         return view('hcl.exams.see', compact('hc'));
     }
 
-    public function viewDetail(Exam $ex): JsonResponse {
-        $hc 		= History::where('id', $ex->id_historia)->get();
+    public function viewDetail(Exam $ex): JsonResponse
+    {
+        $hc = History::where('id', $ex->id_historia)->get();
         $diagnostic = DB::select('CALL PA_getDiagnosticByExam(?)', [$ex->id]);
         $medication = DB::select('CALL PA_getMedicationByExam(?)', [$ex->id]);
+
         return response()->json(compact('ex', 'hc', 'diagnostic', 'medication'), 200);
     }
 
-    public function viewExamImage(Imagen $image): JsonResponse {
+    public function viewExamImage(Imagen $image): JsonResponse
+    {
         return response()->json(ImageResource::make($image), 200);
     }
 
-    public function store(ExamValidate $request): JsonResponse {
-        $validated 		= $request->validated();
-        $id 			= $request->input('examId');
-        $diagnostics 	= $request->input('diagnostic_id');
-        $drugs 			= $request->input('drug_id');
-        $descriptions 	= $request->input('description');
-        $img 			= $request->file('img');
-        $dateImg 		= $request->input('dateImg');
+    public function store(ExamValidate $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $id = $request->input('examId');
+        $diagnostics = $request->input('diagnostic_id');
+        $drugs = $request->input('drug_id');
+        $descriptions = $request->input('description');
+        $img = $request->file('img');
+        $dateImg = $request->input('dateImg');
 
         DB::beginTransaction();
         try {
-            $exam 		= Exam::updateOrCreate(['id' => $id], $validated);
-            $id 		= $exam->id;
-            $historia 	= $exam->id_historia;
-            $dni 		= $exam->dni;
+            $exam = Exam::updateOrCreate(['id' => $id], $validated);
+            $id = $exam->id;
+            $historia = $exam->id_historia;
+            $dni = $exam->dni;
             // Guardar diagnóstico, medicación y subir imagen si existen
             if ($diagnostics) {
                 $this->saveDiagnosis($id, $historia, $dni, $diagnostics);
@@ -125,33 +138,34 @@ class ExamsController extends Controller
             DB::commit();
 
             return response()->json([
-                'status' 	=> true,
-                'type' 		=> 'success',
-                'message' 	=> $exam->wasChanged() ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
-                'route' 	=> route('hcl.exams.see', $exam->id_historia),
-                'print_a4' 	=> route('hcl.exams.print', [$id, 'a4']),
-                'print_a5' 	=> route('hcl.exams.print', [$id, 'a5']),
+                'status' => true,
+                'type' => 'success',
+                'message' => $exam->wasChanged() ? 'Actualizado exitosamente' : 'Se ha añadido un nuevo examen',
+                'route' => route('hcl.exams.see', $exam->id_historia),
+                'print_a4' => route('hcl.exams.print', [$id, 'a4']),
+                'print_a5' => route('hcl.exams.print', [$id, 'a5']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
-                'status' 	=> false,
-                'type' 		=> 'error',
-                'messages' 	=> $e->getMessage(),
+                'status' => false,
+                'type' => 'error',
+                'messages' => $e->getMessage(),
             ], 500);
         }
     }
 
-    private function saveDiagnosis($id, $historia, $dni, $diagnosticId) {
+    private function saveDiagnosis($id, $historia, $dni, $diagnosticId)
+    {
         $data = collect($diagnosticId)->map(function ($diagnosticId) use ($id, $historia, $dni) {
             return [
-                'id_examen' 		=> $id,
-                'id_historia' 		=> $historia,
-                'dni' 				=> $dni,
-                'id_diagnostico' 	=> $diagnosticId,
-                'created_at' 		=> now(),
-                'updated_at' 		=> now(),
+                'id_examen' => $id,
+                'id_historia' => $historia,
+                'dni' => $dni,
+                'id_diagnostico' => $diagnosticId,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         })->toArray();
 
@@ -159,24 +173,26 @@ class ExamsController extends Controller
 
     }
 
-    private function saveMedication($id, $historia, $dni, $drugId, $description) {
+    private function saveMedication($id, $historia, $dni, $drugId, $description)
+    {
         $data = [];
         for ($i = 0; $i < count($drugId); $i++) {
             $data[] = [
-                'id_examen' 	=> $id,
-                'id_historia' 	=> $historia,
-                'dni' 			=> $dni,
-                'id_droga' 		=> $drugId[$i],
-                'descripcion' 	=> $description[$i],
-                'created_at' 	=> now(),
-                'updated_at' 	=> now(),
+                'id_examen' => $id,
+                'id_historia' => $historia,
+                'dni' => $dni,
+                'id_droga' => $drugId[$i],
+                'descripcion' => $description[$i],
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 
         MedicationExam::insert($data);
     }
 
-    private function uploadImage($images, $historia, $dni, $fechaImg, $id) {
+    private function uploadImage($images, $historia, $dni, $fechaImg, $id)
+    {
         if ($images) {
             $directorio = "img/pacientes/{$dni}";
             if (! Storage::exists($directorio)) {
@@ -185,17 +201,17 @@ class ExamsController extends Controller
             // Storage::disk('public')->makeDirectory($directorio);
             foreach ($images as $i => $image) {
                 if ($image->isValid()) {
-                    $extension 	= $image->getClientOriginalExtension();
-                    $fileName 	= mt_rand(1000, 9999).'.'.$extension;
-                    $route 		= "{$directorio}/{$fileName}";
+                    $extension = $image->getClientOriginalExtension();
+                    $fileName = mt_rand(1000, 9999).'.'.$extension;
+                    $route = "{$directorio}/{$fileName}";
 
                     if ($image->storeAs($directorio, $fileName, 'public')) {
                         Imagen::create([
-                            'id_examen' 	=> $id,
-                            'id_historia' 	=> $historia,
-                            'dni' 			=> $dni,
-                            'fecha_examen' 	=> $fechaImg[$i],
-                            'imagen' 		=> $route,
+                            'id_examen' => $id,
+                            'id_historia' => $historia,
+                            'dni' => $dni,
+                            'fecha_examen' => $fechaImg[$i],
+                            'imagen' => $route,
                         ]);
                     }
                 }
@@ -203,10 +219,11 @@ class ExamsController extends Controller
         }
     }
 
-    public function listExams(History $hc): JsonResponse {
-        $results 	= DB::select('CALL PA_getExamsByMedicalHistory(?)', [$hc->id]);
-        $data 		= collect($results)->map(function ($item, $index) {
-            $user 	= auth()->user();
+    public function listExams(History $hc): JsonResponse
+    {
+        $results = DB::select('CALL PA_getExamsByMedicalHistory(?)', [$hc->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
             $buttons = '';
 
             if ($user->can('informe_ver')) {
@@ -241,16 +258,17 @@ class ExamsController extends Controller
         });
 
         return response()->json([
-            'sEcho' 				=> 1,
-            'iTotalRecords' 		=> $data->count(),
-            'iTotalDisplayRecords' 	=> $data->count(),
-            'aaData' 				=> $data ?? [],
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
         ], 200);
     }
 
-    public function listOfImagesByExam(Exam $ex): JsonResponse {
-        $results 	= DB::select('CALL PA_getImgByExam(?)', [$ex->id]);
-        $data 		= collect($results)->map(function ($item, $index) {
+    public function listOfImagesByExam(Exam $ex): JsonResponse
+    {
+        $results = DB::select('CALL PA_getImgByExam(?)', [$ex->id]);
+        $data = collect($results)->map(function ($item, $index) {
             return [
                 $index + 1,
                 $item->fecha_examen,
@@ -265,17 +283,18 @@ class ExamsController extends Controller
         });
 
         return response()->json([
-            'sEcho' 				=> 1,
-            'iTotalRecords' 		=> $data->count(),
-            'iTotalDisplayRecords' 	=> $data->count(),
-            'aaData' 				=> $data ?? [],
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
         ], 200);
     }
 
-    public function listOfDiagnosticsByExam(Exam $ex): JsonResponse {
-        $results 	= DB::select('CALL PA_getDiagnosticByExam(?)', [$ex->id]);
-        $data 		= collect($results)->map(function ($item, $index) {
-            $user 	= auth()->user();
+    public function listOfDiagnosticsByExam(Exam $ex): JsonResponse
+    {
+        $results = DB::select('CALL PA_getDiagnosticByExam(?)', [$ex->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
             $buttons = '';
             if ($user->can('examen_borrar')) {
                 $buttons .= sprintf(
@@ -292,17 +311,18 @@ class ExamsController extends Controller
         });
 
         return response()->json([
-            'sEcho' 				=> 1,
-            'iTotalRecords' 		=> $data->count(),
-            'iTotalDisplayRecords' 	=> $data->count(),
-            'aaData' 				=> $data ?? [],
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
         ], 200);
     }
 
-    public function listOfMedicationByExam(Exam $ex): JsonResponse {
-        $results 	= DB::select('CALL PA_getMedicationByExam(?)', [$ex->id]);
-        $data 		= collect($results)->map(function ($item, $index) {
-            $user 	= auth()->user();
+    public function listOfMedicationByExam(Exam $ex): JsonResponse
+    {
+        $results = DB::select('CALL PA_getMedicationByExam(?)', [$ex->id]);
+        $data = collect($results)->map(function ($item, $index) {
+            $user = auth()->user();
             $buttons = '';
             if ($user->can('examen_borrar')) {
                 $buttons .= sprintf(
@@ -320,50 +340,59 @@ class ExamsController extends Controller
         });
 
         return response()->json([
-            'sEcho' 				=> 1,
-            'iTotalRecords' 		=> $data->count(),
-            'iTotalDisplayRecords' 	=> $data->count(),
-            'aaData' 				=> $data ?? [],
+            'sEcho' => 1,
+            'iTotalRecords' => $data->count(),
+            'iTotalDisplayRecords' => $data->count(),
+            'aaData' => $data ?? [],
         ], 200);
     }
 
-    public function destroy(Exam $ex): JsonResponse {
+    public function destroy(Exam $ex): JsonResponse
+    {
         $ex->delete();
+
         return response()->json([
-            'status' 	=> (bool) $ex,
-            'type' 		=> $ex ? 'success' : 'error',
-            'messages' 	=> $ex ? 'El examen fue eliminado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $ex,
+            'type' => $ex ? 'success' : 'error',
+            'messages' => $ex ? 'El examen fue eliminado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyExamDiagnostic(DiagnosticExam $dx): JsonResponse {
+    public function destroyExamDiagnostic(DiagnosticExam $dx): JsonResponse
+    {
         $dx->delete();
+
         return response()->json([
-            'status' 	=> (bool) $dx,
-            'type' 		=> $dx ? 'success' : 'error',
-            'messages' 	=> $dx ? 'El diagnóstico fue quitado de este examen' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $dx,
+            'type' => $dx ? 'success' : 'error',
+            'messages' => $dx ? 'El diagnóstico fue quitado de este examen' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyPrescriptionDrug(MedicationExam $mx): JsonResponse {
+    public function destroyPrescriptionDrug(MedicationExam $mx): JsonResponse
+    {
         $mx->delete();
+
         return response()->json([
-            'status' 	=> (bool) $mx,
-            'type' 		=> $mx ? 'success' : 'error',
-            'messages' 	=> $mx ? 'El fármaco de la receta fue quitado' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $mx,
+            'type' => $mx ? 'success' : 'error',
+            'messages' => $mx ? 'El fármaco de la receta fue quitado' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function destroyExamImage(Imagen $ix): JsonResponse {
+    public function destroyExamImage(Imagen $ix): JsonResponse
+    {
         $ix->delete();
+
         return response()->json([
-            'status' 	=> (bool) $ix,
-            'type' 		=> $ix ? 'success' : 'error',
-            'messages' 	=> $ix ? 'La imagen fue eliminada' : 'Recargue la página, algo salió mal',
+            'status' => (bool) $ix,
+            'type' => $ix ? 'success' : 'error',
+            'messages' => $ix ? 'La imagen fue eliminada' : 'Recargue la página, algo salió mal',
         ], 200);
     }
 
-    public function printPrescription(Exam $ex, string $format = 'a5') {
+    public function printPrescription(Exam $ex, string $format = 'a5')
+    {
         // Validar formato
         if (! in_array($format, ['a4', 'a5'])) {
             $format = 'a5';
@@ -380,33 +409,34 @@ class ExamsController extends Controller
             $pdf = PDF::loadView('hcl.exams.pdf-a4', compact('hc', 'ex', 'dx', 'mx', 'us', 'en', 'format'));
             $pdf->setPaper('a4', 'portrait')
                 ->setOptions([
-                    'margin_top' 			=> 10,
-                    'margin_bottom' 		=> 10,
-                    'margin_left' 			=> 15,
-                    'margin_right' 			=> 15,
-                    'fontDefault' 			=> 'sans-serif',
-                    'isHtml5ParserEnabled' 	=> true,
-                    'isRemoteEnabled' 		=> false,
-                    'isPhpEnabled' 			=> false,
-                    'chroot' 				=> realpath(base_path()),
+                    'margin_top' => 10,
+                    'margin_bottom' => 10,
+                    'margin_left' => 15,
+                    'margin_right' => 15,
+                    'fontDefault' => 'sans-serif',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => false,
+                    'isPhpEnabled' => false,
+                    'chroot' => realpath(base_path()),
                 ]);
         } else {
             $pdf = PDF::loadView('hcl.exams.pdf-a5', compact('hc', 'ex', 'dx', 'mx', 'us', 'en', 'format'));
             $pdf->setPaper('a5', 'portrait')
                 ->setOptions([
-                    'margin_top' 			=> 0.5,
-                    'margin_bottom' 		=> 0.5,
-                    'margin_left' 			=> 0.5,
-                    'margin_right' 			=> 0.5,
-                    'fontDefault' 			=> 'sans-serif',
-                    'isHtml5ParserEnabled' 	=> true,
-                    'isRemoteEnabled' 		=> false,
-                    'isPhpEnabled' 			=> false,
-                    'chroot' 				=> realpath(base_path()),
+                    'margin_top' => 0.5,
+                    'margin_bottom' => 0.5,
+                    'margin_left' => 0.5,
+                    'margin_right' => 0.5,
+                    'fontDefault' => 'sans-serif',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => false,
+                    'isPhpEnabled' => false,
+                    'chroot' => realpath(base_path()),
                 ]);
         }
 
         $filename = "receta-medica-examen-{$ex->id}-".strtoupper($format).'.pdf';
+
         return $pdf->stream($filename);
     }
 }

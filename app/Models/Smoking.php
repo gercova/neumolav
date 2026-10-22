@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Smoking extends Model
 {
     use HasFactory;
-    protected $table        = 'tabaquismo';
-    protected $primaryKey   = 'id';
 
-    public function history(): HasMany {
+    protected $table = 'tabaquismo';
+
+    protected $primaryKey = 'id';
+
+    public function history(): HasMany
+    {
         return $this->hasMany(History::class, 'id_ct', 'id');
     }
 }

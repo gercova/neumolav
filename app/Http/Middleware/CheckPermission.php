@@ -18,8 +18,9 @@ class CheckPermission
     {
         return $next($request);
     }*/
-    public function handle($request, Closure $next, ...$permissions) {
-        if (!Auth::check()) {
+    public function handle($request, Closure $next, ...$permissions)
+    {
+        if (! Auth::check()) {
             abort(403, 'No autenticado.');
         }
 

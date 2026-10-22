@@ -22,14 +22,14 @@ trait ApiResponse
      * Respuesta exitosa.
      */
     protected function success(
-        mixed $data         = null,
-        string $messages    = 'OK',
-        int $code           = 200
+        mixed $data = null,
+        string $messages = 'OK',
+        int $code = 200
     ): JsonResponse {
         return response()->json([
-            'status'   => true,
+            'status' => true,
             'messages' => $messages,
-            'data'     => $data,
+            'data' => $data,
         ], $code);
     }
 
@@ -42,37 +42,41 @@ trait ApiResponse
         mixed $errors = null
     ): JsonResponse {
         return response()->json([
-            'status'   => false,
+            'status' => false,
             'messages' => $messages,
-            'errors'   => $errors,
+            'errors' => $errors,
         ], $code);
     }
 
     /**
      * Error de validación (422).
      */
-    protected function validationError(mixed $errors, string $messages = 'Datos inválidos'): JsonResponse {
+    protected function validationError(mixed $errors, string $messages = 'Datos inválidos'): JsonResponse
+    {
         return $this->error($messages, 422, $errors);
     }
 
     /**
      * Recurso no encontrado (404).
      */
-    protected function notFound(string $messages = 'Recurso no encontrado'): JsonResponse {
+    protected function notFound(string $messages = 'Recurso no encontrado'): JsonResponse
+    {
         return $this->error($messages, 404);
     }
 
     /**
      * Acceso denegado (403).
      */
-    protected function forbidden(string $messages = 'Acceso denegado'): JsonResponse {
+    protected function forbidden(string $messages = 'Acceso denegado'): JsonResponse
+    {
         return $this->error($messages, 403);
     }
 
     /**
      * Error interno del servidor (500).
      */
-    protected function serverError(string $messages = 'Error interno del servidor'): JsonResponse {
+    protected function serverError(string $messages = 'Error interno del servidor'): JsonResponse
+    {
         return $this->error($messages, 500);
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Presentation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DrogaPresentacionSeeder extends Seeder
@@ -13,39 +12,38 @@ class DrogaPresentacionSeeder extends Seeder
         $presentaciones = [
             [
                 'descripcion' => 'Tableta',
-                'aka'         => 'Tab.',
-            ],[
+                'aka' => 'Tab.',
+            ], [
                 'descripcion' => 'Capsula',
-                'aka'         => 'Cap.',
-            ],[
+                'aka' => 'Cap.',
+            ], [
                 'descripcion' => 'Ampolla',
-                'aka'         => 'Amp.',
-            ],[
+                'aka' => 'Amp.',
+            ], [
                 'descripcion' => 'Inhalador',
-                'aka'         => 'Inh.',
-            ],[
+                'aka' => 'Inh.',
+            ], [
                 'descripcion' => 'Frasco',
-                'aka'         => 'Fsco.',
-            ],[
+                'aka' => 'Fsco.',
+            ], [
                 'descripcion' => 'Sobre',
-                'aka'         => 'Sob.',
-            ],[
+                'aka' => 'Sob.',
+            ], [
                 'descripcion' => 'Spray',
-                'aka'         => 'Spry.',
-            ],[
+                'aka' => 'Spry.',
+            ], [
                 'descripcion' => 'Tratamiento',
-                'aka'         => 'Tto.',
-            ],[
+                'aka' => 'Tto.',
+            ], [
                 'descripcion' => 'Crema',
-                'aka'         => 'Crm.',
-            ],[
+                'aka' => 'Crm.',
+            ], [
                 'descripcion' => 'Caja',
-                'aka'         => 'Caj.',
+                'aka' => 'Caj.',
             ],
         ];
 
-        
-        foreach($presentaciones as $item){
+        foreach ($presentaciones as $item) {
             Presentation::create($item);
         }
     }

@@ -7,12 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CategoryResource extends JsonResource
 {
-    public function toArray(Request $request): array {
+    public function toArray(Request $request): array
+    {
         return [
-            'id'            => $this->id,
-            'descripcion'   => $this->descripcion,
-            'detalle'       => $this->detalle,
-            'estado'        => $this->estado,
+            'id' => $this->id,
+            'descripcion' => $this->descripcion,
+            'detalle' => $this->detalle,
+            'estado' => $this->estado,
         ];
     }
 }

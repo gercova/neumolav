@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Reservation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,7 +14,9 @@ class CitaSolicitada extends Mailable
     use Queueable, SerializesModels;
 
     public $reservation;
-    public function __construct(Reservation $reservation) {
+
+    public function __construct(Reservation $reservation)
+    {
         $this->reservation = $reservation;
     }
 
@@ -25,7 +26,7 @@ class CitaSolicitada extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nueva Solicitud de Cita - ' . config('app.name'),
+            subject: 'Nueva Solicitud de Cita - '.config('app.name'),
         );
     }
 

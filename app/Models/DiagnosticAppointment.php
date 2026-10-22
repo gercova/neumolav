@@ -8,40 +8,46 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DiagnosticAppointment extends Model {
+class DiagnosticAppointment extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'control_diagnostico';
-    protected $primaryKey   = 'id';
+    protected $table = 'control_diagnostico';
 
-    protected $fillable     = [
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_control',
         'id_historia',
         'dni',
         'id_diagnostico',
-        'estado'
+        'estado',
     ];
 
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
-    protected $casts        = [
-        'id_control'        => 'integer',
-        'dni'               => 'string',
-        'id_diagnostico'    => 'integer',
-        'estado'            => 'boolean',
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime',
-        'deleted_at'        => 'datetime',
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
+    protected $casts = [
+        'id_control' => 'integer',
+        'dni' => 'string',
+        'id_diagnostico' => 'integer',
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function appointment(): BelongsTo {
+    public function appointment(): BelongsTo
+    {
         return $this->belongsTo(Appointment::class, 'id_control', 'id');
     }
 
-    public function diagnostic(): BelongsTo {
+    public function diagnostic(): BelongsTo
+    {
         return $this->belongsTo(Diagnostic::class, 'id_diagnostico', 'id');
     }
 
-    public function history(): BelongsTo {
+    public function history(): BelongsTo
+    {
         return $this->belongsTo(History::class);
     }
 }

@@ -2,45 +2,45 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Exception;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
-class SummaryService {
-
-    public function generate(Request $request): ?string {
+class SummaryService
+{
+    public function generate(Request $request): ?string
+    {
         // 1. Intenta con DeepSeek
         try {
             $deepseekResponse = Http::timeout(15)
-                ->withHeaders(['Authorization' => 'Bearer ' . env('DEEPSEEK_API_KEY')])
+                ->withHeaders(['Authorization' => 'Bearer '.env('DEEPSEEK_API_KEY')])
                 ->post('
                 ', [
-                    'text' => $request->contenido // Accede al campo desde el Request
+                    'text' => $request->contenido, // Accede al campo desde el Request
                 ]);
 
             if ($deepseekResponse->successful()) {
                 return $deepseekResponse->json()['summary'];
             }
         } catch (\Exception $e) {
-            Log::error("DeepSeek API Error: " . $e->getMessage());
+            Log::error('DeepSeek API Error: '.$e->getMessage());
         }
 
         // 2. Si DeepSeek falla, intenta con Kimi
         try {
             $kimiResponse = Http::timeout(15)
-                ->withHeaders(['Authorization' => 'Bearer ' . env('KIMI_API_KEY')])
+                ->withHeaders(['Authorization' => 'Bearer '.env('KIMI_API_KEY')])
                 ->post('https://api.kimi.ai/v1/summarize', [
-                    'text' => $request->contenido // Accede al campo desde el Request
+                    'text' => $request->contenido, // Accede al campo desde el Request
                 ]);
 
             if ($kimiResponse->successful()) {
                 return $kimiResponse->json()['summary'];
             }
         } catch (\Exception $e) {
-            Log::error("Kimi API Error: " . $e->getMessage());
+            Log::error('Kimi API Error: '.$e->getMessage());
         }
 
         // 3. Si todo falla, devuelve null (sin mock)
@@ -112,11 +112,11 @@ class SummaryService {
             }
         );
 
-        return $resumen 
+        return $resumen
             ? response()->json(['resumen' => $resumen])
             : response()->json(['error' => 'Las APIs no respondieron'], 500);
     }*/
-    
+
     /*public function generateSummary(string $contenido): ?string {
         return Cache::remember(
             key: 'summary_' . md5($contenido),

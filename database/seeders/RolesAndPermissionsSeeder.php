@@ -3,25 +3,25 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class RolesAndPermissionsSeeder extends Seeder {
-    
-    public function run(): void {
+class RolesAndPermissionsSeeder extends Seeder
+{
+    public function run(): void
+    {
         // Roles
-        $administrador    = Role::create(['name' => 'administrador']);
-        $especialista     = Role::create(['name' => 'especialista']);
-        $asistente        = Role::create(['name' => 'asistente']);
+        $administrador = Role::create(['name' => 'administrador']);
+        $especialista = Role::create(['name' => 'especialista']);
+        $asistente = Role::create(['name' => 'asistente']);
 
         // Permisos
-        $crudPermissions    = ['acceder', 'ver', 'crear', 'actualizar', 'borrar'];
-        $modulos            = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
-        $modules            = ['historia', 'examen', 'control', 'informe','riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'especialidad', 'usuario', 'rol', 'permiso'];
+        $crudPermissions = ['acceder', 'ver', 'crear', 'actualizar', 'borrar'];
+        $modulos = ['historias', 'examenes', 'controles', 'informes', 'riesgos', 'categorias', 'presentaciones', 'farmacos', 'diagnosticos', 'ocupaciones', 'empresa', 'especialidades', 'usuarios', 'roles', 'permisos', 'seguridad', 'documentos', 'mantenimiento', 'reportes', 'dashboard'];
+        $modules = ['historia', 'examen', 'control', 'informe', 'riesgo', 'categoria', 'presentacion', 'farmaco', 'diagnostico', 'ocupacion', 'empresa', 'especialidad', 'usuario', 'rol', 'permiso'];
 
-        foreach($modulos as $m) {
+        foreach ($modulos as $m) {
             Permission::create(['name' => $m]);
         }
 

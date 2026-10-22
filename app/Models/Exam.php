@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Exam extends Model {
+class Exam extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'examenes';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    protected $table = 'examenes';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_historia',
         'dni',
         'id_tipo',
@@ -63,45 +66,52 @@ class Exam extends Model {
         'plandiag',
         'plan',
         'otros',
-        'estado'
+        'estado',
     ];
 
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
-    protected $casts        = [
-        'estado'                => 'boolean',
-        'created_at'            => 'datetime',
-        'updated_at'            => 'datetime',
-        'deleted_at'            => 'datetime',
+    protected $casts = [
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public static function seePatientByExam($id) {
+    public static function seePatientByExam($id)
+    {
         return Exam::selectRaw('h.id as history, examenes.id as exam, h.nombres, h.dni')
             ->join('historias as h', 'examenes.dni', '=', 'h.dni')
             ->where('examenes.id', $id)->get();
     }
 
-    public function history(): BelongsTo {
+    public function history(): BelongsTo
+    {
         return $this->belongsTo(History::class);
     }
 
-    public function exam(): BelongsTo {
+    public function exam(): BelongsTo
+    {
         return $this->belongsTo(Exam::class, 'id_examen', 'id');
     }
 
-    public function type(): BelongsTo {
-        return $this->belongsTo(ExamType::class, );
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(ExamType::class);
     }
 
-    public function diagnostics(): HasMany {
+    public function diagnostics(): HasMany
+    {
         return $this->hasMany(DiagnosticExam::class, 'id_examen', 'id');
     }
 
-    public function medication(): HasMany {
+    public function medication(): HasMany
+    {
         return $this->hasMany(MedicationExam::class, 'id_examen', 'id');
     }
 
-    public function images(): HasMany {
+    public function images(): HasMany
+    {
         return $this->hasMany(Imagen::class, 'id_examen', 'id');
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DrogaCategoriaSeeder extends Seeder
@@ -22,7 +21,7 @@ class DrogaCategoriaSeeder extends Seeder
             ['descripcion' => 'T', 'detalle' => 'Solo para indicaciones que requieren tratamiento.'],
         ];
 
-        foreach($categorias as $categoria){
+        foreach ($categorias as $categoria) {
             Category::create($categoria);
         }
     }

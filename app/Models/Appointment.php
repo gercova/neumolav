@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Appointment extends Model {
+class Appointment extends Model
+{
+    use AuditLogTrait, HasFactory, SoftDeletes;
 
-    use HasFactory, SoftDeletes, AuditLogTrait;
-    protected $table        = 'controles';
-    protected $primaryKey   = 'id';
-    protected $fillable     = [
+    protected $table = 'controles';
+
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
         'id_historia',
         'dni',
         'sintomas',
@@ -25,30 +28,34 @@ class Appointment extends Model {
         'estado',
     ];
 
-    protected $dates        = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
-    protected $casts        = [
-        'estado'            => 'boolean',
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime',
-        'deleted_at'        => 'datetime',
+    protected $casts = [
+        'estado' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public static function seePatientByAppointment($id) {
+    public static function seePatientByAppointment($id)
+    {
         return Appointment::selectRaw('h.id as history, controles.id as control, h.nombres, h.dni')
             ->join('historias as h', 'controles.dni', '=', 'h.dni')
             ->where('controles.id', $id)->get();
     }
 
-    public function history(): BelongsTo {
+    public function history(): BelongsTo
+    {
         return $this->belongsTo(History::class);
     }
 
-    public function diagnostics(): HasMany {
+    public function diagnostics(): HasMany
+    {
         return $this->hasMany(DiagnosticAppointment::class, 'id_control', 'id');
     }
 
-    public function medication(): HasMany {
+    public function medication(): HasMany
+    {
         return $this->hasMany(MedicationAppointment::class, 'id_control', 'id');
     }
 }
