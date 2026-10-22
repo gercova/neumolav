@@ -2,647 +2,310 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Evaluación de Riesgo Neumológico - {{ $en->nombre_comercial ?? 'NeumoLav' }}</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/'.$en->logo) }}">
+    <title>Informe de Risgos Neumológico - {{ $en->nombre_comercial }}</title>
     <style>
-        @page {
-            margin: 10mm 12mm 12mm 12mm;
-        }
-
-        * {
+        /* Estilos generales */
+        body {
+            /*font-family: 'DejaVu Sans', 'Arial', sans-serif;*/
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            color: #333;
+            line-height: 1.2; /* Reducido de 1.4 */
+            font-size: 12px;
         }
 
-        body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 10.5px;
-            color: #111827;
-            line-height: 1.35;
-            background: #ffffff;
+        /* Encabezado profesional */
+        .header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 12px 15px; /* Reducido */
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 10px; /* Reducido */
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* HEADER */
-        .header-table {
-            width: 100%;
-            margin-bottom: 8px;
-        }
-
-        .header-table td {
-            vertical-align: middle;
-        }
-
-        .clinic-brand {
-            width: 63%;
-            padding-right: 10px;
+        .logo-section {
+            flex: 1;
         }
 
         .clinic-name {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: bold;
-            color: #0F2C59;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 0 0 2px 0;
+            color: #0056b3;
+            margin: 0 0 3px 0; /* Reducido */
         }
 
         .clinic-slogan {
-            font-size: 9.5px;
-            color: #1E6091;
+            font-size: 11px;
+            color: #6c757d;
+            margin: 0 0 5px 0; /* Reducido */
             font-style: italic;
-            margin-bottom: 4px;
         }
 
-        .clinic-doctor {
+        .doctor-info {
+            font-size: 11px;
+            margin: 0;
+        }
+
+        .doctor-credentials {
             font-size: 10px;
-            font-weight: bold;
-            color: #0F2C59;
-            margin-bottom: 2px;
+            margin: 2px 0; /* Reducido */
         }
 
-        .clinic-credentials {
-            font-size: 9px;
-            color: #334155;
-            margin-bottom: 2px;
+        .clinic-address {
+            font-size: 10px;
+            margin: 2px 0 0 0; /* Reducido */
         }
 
-        .clinic-contact {
-            font-size: 8.5px;
-            color: #64748B;
-            line-height: 1.25;
-        }
-
-        /* DOCUMENT BADGE CARD */
-        .doc-badge-col {
-            width: 37%;
+        .patient-info-section {
+            flex: 1;
             text-align: right;
+            border-left: 1px solid #dee2e6;
+            padding-left: 12px; /* Reducido */
         }
 
-        .doc-badge-box {
-            display: inline-block;
-            width: 100%;
-            border: 1.5px solid #0284C7;
-            background-color: #F0F7FF;
-            text-align: center;
-        }
-
-        .doc-badge-header {
-            background-color: #0F2C59;
-            color: #FFFFFF;
-            padding: 5px 6px;
-            font-size: 10px;
+        .document-title {
+            font-size: 16px;
             font-weight: bold;
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
+            color: #343a40;
+            margin: 0 0 8px 0; /* Reducido */
         }
 
-        .doc-badge-body {
-            padding: 6px 8px;
+        /* Información del paciente */
+        .patient-info {
+            background-color: #f8f9fa;
+            padding: 10px 12px; /* Reducido */
+            border-radius: 5px;
+            margin-bottom: 12px; /* Reducido */
+            border-left: 4px solid #007bff;
         }
 
-        .doc-badge-subtitle {
-            font-size: 8px;
-            font-weight: bold;
-            color: #0284C7;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            margin-bottom: 3px;
+        .patient-details {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
         }
 
-        .doc-badge-folio {
-            font-size: 10px;
-            color: #0F2C59;
-            font-weight: bold;
-            margin-bottom: 3px;
+        .patient-field {
+            margin-right: 15px; /* Reducido */
+            margin-bottom: 3px; /* Reducido */
         }
 
-        .doc-badge-date {
-            font-size: 9px;
-            color: #334155;
+        .patient-field strong {
+            color: #495057;
         }
 
-        /* DIVIDER ACCENT */
-        .accent-bar {
-            height: 3px;
-            background-color: #0F2C59;
-            margin-bottom: 2px;
-            width: 100%;
-        }
-
-        .accent-subbar {
-            height: 1.5px;
-            background-color: #0284C7;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        /* PATIENT CARD */
-        .patient-card {
-            background-color: #F4F9FD;
-            border: 1px solid #D0E3F3;
-            border-left: 4px solid #0F2C59;
-            margin-bottom: 10px;
-            padding: 7px 10px;
-        }
-
-        .patient-table td {
-            padding: 2px 4px;
-            font-size: 10px;
-        }
-
-        .patient-label {
-            font-weight: bold;
-            color: #0F2C59;
-            text-transform: uppercase;
-            font-size: 9px;
-        }
-
-        .patient-value {
-            color: #111827;
-            font-weight: bold;
-        }
-
-        /* CLINICAL REPORT SECTIONS */
-        .report-section {
-            margin-bottom: 8px;
+        /* Secciones de contenido */
+        .content-section {
+            margin-bottom: 10px; /* Reducido de 15px */
             page-break-inside: avoid;
         }
 
-        .section-bar {
-            background-color: #F0F7FF;
-            border: 1px solid #BAE6FD;
-            border-left: 3.5px solid #0F2C59;
-            padding: 4px 8px;
-        }
-
-        .section-bar-title {
-            font-size: 9.5px;
+        .section-title {
+            font-size: 13px;
             font-weight: bold;
-            color: #0F2C59;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
+            color: #0056b3;
+            padding-bottom: 3px; /* Reducido */
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 5px; /* Reducido */
         }
 
-        .section-body {
-            padding: 5px 8px;
-            border: 1px solid #E2E8F0;
-            border-top: none;
-            background-color: #FFFFFF;
+        .section-content {
+            padding: 0 5px;
             text-align: justify;
-            font-size: 10px;
-            color: #1E293B;
-            line-height: 1.35;
+            margin-top: 0; /* Asegurar sin margen superior */
         }
 
-        .section-body p {
-            margin-bottom: 3px;
+        .section-content p {
+            margin: 2px 0; /* Reducido significativamente */
         }
 
-        .section-body p:last-child {
-            margin-bottom: 0;
+        /* Eliminar espacios entre secciones */
+        .content-section + .content-section {
+            margin-top: -5px; /* Compensar espacio entre secciones */
         }
 
-        /* SPECIAL RISK STRATIFICATION BLOCK (PROMINENT) */
-        .risk-highlight-card {
-            margin: 10px 0;
-            border: 1.5px solid #0F2C59;
-            background-color: #EBF5FB;
-            page-break-inside: avoid;
-        }
-
-        .risk-card-header {
-            background-color: #0F2C59;
-            color: #FFFFFF;
-            padding: 5px 10px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .risk-card-body {
-            padding: 8px 12px;
-            background-color: #F0F7FF;
-            border-left: 5px solid #0284C7;
-        }
-
-        .risk-classification-text {
-            font-size: 12px;
-            font-weight: bold;
-            color: #0F2C59;
-            line-height: 1.4;
-        }
-
-        .risk-badge {
-            display: inline-block;
-            background-color: #0284C7;
-            color: #FFFFFF;
-            padding: 3px 8px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-right: 8px;
-            letter-spacing: 0.4px;
-        }
-
-        /* SUGGESTIONS & PERIOPERATIVE CARE BLOCK */
-        .suggestions-section {
-            margin-bottom: 8px;
-            page-break-inside: avoid;
-        }
-
-        .suggestions-bar {
-            background-color: #F0F7FF;
-            border: 1px solid #BAE6FD;
-            border-left: 4px solid #0284C7;
-            padding: 4px 8px;
-        }
-
-        .suggestions-body {
-            padding: 6px 8px;
-            border: 1px solid #BAE6FD;
-            border-top: none;
-            background-color: #FFFFFF;
-            text-align: justify;
-            font-size: 10px;
-            color: #1E293B;
-            line-height: 1.35;
-        }
-
-        .empty-field {
-            color: #94A3B8;
-            font-style: italic;
-        }
-
-        /* SIGNATURE SECTION */
-        .signature-table {
+        /* Pie de página */
+        .footer {
+            position: fixed;
+            bottom: 0;
             width: 100%;
-            margin-top: 18px;
-            page-break-inside: avoid;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 6px 0; /* Reducido */
+            border-top: 2px solid #007bff;
+            font-size: 10px;
         }
 
-        .signature-left {
-            width: 58%;
-            vertical-align: bottom;
-            padding-left: 5px;
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px; /* Reducido */
         }
 
-        .signature-right {
-            width: 42%;
+        .footer-clinic {
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .footer-contact {
+            color: #6c757d;
+        }
+
+        /* Utilidades */
+        .page-break {
+            page-break-before: always;
+        }
+
+        .signature-area {
+            margin-top: 25px; /* Reducido de 40px */
             text-align: center;
-            vertical-align: bottom;
-        }
-
-        .signature-img-container {
-            height: 62px;
-            margin-bottom: 2px;
-            text-align: center;
-        }
-
-        .signature-img {
-            max-height: 60px;
-            max-width: 180px;
-        }
-
-        .signature-spacer {
-            height: 50px;
         }
 
         .signature-line {
-            width: 220px;
-            border-top: 1.5px solid #0F2C59;
-            margin: 0 auto 4px auto;
+            width: 60%;
+            border-top: 1px solid #333;
+            margin: 0 auto 3px; /* Reducido */
         }
 
-        .doctor-signature-name {
-            font-size: 10.5px;
-            font-weight: bold;
-            color: #0F2C59;
-            line-height: 1.2;
-        }
-
-        .doctor-signature-spec {
-            font-size: 9px;
-            color: #0284C7;
-            font-weight: bold;
-            line-height: 1.2;
-        }
-
-        .doctor-signature-reg {
-            font-size: 8.5px;
-            color: #475569;
-            line-height: 1.2;
-        }
-
-        .security-stamp {
-            border: 1px dashed #CBD5E1;
-            background-color: #F8FAFC;
-            padding: 6px 9px;
-            font-size: 8px;
-            color: #64748B;
-            display: inline-block;
-            max-width: 300px;
-            line-height: 1.3;
-        }
-
-        /* FOOTER */
-        .footer {
-            margin-top: 20px;
-            padding-top: 6px;
-            border-top: 1.5px solid #0F2C59;
-            page-break-inside: avoid;
-        }
-
-        .footer-subline {
-            height: 1px;
-            background-color: #0284C7;
-            margin-bottom: 5px;
-        }
-
-        .footer-table td {
-            font-size: 8px;
-            color: #64748B;
-            vertical-align: middle;
-        }
-
-        .footer-left {
-            text-align: left;
-            width: 55%;
-        }
-
-        .footer-right {
-            text-align: right;
-            width: 45%;
+        .doctor-signature {
+            font-size: 11px;
+            margin-top: 0;
+            line-height: 1.1;
         }
 
         .no-break {
             page-break-inside: avoid;
         }
+
+        /* Reducir espacios en elementos específicos */
+        h3 {
+            margin: 8px 0 5px 0; /* Reducido */
+        }
+
+        p {
+            margin: 3px 0; /* Reducido significativamente */
+        }
+
+        br {
+            margin-bottom: 2px; /* Reducir efecto de <br> */
+        }
     </style>
 </head>
 <body>
-    @php
-        $logoPath = null;
-        if (!empty($en->logo_receta) && file_exists(public_path('storage/' . $en->logo_receta))) {
-            $logoPath = public_path('storage/' . $en->logo_receta);
-        } elseif (!empty($en->logo) && file_exists(public_path('storage/' . $en->logo))) {
-            $logoPath = public_path('storage/' . $en->logo);
-        } elseif (!empty($en->logo_mini) && file_exists(public_path('storage/' . $en->logo_mini))) {
-            $logoPath = public_path('storage/' . $en->logo_mini);
-        }
-        $logoBase64 = null;
-        if ($logoPath && is_readable($logoPath)) {
-            $logoType = pathinfo($logoPath, PATHINFO_EXTENSION);
-            $logoData = @file_get_contents($logoPath);
-            if ($logoData) {
-                $logoBase64 = 'data:image/' . $logoType . ';base64,' . base64_encode($logoData);
-            }
-        }
+    <!-- Encabezado -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="clinic-name">{{ $en->nombre_comercial }}</h1>
+                <p class="clinic-slogan">{{ $en->slogan }}</p>
+                <p class="doctor-info"><strong>{{ !empty($us->name) ? $us->name : $en->representante_legal }} - {{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</strong></p>
+                <p class="doctor-credentials">CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} | RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</p>
+                <p class="clinic-address">Dirección: {{ $en->direccion }}, {{ $en->ubigeo }}</p>
+            </div>
+            <div class="patient-info-section">
+                <h2 class="document-title">RIESGO NEUMOLÓGICO</h2>
+                <p><strong>Fecha:</strong> {{ date('d/m/Y', strtotime($rk->created_at)) }}</p>
+            </div>
+        </div>
+    </div>
 
-        $doctorName = !empty($us->name) ? $us->name : (!empty($en->representante_legal) ? $en->representante_legal : 'Médico Neumólogo');
-        $specialtyName = !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo';
-        $cmp = !empty($us->cmp) ? $us->cmp : '60432';
-        $rne = !empty($us->rne) ? $us->rne : '39261';
+    <!-- Información del paciente -->
+    <div class="patient-info">
+        <div class="patient-details">
+            <div class="patient-field"><strong>DNI:</strong> {{ $hc[0]->dni }}</div>
+            <div class="patient-field"><strong>Paciente:</strong> {{ $hc[0]->nombres }}</div>
+            <div class="patient-field"><strong>Edad:</strong> {{ $hc[0]->age }} años</div>
+        </div>
+    </div>
 
-        $sigImg = null;
-        if (!empty($signatureBase64)) {
-            $sigImg = $signatureBase64;
-        } elseif (!empty($us->firma_digital) && \Illuminate\Support\Facades\Storage::disk('public')->exists($us->firma_digital)) {
-            $mime = \Illuminate\Support\Facades\Storage::disk('public')->mimeType($us->firma_digital) ?: 'image/png';
-            $sigData = \Illuminate\Support\Facades\Storage::disk('public')->get($us->firma_digital);
-            $sigImg = 'data:' . $mime . ';base64,' . base64_encode($sigData);
-        }
-    @endphp
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Motivo de consulta -->
+        <div class="content-section">
+            <h3 class="section-title">MOTIVO DE CONSULTA</h3>
+            <div class="section-content">
+                <p>{!! $rk->motivo !!}</p>
+            </div>
+        </div>
 
-    <!-- ENCABEZADO -->
-    <table class="header-table no-break">
-        <tr>
-            <td class="clinic-brand">
-                <table style="width: 100%;">
-                    <tr>
-                        @if($logoBase64)
-                            <td style="width: 75px; vertical-align: top; padding-right: 10px;">
-                                <img src="{{ $logoBase64 }}" style="max-height: 52px; max-width: 75px;" alt="Logo">
-                            </td>
-                        @else
-                            <td style="width: 46px; vertical-align: top; padding-right: 8px;">
-                                <div style="width: 42px; height: 42px; background-color: #0F2C59; border: 2px solid #0284C7; text-align: center; line-height: 40px; color: #FFFFFF; font-weight: bold; font-size: 20px;">
-                                    +
-                                </div>
-                            </td>
-                        @endif
-                        <td style="vertical-align: top;">
-                            <h1 class="clinic-name">{{ $en->nombre_comercial ?: ($en->razon_social ?: 'CENTRO NEUMOLÓGICO') }}</h1>
-                            @if(!empty($en->slogan) || !empty($en->frase))
-                                <div class="clinic-slogan">{{ $en->slogan ?: $en->frase }}</div>
-                            @endif
-                            <div class="clinic-doctor">Dr(a). {{ $doctorName }} &bull; {{ $specialtyName }}</div>
-                            <div class="clinic-credentials">CMP: {{ $cmp }} &nbsp;|&nbsp; RNE: {{ $rne }}</div>
-                            <div class="clinic-contact">
-                                {{ $en->direccion }}{{ !empty($en->ubigeo) ? ' - ' . $en->ubigeo : '' }}
-                                @if(!empty($en->telefono)) &bull; Tel: {{ $en->telefono }} @endif
-                                @if(!empty($en->ruc)) &bull; RUC: {{ $en->ruc }} @endif
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td class="doc-badge-col">
-                <div class="doc-badge-box">
-                    <div class="doc-badge-header">RIESGO NEUMOLÓGICO</div>
-                    <div class="doc-badge-body">
-                        <div class="doc-badge-subtitle">VALORACIÓN PREOPERATORIA</div>
-                        <div class="doc-badge-folio">N° RN-{{ str_pad($rk->id, 5, '0', STR_PAD_LEFT) }}</div>
-                        <div class="doc-badge-date">
-                            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($rk->created_at)->format('d/m/Y') }}
-                        </div>
-                    </div>
+        <!-- Antecedentes -->
+        <div class="content-section">
+            <h3 class="section-title">ANTECEDENTES</h3>
+            <div class="section-content">
+                <p>{!! $rk->antecedente !!}</p>
+            </div>
+        </div>
+
+        <!-- Síntomas -->
+        <div class="content-section">
+            <h3 class="section-title">SÍNTOMAS</h3>
+            <div class="section-content">
+                <p>{!! $rk->sintomas !!}</p>
+            </div>
+        </div>
+
+        <!-- Examen físico -->
+        <div class="content-section">
+            <h3 class="section-title">EXAMEN FÍSICO</h3>
+            <div class="section-content">
+                <p>{!! $rk->examen_fisico !!}</p>
+            </div>
+        </div>
+
+        <!-- Exámenes complementarios -->
+        <div class="content-section">
+            <h3 class="section-title">EXÁMENES COMPLEMENTARIOS</h3>
+            <div class="section-content">
+                <p>{!! $rk->examen_complementario !!}</p>
+            </div>
+        </div>
+
+        <!-- Riesgo neumológico -->
+        <div class="content-section">
+            <h3 class="section-title">RIESGO NEUMOLÓGICO</h3>
+            <div class="section-content">
+                <p>{!! $rk->riesgo_neumologico !!}</p>
+            </div>
+        </div>
+
+        <!-- Sugerencias -->
+        <div class="content-section">
+            <h3 class="section-title">SUGERENCIAS Y TRATAMIENTO</h3>
+            <div class="section-content">
+                <p>{!! $rk->sugerencia !!}</p>
+            </div>
+        </div>
+
+        <!-- Firma y Sello -->
+        <div class="signature-area no-break" style="margin-top: 30px; text-align: center;">
+            @if(!empty($withSignature) && !empty($signatureBase64))
+                <div style="margin-bottom: -15px;">
+                    <img src="{{ $signatureBase64 }}" style="max-height: 75px; max-width: 220px;" alt="Firma Digital">
                 </div>
-            </td>
-        </tr>
-    </table>
-
-    <div class="accent-bar"></div>
-    <div class="accent-subbar"></div>
-
-    <!-- DATOS DEL PACIENTE -->
-    <div class="patient-card no-break">
-        <table class="patient-table">
-            <tr>
-                <td style="width: 42%;">
-                    <span class="patient-label">Paciente:</span><br>
-                    <span class="patient-value">{{ $hc[0]->nombres ?? '---' }}</span>
-                </td>
-                <td style="width: 20%;">
-                    <span class="patient-label">DNI / Documento:</span><br>
-                    <span class="patient-value">{{ $hc[0]->dni ?? '---' }}</span>
-                </td>
-                <td style="width: 16%;">
-                    <span class="patient-label">Edad:</span><br>
-                    <span class="patient-value">{{ $hc[0]->age ?? '---' }} años</span>
-                </td>
-                <td style="width: 22%;">
-                    <span class="patient-label">N° Historia Clínica:</span><br>
-                    <span class="patient-value">{{ !empty($hc[0]->history) ? str_pad($hc[0]->history, 5, '0', STR_PAD_LEFT) : '---' }}</span>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- SECCIONES DE EVALUACIÓN DE RIESGO -->
-
-    <!-- I. MOTIVO DE CONSULTA / CIRUGÍA PROPUESTA -->
-    <div class="report-section no-break">
-        <div class="section-bar">
-            <span class="section-bar-title">I. Motivo de Consulta / Procedimiento Quirúrgico Propuesto</span>
-        </div>
-        <div class="section-body">
-            @if(!empty(trim(strip_tags($rk->motivo))))
-                {!! $rk->motivo !!}
             @else
-                <span class="empty-field">Evaluación preoperatoria para procedimiento quirúrgico programado.</span>
+                <div style="height: 50px;"></div>
             @endif
+            <div class="signature-line" style="width: 240px; border-top: 1px solid #333; margin: 0 auto 4px;"></div>
+            <div class="doctor-signature" style="font-size: 11px; line-height: 1.2;">
+                <strong>Dr(a). {{ !empty($us->name) ? $us->name : $en->representante_legal }}</strong><br>
+                <span>{{ !empty($us->specialty_name) ? $us->specialty_name : 'Médico Neumólogo' }}</span><br>
+                <span>CMP: {{ !empty($us->cmp) ? $us->cmp : '60432' }} &nbsp;|&nbsp; RNE: {{ !empty($us->rne) ? $us->rne : '39261' }}</span>
+            </div>
         </div>
     </div>
 
-    <!-- II. ANTECEDENTES PATOLÓGICOS -->
-    <div class="report-section no-break">
-        <div class="section-bar">
-            <span class="section-bar-title">II. Antecedentes Patológicos y Factores de Riesgo</span>
+    <!-- Pie de página -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-clinic">Clínica Rodriguez y Especialistas II</div>
+            <div class="footer-contact">Atención de lunes a sábado | Tel: {{ $en->telefono }}</div>
         </div>
-        <div class="section-body">
-            @if(!empty(trim(strip_tags($rk->antecedente))))
-                {!! $rk->antecedente !!}
-            @else
-                <span class="empty-field">Sin antecedentes patológicos ni comorbilidades respiratorias relevantes.</span>
-            @endif
-        </div>
-    </div>
-
-    <!-- III. SÍNTOMAS RESPIRATORIOS ACTUALES -->
-    <div class="report-section no-break">
-        <div class="section-bar">
-            <span class="section-bar-title">III. Síntomas Respiratorios Actuales</span>
-        </div>
-        <div class="section-body">
-            @if(!empty(trim(strip_tags($rk->sintomas))))
-                {!! $rk->sintomas !!}
-            @else
-                <span class="empty-field">Niega sintomatología respiratoria aguda actual (tos, disnea, dolor torácico, fiebre).</span>
-            @endif
-        </div>
-    </div>
-
-    <!-- IV. EXAMEN FÍSICO -->
-    <div class="report-section no-break">
-        <div class="section-bar">
-            <span class="section-bar-title">IV. Examen Físico y Constantes Vitales</span>
-        </div>
-        <div class="section-body">
-            @if(!empty(trim(strip_tags($rk->examen_fisico))))
-                {!! $rk->examen_fisico !!}
-            @else
-                <span class="empty-field">Aparato respiratorio: Murmullo vesicular pasa bien en ambos campos pulmonares, no ruidos agregados.</span>
-            @endif
-        </div>
-    </div>
-
-    <!-- V. EXÁMENES COMPLEMENTARIOS -->
-    <div class="report-section no-break">
-        <div class="section-bar">
-            <span class="section-bar-title">V. Exámenes Complementarios y Pruebas Funcionales</span>
-        </div>
-        <div class="section-body">
-            @if(!empty(trim(strip_tags($rk->examen_complementario))))
-                {!! $rk->examen_complementario !!}
-            @else
-                <span class="empty-field">Estudios complementarios dentro de parámetros admisibles.</span>
-            @endif
-        </div>
-    </div>
-
-    <!-- VI. ESTRATIFICACIÓN DEL RIESGO NEUMOLÓGICO (DESTACADO) -->
-    <div class="risk-highlight-card no-break">
-        <div class="risk-card-header">
-            VI. Estratificación y Clasificación del Riesgo Neumológico / Quirúrgico
-        </div>
-        <div class="risk-card-body">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="width: 100%; vertical-align: middle;">
-                        <span class="risk-badge">ESTRATIFICACIÓN CLÍNICA</span>
-                        <span class="risk-classification-text">
-                            @if(!empty(trim(strip_tags($rk->riesgo_neumologico))))
-                                {!! $rk->riesgo_neumologico !!}
-                            @else
-                                RIESGO NEUMOLÓGICO HABITUAL / LEVE
-                            @endif
-                        </span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <!-- VII. SUGERENCIAS Y RECOMENDACIONES PERIOPERATORIAS -->
-    <div class="suggestions-section no-break">
-        <div class="suggestions-bar">
-            <span class="section-bar-title">VII. Sugerencias y Manejo Perioperatorio</span>
-        </div>
-        <div class="suggestions-body">
-            @if(!empty(trim(strip_tags($rk->sugerencia))))
-                {!! $rk->sugerencia !!}
-            @else
-                <span class="empty-field">Sin contraindicaciones respiratorias absolutas para el acto quirúrgico propuesto. Continuar con monitoreo intra y postoperatorio habitual.</span>
-            @endif
-        </div>
-    </div>
-
-    <!-- SECCIÓN DE FIRMA -->
-    <table class="signature-table no-break">
-        <tr>
-            <td class="signature-left">
-                <div class="security-stamp">
-                    <strong>Certificación de Evaluación Preoperatoria</strong><br>
-                    Valoración clínica para fines anestésico-quirúrgicos según Guías Clínicas de Neumología.
-                </div>
-            </td>
-            <td class="signature-right">
-                <div class="signature-img-container">
-                    @if($sigImg)
-                        <img src="{{ $sigImg }}" class="signature-img" alt="Firma Digital">
-                    @else
-                        <div class="signature-spacer"></div>
-                    @endif
-                </div>
-                <div class="signature-line"></div>
-                <div class="doctor-signature-name">Dr(a). {{ $doctorName }}</div>
-                <div class="doctor-signature-spec">{{ $specialtyName }}</div>
-                <div class="doctor-signature-reg">CMP: {{ $cmp }} &nbsp;|&nbsp; RNE: {{ $rne }}</div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- PIE DE PÁGINA -->
-    <div class="footer no-break">
-        <div class="footer-subline"></div>
-        <table class="footer-table">
-            <tr>
-                <td class="footer-left">
-                    <strong>{{ $en->nombre_comercial ?: ($en->razon_social ?: 'Centro Neumológico') }}</strong> &bull;
-                    Atención Médica Especializada
-                    @if(!empty($en->telefono)) &bull; Tel: {{ $en->telefono }} @endif
-                </td>
-                <td class="footer-right">
-                    Documento de carácter médico confidencial &bull; Fecha de emisión: {{ date('d/m/Y H:i') }}
-                </td>
-            </tr>
-        </table>
     </div>
 </body>
 </html>
